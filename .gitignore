@@ -1,0 +1,7 @@
+.npmignore
+.nyc_output
+package-lock.json
+node_modules
+experiments
+coverage
+test/__screenshots__

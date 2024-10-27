@@ -1,0 +1,30 @@
+{
+  // https://janessagarrow.com/blog/typescript-and-esbuild/
+ "compilerOptions": {
+   "lib": ["DOM", "ESNext", "DOM.Iterable"],
+   "types": ["@thednp/shorty"],
+   "rootDir": "./",
+   "baseUrl": "./",
+   "module": "ESNext",
+   "target": "ESNext",
+   "moduleResolution": "Bundler",
+   "allowJs": true,
+   "forceConsistentCasingInFileNames": true,
+   "useDefineForClassFields": true,
+   "strict": true,
+   "sourceMap": true,
+   "resolveJsonModule": true,
+   "esModuleInterop": true,
+   "isolatedModules": true,
+   "noUnusedLocals": true,
+   "noUnusedParameters": true,
+   "noImplicitReturns": true,
+   "removeComments": false,
+   "allowSyntheticDefaultImports": true,
+   "noEmit": true,
+   "checkJs": true,
+   "skipLibCheck": true // allows dts-bundle-generator to import from package.json
+ },
+ "include": ["src/*", "src/**/*"],
+ "exclude": ["node_modules", "experiments", "coverage", "dist"],
+}

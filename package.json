@@ -1,0 +1,68 @@
+{
+  "name": "@thednp/position-observer",
+  "version": "0.0.1",
+  "author": "thednp",
+  "license": "MIT",
+  "description": "The PositionObserver class provides a way to asynchronously observe changes in the position of a target element with the top-level document's viewport.",
+  "homepage": "https://github.com/thednp/position-observer",
+  "source": "./src/index.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.mjs"
+    }
+  },
+  "scripts": {
+    "pre-test": "pnpm clean-coverage",
+    "dev": "vite --open ./demo/index.html --port 8577",
+    "test": "pnpm pre-test && vitest --config vitest.config.mts",
+    "test-ui": "pnpm pre-test && vitest --config vitest.config-ui.mts --browser=chrome",
+    "clean-coverage": "rm -rf coverage .nyc_output",
+    "badges": "npx -p dependency-version-badge update-badge typescript vitest vite",
+    "build": "pnpm build-vite && pnpm dts",
+    "build-vite": "vite build",
+    "dts": "dts-bundle-generator --config ./dts.config.cjs --project ./tsconfig.json",
+    "lint": "deno lint src && pnpm check:ts",
+    "check:ts": "tsc --noEmit",
+    "prepublishOnly": "pnpm up && pnpm lint && deno fmt src && pnpm build && pnpm badges"
+  },
+  "bugs": {
+    "url": "https://github.com/thednp/position-observer/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thednp/position-observer.git"
+  },
+  "keywords": [
+    "position-observer",
+    "observer",
+    "typescript"
+  ],
+  "dependencies": {
+    "@thednp/shorty": "^2.0.6"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.1",
+    "@vitest/browser": "^2.1.3",
+    "@vitest/coverage-istanbul": "^2.1.3",
+    "@vitest/ui": "^2.1.3",
+    "dts-bundle-generator": "^9.5.1",
+    "playwright": "^1.48.2",
+    "prettier": "^2.8.8",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.10",
+    "vitest": "^2.1.3"
+  },
+  "packageManager": "pnpm@8.6.12",
+  "engines": {
+    "node": ">=16",
+    "pnpm": ">=8.6.0"
+  }
+}
