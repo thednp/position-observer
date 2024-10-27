@@ -47,6 +47,6 @@ export {
 	PositionObserver as default,
 };
 
-export as namespace PotitionObserver;
+export as namespace PositionObserver;
 
 export {};

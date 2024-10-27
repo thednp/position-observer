@@ -7,7 +7,7 @@ const config = {
       filePath: "src/index.ts",
       outFile: `dist/index.d.ts`,
       output: {
-        umdModuleName: 'PotitionObserver',
+        umdModuleName: 'PositionObserver',
         noBanner: true,
       }
     },
