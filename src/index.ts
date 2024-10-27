@@ -1,6 +1,5 @@
 import {
   getBoundingClientRect,
-  getDocumentElement,
   isFunction,
   isHTMLElement,
 } from "@thednp/shorty";
@@ -12,6 +11,9 @@ export type PositionObserverEntry = {
   target: HTMLElement;
   boundingBox: DOMRect;
   isVisible: boolean;
+};
+export type PositionObserverOptions = {
+  root: HTMLElement;
 };
 
 const errorString = "PositionObserver Error";
@@ -33,13 +35,16 @@ export default class PositionObserver {
    *
    * @param callback the callback that applies to all targets of this observer
    */
-  constructor(callback: PositionObserverCallback) {
+  constructor(
+    callback: PositionObserverCallback,
+    options?: Partial<PositionObserverOptions>,
+  ) {
     if (!isFunction(callback)) {
       throw new Error(`${errorString}: ${callback} is not a function.`);
     }
     this.entries = [];
     this._callback = callback;
-    this._root = document?.documentElement; // viewport is basically "unknown" at this point
+    this._root = options?.root || document?.documentElement; // viewport is basically "unknown" at this point
     this._tick = 0;
   }
 
@@ -55,8 +60,6 @@ export default class PositionObserver {
         `${errorString}: ${target} is not an instance of HTMLElement.`,
       );
     }
-    /* istanbul ignore if @preserve - a guard must be set and the real viewport must be used */
-    if (!this._root) this._root = getDocumentElement(target);
 
     const { clientWidth, clientHeight } = this._root;
     const boundingBox = getBoundingClientRect(target) as DOMRect;

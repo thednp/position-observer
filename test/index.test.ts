@@ -59,11 +59,9 @@ describe("Offcanvas Class Tests", () => {
     let isOpen = false;
 
     const observer = new PositionObserver(([entry]) => {
-        // console.log(entry);
         styleTip({ element, container, tooltip, arrow });
     });
 
-    // { element: HTMLElement, tooltip: HTMLElement, container: HTMLElement, arrow: HTMLElement }
     element.addEventListener('click', (e) => {
         if (isOpen) {
             tooltip.classList.remove('show');

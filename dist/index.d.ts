@@ -4,6 +4,9 @@ export type PositionObserverEntry = {
 	boundingBox: DOMRect;
 	isVisible: boolean;
 };
+export type PositionObserverOptions = {
+	root: HTMLElement;
+};
 /**
  * The PositionObserver class is a utility class that observes the position
  * of DOM elements and triggers a callback when their position changes.
@@ -20,7 +23,7 @@ declare class PositionObserver {
 	 *
 	 * @param callback the callback that applies to all targets of this observer
 	 */
-	constructor(callback: PositionObserverCallback);
+	constructor(callback: PositionObserverCallback, options?: Partial<PositionObserverOptions>);
 	/**
 	 * Start observing the position of the specified element.
 	 * If the element is not currently attached to the DOM,

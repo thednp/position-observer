@@ -14,7 +14,6 @@ export default function getMarkup() {
                 </div>
             </div>
         </div>
-      </div>
     </div>`;
     const domParser = new DOMParser();
     let tempDocument = domParser.parseFromString(markup, "text/html");

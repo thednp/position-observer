@@ -3,7 +3,7 @@
   "version": "0.0.2",
   "author": "thednp",
   "license": "MIT",
-  "description": "The PositionObserver class provides a way to asynchronously observe changes in the position of a target element with the top-level document's viewport.",
+  "description": "🔩 The PositionObserver class provides a way to asynchronously observe changes in the position of a target element with the top-level document's viewport.",
   "homepage": "https://github.com/thednp/position-observer",
   "source": "./src/index.ts",
   "main": "./dist/index.js",
@@ -43,6 +43,9 @@
   "keywords": [
     "position-observer",
     "observer",
+    "intersection",
+    "resize",
+    "position",
     "typescript"
   ],
   "dependencies": {

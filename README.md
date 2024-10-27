@@ -31,10 +31,10 @@ pnpm install @thednp/position-observer
 
 ```ts
 // import the PositionObserver class
-import PositionObserver from '@thednp/position-observer';
+import PositionObserver, { type PositionObserverEntry } from '@thednp/position-observer';
 
-// create an observer
-const observer = new PositionObserver((entries) => {
+// define a callback
+const callback = (entries: PositionObserverEntry[]) => {
   console.log(entries);
 
   // find entry for myTarget
@@ -42,7 +42,15 @@ const observer = new PositionObserver((entries) => {
   if (entry.isVisible) {
     // do something about it
   }
-});
+};
+
+// set some options
+const options = {
+  root: document.body, // if not set, this will be the document.documentElement
+}
+
+// create an observer
+const observer = new PositionObserver(callback, options);
 
 // find a suitable target
 const target = document.getElementById('myElement');
@@ -66,6 +74,12 @@ observer.unobserve(target);
 // you can disconect the observer
 observer.disconect();
 ```
+
+## Instance Options
+
+### root: HTMLElement | null
+Sets the `instance._root` private property which identifies the `Element` whose bounds are treated as the bounding box of the viewport for the element which is the observer's target. If not defined then the `Document.documentElement` will be used. When observing multiple targets from a scrollable parent, that parent must be set as root. See the [ScrollSpy](https://github.com/thednp/bootstrap.native/blob/master/src/components/scrollspy.ts) example for more implementation details.
+
 
 ## Notes
 * because the functionality is powered by `requestAnimationFrame`, all computation always happens before the next paint, in some cases you might want to consider wrapping your **PositionObserver** callback in a `requestAnimationFrame()` invokation for a consistent syncronicity or to eliminate any [unwanted anomalies](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver#observation_errors);
