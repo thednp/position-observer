@@ -7,14 +7,17 @@
 [![vitest version](https://img.shields.io/badge/vitest-2.1.4-brightgreen)](https://vitest.dev/)
 [![vite version](https://img.shields.io/badge/vite-5.4.10-brightgreen)](https://vitejs.dev/)
 
-If you were looking for an observer that could replace all your `resize` and/or `scroll` EventListeners JANK, this should be it! The **PositionObserver** works with `requestAnimationFrame` under the hood for maximum performance and its functionality resembles very much to the [IntersectionObserver](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver) and the [ResizeObserver](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver), but with a much more simple design. In most cases you might not need both of these two observers, the **PositionObserver** can prove to be more useful.
+If you were looking for an observer that could replace all your `resize` and/or `scroll` EventListeners JANK, this should be it! The **PositionObserver** works with `requestAnimationFrame` under the hood its functionality resembles very much to a combination of the [IntersectionObserver](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver) and the [ResizeObserver](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver), but with a much more simple design.
+
+What can you use after your element has intersected? How to listen to resize or scroll without attaching event listeners? What's the most efficient solution to all this?
+In most cases you might not need both of these two observers, the **PositionObserver** can prove to be more useful.
 
 
 ## How it works
 * when the observer is initialized without a callback, it will throw an `Error`;
 * if you call the `observe()` method without a valid HTMLElement target, it will throw an `Error`;
 * if the target isn't attached to the DOM, it will not be added to the observer entries;
-* once propertly set up, the **PositionObserver** will observe the changes of either top, left, bottom or right (the extremes) for a given HTMLElement target;
+* once propertly set up, the **PositionObserver** will observe the changes of either top, left, width or height for a given HTMLElement target as well as the scroll position of a designated parent element;
 * only when at least one of these values changes the callback will be invoked.
 
 
@@ -51,7 +54,8 @@ const callback = (entries: PositionObserverEntry[]) => {
 
 // set some options
 const options = {
-  root: document.body, // if not set, it will use the document.documentElement
+  // if not set, it will use the document.documentElement
+  root: document.getElementById('myModal-or-something'),
 }
 
 // create the observer
@@ -64,9 +68,12 @@ observer.observe(target);
 // the position change was triggered by either scroll / resize events
 // this will be the output of observer callback
 [{
-  target: <div#myelement>, // the observed target element
-  boundingBox: DOMRect, // the target's bounding box
-  isVisible: true, // this will always be true when at least one pixel of the target is visible in the viewport
+  // the observed target element
+  target: <div#myelement>,
+  // the target's offsets and root scroll position
+  box: { offsetLeft, offsetTop, offsetWidth, offsetHeight, scrollTop, scrollLeft },
+  // this will always be true when at least one pixel of the target is visible in the viewport
+  isVisible: true,
 }]
 
 // stop observing the changes for #myElement at any point
@@ -88,8 +95,8 @@ When observing multiple targets from a **scrollable** parent element, that paren
 * because the functionality is powered by `requestAnimationFrame`, all computation always happens before the next paint, in some cases you might want to consider wrapping your **PositionObserver** callback in a `requestAnimationFrame()` invokation for a consistent syncronicity or to eliminate any [unwanted anomalies](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver#observation_errors);
 * while the performance benefits over the use of event listeners is undeniable, it's still **important** to `unobserve` targets or `disconnect` the observer to make room in the main thread;
 * if you keep track of the changes to the `entry.isVisible` property you could say you have an equivalent for `IntersectionObserver.isIntersecting`; 
-* how about an idea to make your **PositionObserver** instance work like a `ResizeObserver`, well you can simply filter your callback to the `entry.boundingBox.left !== lastLeft` || `entry.boundingBox.right !== lastRight` cases, easy right?
-* lastly, the **PositionObserver** will only observe changes to all sides, but in some cases you might want to only observe changes triggered by scroll, in which case you can filter your callback to a single side `entry.boundingBox.top !== lastScrollTop`, further increasing performance.
+* how about an idea to make your **PositionObserver** instance work like a `ResizeObserver`, well you can simply filter your callback to the `entry.box.offsetHeight !== lastHeight` || `entry.box.offsetWidth !== lastWidth` cases, easy right?
+* lastly, the **PositionObserver** will observe changes to a target box model, but in some cases you might want to narrow down to the changes triggered by scroll, in which case you can filter your callback to a single side `entry.box.scrollTop !== lastScrollTop`, further increasing performance.
 
 
 ## License

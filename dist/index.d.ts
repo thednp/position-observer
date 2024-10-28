@@ -1,3 +1,12 @@
+declare type EntryOffsets = {
+    offsetWidth: number;
+    offsetHeight: number;
+    offsetTop: number;
+    offsetLeft: number;
+    scrollLeft: number;
+    scrollTop: number;
+};
+
 /**
  * The PositionObserver class is a utility class that observes the position
  * of DOM elements and triggers a callback when their position changes.
@@ -33,6 +42,7 @@ declare class PositionObserver {
      * Private method responsible for all the heavy duty.
      */
     private _runCallback;
+    private _getTargetEntry;
     /**
      * Immediately stop observing all elements.
      */
@@ -44,7 +54,7 @@ declare type PositionObserverCallback = (entries: PositionObserverEntry[]) => vo
 
 declare type PositionObserverEntry = {
     target: HTMLElement;
-    boundingBox: DOMRect;
+    box: EntryOffsets;
     isVisible: boolean;
 };
 

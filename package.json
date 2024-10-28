@@ -1,6 +1,6 @@
 {
   "name": "@thednp/position-observer",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "author": "thednp",
   "license": "MIT",
   "description": "🔩 The PositionObserver class provides a way to asynchronously observe changes in the position of a target element with the top-level document's viewport.",
@@ -50,7 +50,7 @@
     "@thednp/shorty": "^2.0.7"
   },
   "devDependencies": {
-    "@types/node": "^20.17.1",
+    "@types/node": "^20.17.2",
     "@vitest/browser": "^2.1.4",
     "@vitest/coverage-istanbul": "^2.1.4",
     "@vitest/ui": "^2.1.4",

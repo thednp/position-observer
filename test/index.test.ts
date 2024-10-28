@@ -53,12 +53,13 @@ describe("Offcanvas Class Tests", () => {
     )!;
     const tooltip = markup.querySelector<HTMLElement>('.tooltip')!;
     const arrow = tooltip.querySelector<HTMLElement>('.tooltip-arrow')!;
-    const container = markup.ownerDocument.body!;
+    const container = markup.ownerDocument.documentElement!;
     const win = container.ownerDocument.defaultView!;
 
     let isOpen = false;
 
     const observer = new PositionObserver(([entry]) => {
+      // console.log(entry)
         styleTip({ element, container, tooltip, arrow });
     }, { root: container });
 

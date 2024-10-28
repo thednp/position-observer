@@ -3,9 +3,17 @@ import { isFunction, isHTMLElement } from "@thednp/shorty";
 export type PositionObserverCallback = (
   entries: PositionObserverEntry[],
 ) => void;
+export type EntryOffsets = {
+  offsetWidth: number;
+  offsetHeight: number;
+  offsetTop: number;
+  offsetLeft: number;
+  scrollLeft: number;
+  scrollTop: number;
+};
 export type PositionObserverEntry = {
   target: HTMLElement;
-  boundingBox: DOMRect;
+  box: EntryOffsets;
   isVisible: boolean;
 };
 export type PositionObserverOptions = {
@@ -66,14 +74,9 @@ export default class PositionObserver {
     /* istanbul ignore if @preserve - a guard must be set */
     if (!this._root.contains(target)) return;
 
-    const { clientWidth, clientHeight } = this._root;
-    const boundingBox = target.getBoundingClientRect();
-    const { left, top, bottom, right, width, height } = boundingBox;
+    const newEntry = this._getTargetEntry(target);
+    this.entries.push(newEntry);
 
-    const isVisible = top > 1 - height && left > 1 - width &&
-      bottom <= clientHeight + height - 1 && right <= clientWidth + width - 1;
-
-    this.entries.push({ target, boundingBox, isVisible });
     /* istanbul ignore else @preserve */
     if (!this._tick) {
       this._tick = requestAnimationFrame(this._runCallback);
@@ -96,25 +99,32 @@ export default class PositionObserver {
     /* istanbul ignore if @preserve - a guard must be set */
     if (!this.entries.length) return;
     const updates: PositionObserverEntry[] = [];
-    // the viewport is known at this point
-    const { clientWidth, clientHeight } = this._root as HTMLElement;
 
     this.entries.forEach((entry, index) => {
-      const { target, boundingBox: oldBoundingBox } = entry;
-      const boundingBox = target.getBoundingClientRect();
-      const { left, top, bottom, right, width, height } = boundingBox;
+      const { target, box: previousOffsets } = entry;
+      /* istanbul ignore if @preserve - a guard must be set */
+      if (!this._root.contains(target)) return;
+      const { box, isVisible } = this._getTargetEntry(target);
+      const {
+        offsetLeft,
+        offsetTop,
+        offsetWidth,
+        offsetHeight,
+        scrollLeft,
+        scrollTop,
+      } = box;
 
       if (
-        oldBoundingBox.left !== left || oldBoundingBox.top !== top ||
-        oldBoundingBox.right !== right || oldBoundingBox.bottom !== bottom
+        previousOffsets.offsetLeft !== offsetLeft ||
+        previousOffsets.offsetTop !== offsetTop ||
+        previousOffsets.offsetWidth !== offsetWidth ||
+        previousOffsets.offsetHeight !== offsetHeight ||
+        previousOffsets.scrollTop !== scrollTop ||
+        previousOffsets.scrollLeft !== scrollLeft
       ) {
-        const isVisible = top > 1 - height && left > 1 - width &&
-          bottom <= clientHeight + height - 1 &&
-          right <= clientWidth + width - 1;
-
-        this.entries[index].boundingBox = boundingBox;
+        this.entries[index].box = box;
         this.entries[index].isVisible = isVisible;
-        updates.push({ target, boundingBox, isVisible });
+        updates.push({ target, box, isVisible });
       }
     });
 
@@ -123,6 +133,29 @@ export default class PositionObserver {
       this._callback(updates);
     }
     requestAnimationFrame(this._runCallback);
+  };
+
+  private _getTargetEntry = (target: HTMLElement) => {
+    const { offsetLeft, offsetTop, offsetWidth, offsetHeight } = target;
+    const { clientWidth, clientHeight, scrollLeft, scrollTop } = this._root;
+
+    const isVisible = offsetTop > 1 - offsetHeight &&
+      offsetLeft > 1 - offsetWidth &&
+      offsetTop + offsetHeight <= clientHeight + offsetHeight - 1 &&
+      offsetLeft + offsetWidth <= clientWidth + offsetWidth - 1;
+
+    return {
+      target,
+      isVisible,
+      box: {
+        offsetLeft,
+        offsetTop,
+        offsetWidth,
+        offsetHeight,
+        scrollLeft,
+        scrollTop,
+      },
+    };
   };
 
   /**
