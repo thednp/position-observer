@@ -70,8 +70,8 @@ observer.observe(target);
 [{
   // the observed target element
   target: <div#myelement>,
-  // the target's offsets and root scroll position
-  box: { offsetLeft, offsetTop, offsetWidth, offsetHeight, scrollTop, scrollLeft },
+  // the target's bounding box
+  boundingBox: DOMRect,
   // this will always be true when at least one pixel of the target is visible in the viewport
   isVisible: true,
 }]
@@ -92,12 +92,12 @@ When observing multiple targets from a **scrollable** parent element, that paren
 
 
 ## Notes
-* the `isVisible` property is only limited to the position of the target within the specified viewport, it doesn't take into account CSS properties or other specific attributes;
+* the `entry.isVisible` property is only limited to the position of the target within the specified viewport, it doesn't take into account CSS properties or other specific attributes;
 * because the functionality is powered by `requestAnimationFrame`, all computation always happens before the next paint, in some cases you might want to consider wrapping your **PositionObserver** callback in a `requestAnimationFrame()` invokation for a consistent syncronicity or to eliminate any [unwanted anomalies](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver#observation_errors);
 * while the performance benefits over the use of event listeners is undeniable, it's still **important** to `unobserve` targets or `disconnect` the observer to make room in the main thread;
 * if you keep track of the changes to the `entry.isVisible` property you could say you have an equivalent for `IntersectionObserver.isIntersecting`; 
-* how about an idea to make your **PositionObserver** instance work like a `ResizeObserver`, well you can simply filter your callback to the `entry.box.offsetHeight !== lastHeight` || `entry.box.offsetWidth !== lastWidth` cases, easy right?
-* lastly, the **PositionObserver** will observe changes to a target box model, but in some cases you might want to narrow down to the changes triggered by scroll, in which case you can filter your callback to a single side `entry.box.scrollTop !== lastScrollTop`, further increasing performance.
+* how about an idea to make your **PositionObserver** instance work like a `ResizeObserver`, well you can simply filter your callback to the `entry.boundingBox.offsetHeight !== lastHeight` || `entry.boundingBox.width !== lastWidth` cases, easy right?
+* lastly, the **PositionObserver** will observe changes to all sides of a target, but in some cases you might want to narrow down to the changes triggered by scroll, in which case you can filter your callback to a single side `entry.boundingBox.top !== lastTop`, further increasing performance.
 
 
 ## License

@@ -1,6 +1,6 @@
-const T = (e) => e != null && typeof e == "object" || !1, d = (e) => T(e) && typeof e.nodeType == "number" && [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].some(
-  (t) => e.nodeType === t
-) || !1, _ = (e) => d(e) && e.nodeType === 1 || !1, g = (e) => typeof e == "function" || !1, p = "PositionObserver Error";
+const g = (i) => i != null && typeof i == "object" || !1, _ = (i) => g(i) && typeof i.nodeType == "number" && [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].some(
+  (t) => i.nodeType === t
+) || !1, b = (i) => _(i) && i.nodeType === 1 || !1, d = (i) => typeof i == "function" || !1, f = "PositionObserver Error";
 class m {
   entries;
   _tick;
@@ -15,10 +15,10 @@ class m {
    * @param callback the callback that applies to all targets of this observer
    * @param options the options of this observer
    */
-  constructor(t, s) {
-    if (!g(t))
-      throw new Error(`${p}: ${t} is not a function.`);
-    this.entries = [], this._callback = t, this._root = _(s?.root) ? s.root : document?.documentElement, this._tick = 0;
+  constructor(t, n) {
+    if (!d(t))
+      throw new Error(`${f}: ${t} is not a function.`);
+    this.entries = [], this._callback = t, this._root = b(n?.root) ? n.root : document?.documentElement, this._tick = 0;
   }
   /**
    * Start observing the position of the specified element.
@@ -27,21 +27,21 @@ class m {
    * @param target
    */
   observe = (t) => {
-    if (!_(t))
+    if (!b(t))
       throw new Error(
-        `${p}: ${t} is not an instance of HTMLElement.`
+        `${f}: ${t} is not an instance of HTMLElement.`
       );
     if (!this._root.contains(t)) return;
-    const s = this._getTargetEntry(t);
-    this.entries.push(s), this._tick || (this._tick = requestAnimationFrame(this._runCallback));
+    const n = this._getTargetEntry(t);
+    this.entries.push(n), this._tick || (this._tick = requestAnimationFrame(this._runCallback));
   };
   /**
    * Stop observing the position of the specified element.
    * @param target
    */
   unobserve = (t) => {
-    const s = this.entries.findIndex((i) => i.target === t);
-    this.entries.splice(s, 1);
+    const n = this.entries.findIndex((e) => e.target === t);
+    this.entries.splice(n, 1);
   };
   /**
    * Private method responsible for all the heavy duty.
@@ -49,45 +49,19 @@ class m {
   _runCallback = () => {
     if (!this.entries.length) return;
     const t = [];
-    this.entries.forEach((s, i) => {
-      const { target: r, box: o } = s;
-      if (!this._root.contains(r)) return;
-      const { box: n, isVisible: c } = this._getTargetEntry(r), {
-        offsetLeft: f,
-        offsetTop: l,
-        offsetWidth: h,
-        offsetHeight: a,
-        scrollLeft: u,
-        scrollTop: b
-      } = n;
-      (o.offsetLeft !== f || o.offsetTop !== l || o.offsetWidth !== h || o.offsetHeight !== a || o.scrollTop !== b || o.scrollLeft !== u) && (this.entries[i].box = n, this.entries[i].isVisible = c, t.push({ target: r, box: n, isVisible: c }));
+    this.entries.forEach((n, e) => {
+      const { target: o, boundingBox: s } = n;
+      if (!this._root.contains(o)) return;
+      const { boundingBox: r, isVisible: c } = this._getTargetEntry(o), { left: u, top: h, bottom: l, right: a } = r;
+      (s.left !== u || s.top !== h || s.right !== a || s.bottom !== l) && (this.entries[e].boundingBox = r, this.entries[e].isVisible = c, t.push({ target: o, boundingBox: r, isVisible: c }));
     }), t.length && this._callback(t), requestAnimationFrame(this._runCallback);
   };
   _getTargetEntry = (t) => {
-    const {
-      offsetLeft: s,
-      offsetTop: i,
-      offsetWidth: r,
-      offsetHeight: o,
-      scrollTop: n,
-      scrollLeft: c
-    } = t, {
-      clientWidth: f,
-      clientHeight: l,
-      scrollLeft: h,
-      scrollTop: a
-    } = this._root, u = i > 1 - o && s > 1 - r && i + o <= l + o - 1 && s + r <= f + r - 1;
+    const { clientWidth: n, clientHeight: e } = this._root, o = t.getBoundingClientRect(), { left: s, top: r, bottom: c, right: u, width: h, height: l } = o, a = r > 1 - l && s > 1 - h && c <= e + l - 1 && u <= n + h - 1;
     return {
       target: t,
-      isVisible: u,
-      box: {
-        offsetLeft: s,
-        offsetTop: i,
-        offsetWidth: r,
-        offsetHeight: o,
-        scrollLeft: c + h,
-        scrollTop: n + a
-      }
+      isVisible: a,
+      boundingBox: o
     };
   };
   /**
