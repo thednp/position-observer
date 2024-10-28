@@ -9,8 +9,7 @@
 
 If you were looking for an observer that could replace all your `resize` and/or `scroll` EventListeners JANK, this should be it! The **PositionObserver** works with `requestAnimationFrame` under the hood its functionality resembles very much to a combination of the [IntersectionObserver](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver) and the [ResizeObserver](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver), but with a much more simple design.
 
-What can you use after your element has intersected? How to listen to resize or scroll without attaching event listeners? What's the most efficient solution to all this?
-In most cases you might not need both of these two observers, the **PositionObserver** can prove to be more useful.
+What can you use after your element has intersected? How to listen to resize or scroll without attaching event listeners? What's the most efficient solution to observe scroll, size and position all at once? Why doesn't MutationObserver cover this? Here's where the **PositionObserver** can cover some of these cases.
 
 
 ## How it works
