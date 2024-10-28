@@ -4,7 +4,7 @@
 [![NPM Version](https://img.shields.io/npm/v/@thednp/position-observer.svg)](https://www.npmjs.com/package/@thednp/position-observer)
 [![jsDeliver](https://img.shields.io/jsdelivr/npm/hw/@thednp/position-observer)](https://www.jsdelivr.com/package/npm/@thednp/position-observer)
 [![typescript version](https://img.shields.io/badge/typescript-5.6.3-brightgreen)](https://www.typescriptlang.org/)
-[![vitest version](https://img.shields.io/badge/vitest-2.1.3-brightgreen)](https://vitest.dev/)
+[![vitest version](https://img.shields.io/badge/vitest-2.1.4-brightgreen)](https://vitest.dev/)
 [![vite version](https://img.shields.io/badge/vite-5.4.10-brightgreen)](https://vitejs.dev/)
 
 If you were looking for an observer that could replace all your `resize` and/or `scroll` EventListeners JANK, this should be it! The **PositionObserver** works with `requestAnimationFrame` under the hood for maximum performance and its functionality resembles very much to the [IntersectionObserver](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver) and the [ResizeObserver](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver), but with a much more simple design. In most cases you might not need both of these two observers, the **PositionObserver** can prove to be more useful.

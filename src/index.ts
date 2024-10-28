@@ -1,8 +1,4 @@
-import {
-  getBoundingClientRect,
-  isFunction,
-  isHTMLElement,
-} from "@thednp/shorty";
+import { isFunction, isHTMLElement } from "@thednp/shorty";
 
 export type PositionObserverCallback = (
   entries: PositionObserverEntry[],
@@ -71,7 +67,7 @@ export default class PositionObserver {
     if (!this._root.contains(target)) return;
 
     const { clientWidth, clientHeight } = this._root;
-    const boundingBox = getBoundingClientRect(target) as DOMRect;
+    const boundingBox = target.getBoundingClientRect();
     const { left, top, bottom, right, width, height } = boundingBox;
 
     const isVisible = top > 1 - height && left > 1 - width &&
@@ -105,7 +101,7 @@ export default class PositionObserver {
 
     this.entries.forEach((entry, index) => {
       const { target, boundingBox: oldBoundingBox } = entry;
-      const boundingBox = getBoundingClientRect(target) as DOMRect;
+      const boundingBox = target.getBoundingClientRect();
       const { left, top, bottom, right, width, height } = boundingBox;
 
       if (

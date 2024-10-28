@@ -1,5 +1,6 @@
 import { resolve } from 'path';
 import { defineConfig } from 'vite';
+import dts from "vite-plugin-dts";
 
 const NAME = 'PositionObserver';
 
@@ -14,9 +15,17 @@ export default defineConfig({
   esbuild: {
     legalComments: 'none',
   },
+  plugins: [
+    dts({
+      outDir: 'dist',
+      copyDtsFiles: true,
+      rollupTypes: true,
+    })
+  ],
   build: {
     minify: 'esbuild',
     emptyOutDir: true,
+    target: 'ESNext',
     lib: {
       entry: [
         resolve(__dirname, 'src/index.ts'), // main file
