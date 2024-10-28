@@ -92,6 +92,7 @@ When observing multiple targets from a **scrollable** parent element, that paren
 
 
 ## Notes
+* the `isVisible` property is only limited to the position of the target within the specified viewport, it doesn't take into account CSS properties or other specific attributes;
 * because the functionality is powered by `requestAnimationFrame`, all computation always happens before the next paint, in some cases you might want to consider wrapping your **PositionObserver** callback in a `requestAnimationFrame()` invokation for a consistent syncronicity or to eliminate any [unwanted anomalies](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver#observation_errors);
 * while the performance benefits over the use of event listeners is undeniable, it's still **important** to `unobserve` targets or `disconnect` the observer to make room in the main thread;
 * if you keep track of the changes to the `entry.isVisible` property you could say you have an equivalent for `IntersectionObserver.isIntersecting`; 

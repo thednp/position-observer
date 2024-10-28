@@ -136,8 +136,20 @@ export default class PositionObserver {
   };
 
   private _getTargetEntry = (target: HTMLElement) => {
-    const { offsetLeft, offsetTop, offsetWidth, offsetHeight } = target;
-    const { clientWidth, clientHeight, scrollLeft, scrollTop } = this._root;
+    const {
+      offsetLeft,
+      offsetTop,
+      offsetWidth,
+      offsetHeight,
+      scrollTop,
+      scrollLeft,
+    } = target;
+    const {
+      clientWidth,
+      clientHeight,
+      scrollLeft: rootScrollX,
+      scrollTop: rootScrollY,
+    } = this._root;
 
     const isVisible = offsetTop > 1 - offsetHeight &&
       offsetLeft > 1 - offsetWidth &&
@@ -152,8 +164,8 @@ export default class PositionObserver {
         offsetTop,
         offsetWidth,
         offsetHeight,
-        scrollLeft,
-        scrollTop,
+        scrollLeft: scrollLeft + rootScrollX,
+        scrollTop: scrollTop + rootScrollY,
       },
     };
   };
