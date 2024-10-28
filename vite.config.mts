@@ -11,7 +11,11 @@ const mainFile = {
 
 export default defineConfig({
   base: './',
+  esbuild: {
+    legalComments: 'none',
+  },
   build: {
+    minify: 'esbuild',
     emptyOutDir: true,
     lib: {
       entry: [
@@ -19,7 +23,7 @@ export default defineConfig({
       ],
       name: NAME,
       formats: ['es', 'cjs', 'iife'],
-      fileName: (format, entry) => mainFile[format]
+      fileName: (format) => mainFile[format]
     },
     sourcemap: true,
   },

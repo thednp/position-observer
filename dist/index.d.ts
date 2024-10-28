@@ -17,17 +17,19 @@ declare class PositionObserver {
 	private _root;
 	private _callback;
 	/**
-	 * The constructor takes a single argument, callback, which is called
-	 * whenever the position of an observed element changes. The callback function
-	 * should take an array of `PositionObserverEntry` objects as its only argument.
+	 * The constructor takes two arguments, a `callback`, which is called
+	 * whenever the position of an observed element changes and an `options` object.
+	 * The callback function should take an array of `PositionObserverEntry` objects
+	 * as its only argument, but it's not required.
 	 *
 	 * @param callback the callback that applies to all targets of this observer
+	 * @param options the options of this observer
 	 */
 	constructor(callback: PositionObserverCallback, options?: Partial<PositionObserverOptions>);
 	/**
 	 * Start observing the position of the specified element.
 	 * If the element is not currently attached to the DOM,
-	 * it will be attached before observation begins.
+	 * it will NOT be added to the entries.
 	 * @param target
 	 */
 	observe: (target: HTMLElement) => void;

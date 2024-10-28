@@ -29,11 +29,13 @@ export default class PositionObserver {
   private _callback: PositionObserverCallback;
 
   /**
-   * The constructor takes a single argument, callback, which is called
-   * whenever the position of an observed element changes. The callback function
-   * should take an array of `PositionObserverEntry` objects as its only argument.
+   * The constructor takes two arguments, a `callback`, which is called
+   * whenever the position of an observed element changes and an `options` object.
+   * The callback function should take an array of `PositionObserverEntry` objects
+   * as its only argument, but it's not required.
    *
    * @param callback the callback that applies to all targets of this observer
+   * @param options the options of this observer
    */
   constructor(
     callback: PositionObserverCallback,
@@ -44,14 +46,18 @@ export default class PositionObserver {
     }
     this.entries = [];
     this._callback = callback;
-    this._root = options?.root || document?.documentElement; // viewport is basically "unknown" at this point
+    // viewport is basically "unknown" at this point
+    this._root = isHTMLElement(options?.root)
+      ? options.root
+      /* istanbul ignore next @preserve */
+      : document?.documentElement;
     this._tick = 0;
   }
 
   /**
    * Start observing the position of the specified element.
    * If the element is not currently attached to the DOM,
-   * it will be attached before observation begins.
+   * it will NOT be added to the entries.
    * @param target
    */
   public observe = (target: HTMLElement) => {
@@ -61,6 +67,9 @@ export default class PositionObserver {
       );
     }
 
+    /* istanbul ignore if @preserve - a guard must be set */
+    if (!this._root.contains(target)) return;
+
     const { clientWidth, clientHeight } = this._root;
     const boundingBox = getBoundingClientRect(target) as DOMRect;
     const { left, top, bottom, right, width, height } = boundingBox;
@@ -69,7 +78,10 @@ export default class PositionObserver {
       bottom <= clientHeight + height - 1 && right <= clientWidth + width - 1;
 
     this.entries.push({ target, boundingBox, isVisible });
-    this._tick = requestAnimationFrame(this._runCallback);
+    /* istanbul ignore else @preserve */
+    if (!this._tick) {
+      this._tick = requestAnimationFrame(this._runCallback);
+    }
   };
 
   /**

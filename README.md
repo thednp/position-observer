@@ -1,21 +1,22 @@
 # PositionObserver
 [![Coverage Status](https://coveralls.io/repos/github/thednp/position-observer/badge.svg)](https://coveralls.io/github/thednp/position-observer)
 [![ci](https://github.com/thednp/position-observer/actions/workflows/ci.yml/badge.svg)](https://github.com/thednp/position-observer/actions/workflows/ci.yml)
-[![NPM Version](https://img.shields.io/npm/v/position-observer.svg)](https://www.npmjs.com/package/position-observer)
-[![jsDeliver](https://img.shields.io/jsdelivr/npm/hw/position-observer)](https://www.jsdelivr.com/package/npm/position-observer)
+[![NPM Version](https://img.shields.io/npm/v/@thednp/position-observer.svg)](https://www.npmjs.com/package/@thednp/position-observer)
+[![jsDeliver](https://img.shields.io/jsdelivr/npm/hw/@thednp/position-observer)](https://www.jsdelivr.com/package/npm/@thednp/position-observer)
 [![typescript version](https://img.shields.io/badge/typescript-5.6.3-brightgreen)](https://www.typescriptlang.org/)
 [![vitest version](https://img.shields.io/badge/vitest-2.1.3-brightgreen)](https://vitest.dev/)
 [![vite version](https://img.shields.io/badge/vite-5.4.10-brightgreen)](https://vitejs.dev/)
 
-The **PositionObserver** class works with `requestAnimationFrame` under the hood for maximum performance and its functionality resembles very much to the [IntersectionObserver](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver) or the [ResizeObserver](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver). That is why you might have to follow [the official guidance](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver#observation_errors) for troubleshooting.
+If you were looking for an observer that could replace all your `resize` and/or `scroll` EventListeners JANK, this should be it! The **PositionObserver** works with `requestAnimationFrame` under the hood for maximum performance and its functionality resembles very much to the [IntersectionObserver](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver) and the [ResizeObserver](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver), but with a much more simple design. In most cases you might not need both of these two observers, the **PositionObserver** can prove to be more useful.
 
-If you were looking for an observer that could replace all your `resize` and/or `scroll` EventListeners, well then, this should be it!
 
-**How it works**
-* if you initialize the class without a callback, it will throw an `Error`;
-* if you call the `observe()` method without a valid HTMLElement target, again it will throw an `Error`;
-* once propertly set up, the **PositionObserver** will observe the changes of top, left, bottom and right (the extremes) for a given HTMLElement target;
-* only when these values change the callback will be invoked.
+## How it works
+* when the observer is initialized without a callback, it will throw an `Error`;
+* if you call the `observe()` method without a valid HTMLElement target, it will throw an `Error`;
+* if the target isn't attached to the DOM, it will not be added to the observer entries;
+* once propertly set up, the **PositionObserver** will observe the changes of either top, left, bottom or right (the extremes) for a given HTMLElement target;
+* only when at least one of these values changes the callback will be invoked.
+
 
 ## Installation
 
@@ -33,8 +34,12 @@ pnpm install @thednp/position-observer
 // import the PositionObserver class
 import PositionObserver, { type PositionObserverEntry } from '@thednp/position-observer';
 
+// find a suitable target
+const target = document.getElementById('myElement');
+
 // define a callback
 const callback = (entries: PositionObserverEntry[]) => {
+  // keep an eye on your entries
   console.log(entries);
 
   // find entry for myTarget
@@ -46,19 +51,16 @@ const callback = (entries: PositionObserverEntry[]) => {
 
 // set some options
 const options = {
-  root: document.body, // if not set, this will be the document.documentElement
+  root: document.body, // if not set, it will use the document.documentElement
 }
 
-// create an observer
+// create the observer
 const observer = new PositionObserver(callback, options);
 
-// find a suitable target
-const target = document.getElementById('myElement');
-
-// start observing the position
+// start observing the target element position
 observer.observe(target);
 
-// When the position of the element changes from DOM manipulations and/or
+// when the position of the element changes from DOM manipulations and/or
 // the position change was triggered by either scroll / resize events
 // this will be the output of observer callback
 [{
@@ -67,10 +69,10 @@ observer.observe(target);
   isVisible: true, // this will always be true when at least one pixel of the target is visible in the viewport
 }]
 
-// at some point you may want to remove #myElement from the observer entries
+// stop observing the changes for #myElement at any point
 observer.unobserve(target);
 
-// when no other targets require any observation
+// when no targets require any observation
 // you can disconect the observer
 observer.disconect();
 ```
@@ -78,7 +80,8 @@ observer.disconect();
 ## Instance Options
 
 ### root: HTMLElement | null
-Sets the `instance._root` private property which identifies the `Element` whose bounds are treated as the bounding box of the viewport for the element which is the observer's target. If not defined then the `Document.documentElement` will be used. When observing multiple targets from a scrollable parent, that parent must be set as root. See the [ScrollSpy](https://github.com/thednp/bootstrap.native/blob/master/src/components/scrollspy.ts) example for more implementation details.
+Sets the `instance._root` private property which identifies the `Element` whose bounds are treated as the bounding box of the viewport for the element which is the observer's target. If not defined then the `Document.documentElement` will be used.
+When observing multiple targets from a **scrollable** parent element, that parent must be set as root. The same applies to embeddings and `IFrame`s See the [ScrollSpy](https://github.com/thednp/bootstrap.native/blob/master/src/components/scrollspy.ts) example for implementation details.
 
 
 ## Notes

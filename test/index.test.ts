@@ -60,7 +60,7 @@ describe("Offcanvas Class Tests", () => {
 
     const observer = new PositionObserver(([entry]) => {
         styleTip({ element, container, tooltip, arrow });
-    });
+    }, { root: container });
 
     element.addEventListener('click', (e) => {
         if (isOpen) {
