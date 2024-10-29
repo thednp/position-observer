@@ -6,6 +6,7 @@ import {
     isRTL,
     setElementStyle,
   } from "@thednp/shorty";
+import PositionObserver from "../src";
   
   const tipClassPositions = {
     top: "top",
@@ -14,7 +15,7 @@ import {
     right: "end",
   };
 
-  type Tooltip = { element: HTMLElement, tooltip: HTMLElement, container: HTMLElement, arrow: HTMLElement }
+  type Tooltip = { element: HTMLElement, tooltip: HTMLElement, container: HTMLElement, arrow: HTMLElement, _observer: PositionObserver }
 
   /**
    * Style popovers and tooltips.
@@ -58,13 +59,15 @@ import {
         ? scrollbarWidth
         : 0;
       const rightBoundry = htmlcw - (!RTL ? scrollbarWidth : 0) - 1;
+
+      const observerEntry = self._observer.getEntry(element);
       const {
         width: elemWidth,
         height: elemHeight,
         left: elemRectLeft,
         right: elemRectRight,
         top: elemRectTop,
-      } = getBoundingClientRect(element, true);
+      } = observerEntry ?  observerEntry.boundingBox : getBoundingClientRect(element, true);
       const { x, y } = {
         x: elemRectLeft,
         y: elemRectTop,

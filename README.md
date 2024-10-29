@@ -7,7 +7,7 @@
 [![vitest version](https://img.shields.io/badge/vitest-2.1.4-brightgreen)](https://vitest.dev/)
 [![vite version](https://img.shields.io/badge/vite-5.4.10-brightgreen)](https://vitejs.dev/)
 
-If you were looking for an observer that could replace all your `resize` and/or `scroll` EventListeners JANK, this should be it! The **PositionObserver** works with `requestAnimationFrame` under the hood its functionality resembles very much to a combination of the [IntersectionObserver](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver) and the [ResizeObserver](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver), but with a much more simple design.
+If you were looking for an observer that could replace all your `resize` and/or `scroll` EventListeners, this should be it! The **PositionObserver** works with `requestAnimationFrame` and `getBoundingClientRect` under the hood and its functionality resembles very much to a combination of the [IntersectionObserver](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver) and the [ResizeObserver](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver), but with a much more simple design.
 
 What can you use after your element has intersected? How to listen to resize or scroll without attaching event listeners? What's the most efficient solution to observe scroll, size and position all at once? Why doesn't MutationObserver cover this? Here's where the **PositionObserver** can cover some of these cases.
 
@@ -65,7 +65,7 @@ observer.observe(target);
 
 // when the position of the element changes from DOM manipulations and/or
 // the position change was triggered by either scroll / resize events
-// this will be the output of observer callback
+// this will be the output of this observer callback example
 [{
   // the observed target element
   target: <div#myelement>,
@@ -74,6 +74,9 @@ observer.observe(target);
   // this will always be true when at least one pixel of the target is visible in the viewport
   isVisible: true,
 }]
+
+// anytime you need the entry, find it!!
+observer.getEntry(target);
 
 // stop observing the changes for #myElement at any point
 observer.unobserve(target);
@@ -85,13 +88,16 @@ observer.disconect();
 
 ## Instance Options
 
-### root: HTMLElement | null
+### root: HTMLElement | undefined
 Sets the `instance._root` private property which identifies the `Element` whose bounds are treated as the bounding box of the viewport for the element which is the observer's target. If not defined then the `Document.documentElement` will be used.
 When observing multiple targets from a **scrollable** parent element, that parent must be set as root. The same applies to embeddings and `IFrame`s See the [ScrollSpy](https://github.com/thednp/bootstrap.native/blob/master/src/components/scrollspy.ts) example for implementation details.
 
 
 ## Notes
 * the `entry.isVisible` property is only limited to the position of the target within the specified viewport, it doesn't take into account CSS properties or other specific attributes;
+* the `getBoundingClientRect` is considered to be a heavy computation, **so use with caution**; for performance reasons, if your callback is focused on values of the target's bounding client rect, be sure to make use of `entry.boundingBox` values (`observer.getEntry(target)`) instead of invoking `getBoundingClientRect()` again on your target;
+* if nothing happens when observing a target, please know that the observer's runtime will only call the callback for elements that are descendents of the given root element; this also means that if a target is removed from the document, the callback will not be invoked;
+* also if the target element is hidden with either `display: none` or `visibility: hidden` or attributes with the same effect, the bounding box always has ZERO values and never changes, so make sure to have your target visible before calling `observer.observe(target)`;
 * because the functionality is powered by `requestAnimationFrame`, all computation always happens before the next paint, in some cases you might want to consider wrapping your **PositionObserver** callback in a `requestAnimationFrame()` invokation for a consistent syncronicity or to eliminate any [unwanted anomalies](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver#observation_errors);
 * while the performance benefits over the use of event listeners is undeniable, it's still **important** to `unobserve` targets or `disconnect` the observer to make room in the main thread;
 * if you keep track of the changes to the `entry.isVisible` property you could say you have an equivalent for `IntersectionObserver.isIntersecting`; 

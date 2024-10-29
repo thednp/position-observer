@@ -54,35 +54,45 @@ describe("Offcanvas Class Tests", () => {
     const tooltip = markup.querySelector<HTMLElement>('.tooltip')!;
     const arrow = tooltip.querySelector<HTMLElement>('.tooltip-arrow')!;
     const container = markup.ownerDocument.documentElement!;
-    const win = container.ownerDocument.defaultView!;
-
+    const doc = container.ownerDocument!;
+    const win = doc.defaultView!;
+    const dummyTarget = doc.createElement('span');
+    
     let isOpen = false;
-
+    
     const observer = new PositionObserver(([entry]) => {
-      // console.log(entry)
-        styleTip({ element, container, tooltip, arrow });
+      update();
+      // console.log(observer)
     }, { root: container });
 
+    const update = () => styleTip({ element, container, tooltip, arrow, _observer: observer });
+
     element.addEventListener('click', (e) => {
-        if (isOpen) {
-            tooltip.classList.remove('show');
-            observer.unobserve(element);
-        } else {
-            styleTip({ element, container, tooltip, arrow });
-            tooltip.classList.add('show');
-            observer.observe(element);
-        }
-        isOpen = !isOpen;
+      if (isOpen) {
+        tooltip.classList.remove('show');
+        tooltip.classList.add('d-none');
+        observer.unobserve(element);
+      } else {
+        tooltip.classList.remove('d-none');
+        update();
+        tooltip.classList.add('show');
+        observer.observe(element);
+        // should not be possible to have duplicate entries
+        observer.observe(element);
+        // should not be possible to observe innexisting targets
+        observer.observe(dummyTarget);
+      }
+      isOpen = !isOpen;
     });
 
     element.click();
-    await new Promise(res => setTimeout(res, 250));
+    await new Promise(res => setTimeout(res, 50));
 
     await vi.waitFor(() => {
         expect(observer.entries.length).to.equal(1);
         expect(tooltip.className).to.contain('show');
         expect(tooltip.className).to.contain('bs-tooltip-top');
-    }, 150);
+    }, 50);
 
     win.scrollTo({ top: 500, behavior: 'instant' });
     await vi.waitFor(() => {
@@ -95,12 +105,12 @@ describe("Offcanvas Class Tests", () => {
     await vi.waitFor(() => {
         expect(tooltip.className).to.not.contain('show');
         expect(observer.entries.length).to.equal(0);
-    }, 250);
+    }, 50);
 
     win.scrollTo({ top: 0, behavior: 'instant' });
     observer.disconnect();
     await vi.waitFor(() => {
         expect(observer.entries.length).to.equal(0);
-    }, 50);
+    }, 150);
   });
 });

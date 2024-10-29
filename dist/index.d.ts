@@ -21,19 +21,34 @@ declare class PositionObserver {
      * Start observing the position of the specified element.
      * If the element is not currently attached to the DOM,
      * it will NOT be added to the entries.
-     * @param target
+     *
+     * @param target an `HTMLElement` target
      */
     observe: (target: HTMLElement) => void;
     /**
      * Stop observing the position of the specified element.
-     * @param target
+     *
+     * @param target an `HTMLElement` target
      */
     unobserve: (target: HTMLElement) => void;
     /**
-     * Private method responsible for all the heavy duty.
+     * Private method responsible for all the heavy duty,
+     * the observer's runtime.
      */
     private _runCallback;
-    private _getTargetEntry;
+    /**
+     * Calculate the target bounding box and determine
+     * the value of `isVisible`.
+     *
+     * @param target an `HTMLElement` target
+     */
+    private _new;
+    /**
+     * Find the entry for a given target.
+     *
+     * @param target an `HTMLElement` target
+     */
+    getEntry: (target: HTMLElement) => PositionObserverEntry | undefined;
     /**
      * Immediately stop observing all elements.
      */

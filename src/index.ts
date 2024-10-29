@@ -42,7 +42,6 @@ export default class PositionObserver {
     }
     this.entries = [];
     this._callback = callback;
-    // viewport is basically "unknown" at this point
     this._root = isHTMLElement(options?.root)
       ? options.root
       /* istanbul ignore next @preserve */
@@ -54,7 +53,8 @@ export default class PositionObserver {
    * Start observing the position of the specified element.
    * If the element is not currently attached to the DOM,
    * it will NOT be added to the entries.
-   * @param target
+   *
+   * @param target an `HTMLElement` target
    */
   public observe = (target: HTMLElement) => {
     if (!isHTMLElement(target)) {
@@ -63,28 +63,37 @@ export default class PositionObserver {
       );
     }
 
-    /* istanbul ignore if @preserve - a guard must be set */
+    /* istanbul ignore else @preserve - a guard must be set */
     if (!this._root.contains(target)) return;
-    const newEntry = this._getTargetEntry(target);
 
+    /* istanbul ignore else @preserve - don't allow duplicate entries */
+    if (this.getEntry(target)) return;
+
+    // define a new entry
+    const newEntry = this._new(target);
+
+    // push the entry into the runtime
     this.entries.push(newEntry);
+
     /* istanbul ignore else @preserve */
-    if (!this._tick) {
-      this._tick = requestAnimationFrame(this._runCallback);
-    }
+    if (!this._tick) this._tick = requestAnimationFrame(this._runCallback);
   };
 
   /**
    * Stop observing the position of the specified element.
-   * @param target
+   *
+   * @param target an `HTMLElement` target
    */
   public unobserve = (target: HTMLElement) => {
     const index = this.entries.findIndex((e) => e.target === target);
-    this.entries.splice(index, 1);
+
+    /* istanbul ignore else @preserve */
+    if (index > -1) this.entries.splice(index, 1);
   };
 
   /**
-   * Private method responsible for all the heavy duty.
+   * Private method responsible for all the heavy duty,
+   * the observer's runtime.
    */
   private _runCallback = () => {
     /* istanbul ignore if @preserve - a guard must be set */
@@ -95,7 +104,7 @@ export default class PositionObserver {
       const { target, boundingBox: oldBoundingBox } = entry;
       /* istanbul ignore if @preserve - a guard must be set when target has been removed */
       if (!this._root.contains(target)) return;
-      const { boundingBox, isVisible } = this._getTargetEntry(target);
+      const { boundingBox, isVisible } = this._new(target);
       const { left, top, bottom, right } = boundingBox;
 
       if (
@@ -109,13 +118,19 @@ export default class PositionObserver {
     });
 
     // only execute the callback if position actually changed
-    if (updates.length) {
-      this._callback(updates);
-    }
+    /* istanbul ignore else @preserve */
+    if (updates.length) this._callback(updates);
+
     requestAnimationFrame(this._runCallback);
   };
 
-  private _getTargetEntry = (target: HTMLElement) => {
+  /**
+   * Calculate the target bounding box and determine
+   * the value of `isVisible`.
+   *
+   * @param target an `HTMLElement` target
+   */
+  private _new = (target: HTMLElement) => {
     const { clientWidth, clientHeight } = this._root;
     const boundingBox = target.getBoundingClientRect();
     const { left, top, bottom, right, width, height } = boundingBox;
@@ -129,6 +144,14 @@ export default class PositionObserver {
       boundingBox,
     };
   };
+
+  /**
+   * Find the entry for a given target.
+   *
+   * @param target an `HTMLElement` target
+   */
+  public getEntry = (target: HTMLElement) =>
+    this.entries.find((entry) => entry.target === target);
 
   /**
    * Immediately stop observing all elements.
