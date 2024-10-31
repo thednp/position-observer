@@ -2,7 +2,6 @@
 [![Coverage Status](https://coveralls.io/repos/github/thednp/position-observer/badge.svg)](https://coveralls.io/github/thednp/position-observer)
 [![ci](https://github.com/thednp/position-observer/actions/workflows/ci.yml/badge.svg)](https://github.com/thednp/position-observer/actions/workflows/ci.yml)
 [![NPM Version](https://img.shields.io/npm/v/@thednp/position-observer.svg)](https://www.npmjs.com/package/@thednp/position-observer)
-[![jsDeliver](https://img.shields.io/jsdelivr/npm/hw/@thednp/position-observer)](https://www.jsdelivr.com/package/npm/@thednp/position-observer)
 [![typescript version](https://img.shields.io/badge/typescript-5.6.3-brightgreen)](https://www.typescriptlang.org/)
 [![vitest version](https://img.shields.io/badge/vitest-2.1.4-brightgreen)](https://vitest.dev/)
 [![vite version](https://img.shields.io/badge/vite-5.4.10-brightgreen)](https://vitejs.dev/)
@@ -24,10 +23,18 @@ What can you use after your element has intersected? How to listen to resize or 
 
 ```bash
 npm i @thednp/position-observer
-# or
+```
+
+```bash
 yarn add @thednp/position-observer
-# or
+```
+
+```bash
 pnpm install @thednp/position-observer
+```
+
+```bash
+deno install npm:@thednp/position-observer@latest
 ```
 
 ## Usage
