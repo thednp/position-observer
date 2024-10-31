@@ -3,7 +3,8 @@
  * of DOM elements and triggers a callback when their position changes.
  */
 declare class PositionObserver {
-    entries: PositionObserverEntry[];
+    static entries: Map<HTMLElement, PositionObserverEntry>;
+    static version: string;
     private _tick;
     private _root;
     private _callback;
@@ -56,11 +57,11 @@ declare class PositionObserver {
 }
 export default PositionObserver;
 
-declare type PositionObserverCallback = (entries: PositionObserverEntry[]) => void;
+declare type PositionObserverCallback = (entries: PositionObserverEntry[], observer: PositionObserver) => void;
 
 declare type PositionObserverEntry = {
     target: HTMLElement;
-    boundingBox: DOMRect;
+    boundingClientRect: DOMRect;
     isVisible: boolean;
 };
 

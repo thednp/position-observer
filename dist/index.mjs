@@ -1,8 +1,9 @@
-const _ = (n) => n != null && typeof n == "object" || !1, d = (n) => _(n) && typeof n.nodeType == "number" && [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].some(
-  (t) => n.nodeType === t
-) || !1, f = (n) => d(n) && n.nodeType === 1 || !1, g = (n) => typeof n == "function" || !1, b = "PositionObserver Error";
-class m {
-  entries;
+const v = (e) => e != null && typeof e == "object" || !1, y = (e) => v(e) && typeof e.nodeType == "number" && [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].some(
+  (t) => e.nodeType === t
+) || !1, m = (e) => y(e) && e.nodeType === 1 || !1, k = (e) => typeof e == "function" || !1, E = "1.0.0", s = /* @__PURE__ */ new Map(), p = "PositionObserver Error";
+class O {
+  static entries = s;
+  static version = E;
   _tick;
   _root;
   _callback;
@@ -16,9 +17,9 @@ class m {
    * @param options the options of this observer
    */
   constructor(t, i) {
-    if (!g(t))
-      throw new Error(`${b}: ${t} is not a function.`);
-    this.entries = [], this._callback = t, this._root = f(i?.root) ? i.root : document?.documentElement, this._tick = 0;
+    if (!k(t))
+      throw new Error(`${p}: ${t} is not a function.`);
+    this._callback = t, this._root = m(i?.root) ? i.root : document?.documentElement, this._tick = 0;
   }
   /**
    * Start observing the position of the specified element.
@@ -28,13 +29,13 @@ class m {
    * @param target an `HTMLElement` target
    */
   observe = (t) => {
-    if (!f(t))
+    if (!m(t))
       throw new Error(
-        `${b}: ${t} is not an instance of HTMLElement.`
+        `${p}: ${t} is not an instance of HTMLElement.`
       );
-    if (!this._root.contains(t) || this.getEntry(t)) return;
-    const i = this._new(t);
-    this.entries.push(i), this._tick || (this._tick = requestAnimationFrame(this._runCallback));
+    this._root.contains(t) && this._new(t).then((i) => {
+      this.getEntry(t) || s.set(t, i), this._tick || (this._tick = requestAnimationFrame(this._runCallback));
+    });
   };
   /**
    * Stop observing the position of the specified element.
@@ -42,22 +43,32 @@ class m {
    * @param target an `HTMLElement` target
    */
   unobserve = (t) => {
-    const i = this.entries.findIndex((e) => e.target === t);
-    i > -1 && this.entries.splice(i, 1);
+    s.has(t) && s.delete(t);
   };
   /**
    * Private method responsible for all the heavy duty,
    * the observer's runtime.
    */
   _runCallback = () => {
-    if (!this.entries.length) return;
-    const t = [];
-    this.entries.forEach((i, e) => {
-      const { target: o, boundingBox: s } = i;
-      if (!this._root.contains(o)) return;
-      const { boundingBox: r, isVisible: c } = this._new(o), { left: u, top: h, bottom: l, right: a } = r;
-      (s.left !== u || s.top !== h || s.right !== a || s.bottom !== l) && (this.entries[e].boundingBox = r, this.entries[e].isVisible = c, t.push({ target: o, boundingBox: r, isVisible: c }));
-    }), t.length && this._callback(t), requestAnimationFrame(this._runCallback);
+    if (!s.size) return;
+    const t = new Promise((i) => {
+      const h = [];
+      s.forEach(
+        async ({ target: n, boundingClientRect: o }) => {
+          this._root.contains(n) && await this._new(n).then(({ boundingClientRect: r, isVisible: a }) => {
+            const { left: f, top: l, bottom: u, right: _ } = r;
+            if (o.top !== l || o.left !== f || o.right !== _ || o.bottom !== u) {
+              const c = { target: n, boundingClientRect: r, isVisible: a };
+              s.set(n, c), h.push(c);
+            }
+          });
+        }
+      ), i(h);
+    });
+    requestAnimationFrame(async () => {
+      const i = await t;
+      i.length && this._callback(i, this), this._runCallback();
+    });
   };
   /**
    * Calculate the target bounding box and determine
@@ -66,27 +77,35 @@ class m {
    * @param target an `HTMLElement` target
    */
   _new = (t) => {
-    const { clientWidth: i, clientHeight: e } = this._root, o = t.getBoundingClientRect(), { left: s, top: r, bottom: c, right: u, width: h, height: l } = o, a = r > 1 - l && s > 1 - h && c <= e + l - 1 && u <= i + h - 1;
-    return {
-      target: t,
-      isVisible: a,
-      boundingBox: o
-    };
+    const { clientWidth: i, clientHeight: h } = this._root;
+    return new Promise((n) => {
+      new IntersectionObserver(
+        ([{ boundingClientRect: r }], a) => {
+          a.disconnect();
+          const { left: f, top: l, bottom: u, right: _, width: c, height: b } = r, w = l > 1 - b && f > 1 - c && u <= h + b - 1 && _ <= i + c - 1;
+          n({
+            target: t,
+            isVisible: w,
+            boundingClientRect: r
+          });
+        }
+      ).observe(t);
+    });
   };
   /**
    * Find the entry for a given target.
    *
    * @param target an `HTMLElement` target
    */
-  getEntry = (t) => this.entries.find((i) => i.target === t);
+  getEntry = (t) => s.get(t);
   /**
    * Immediately stop observing all elements.
    */
   disconnect = () => {
-    cancelAnimationFrame(this._tick), this.entries.length = 0, this._tick = 0;
+    cancelAnimationFrame(this._tick), s.clear(), this._tick = 0;
   };
 }
 export {
-  m as default
+  O as default
 };
 //# sourceMappingURL=index.mjs.map

@@ -4,6 +4,7 @@ import getMarkup from "./getMarkup";
 
 import "./assets/bootstrap.min.css";
 import PositionObserver from "../src/index";
+
 import styleTip from "./styleTip";
 
 describe("Offcanvas Class Tests", () => {
@@ -32,7 +33,7 @@ describe("Offcanvas Class Tests", () => {
     try {
       const observer = new PositionObserver(() => {});
       // @ts-expect-error
-      observer.observe();
+      await observer.observe();
     } catch (error) {
       expect(error).to.be.instanceOf(Error);
       expect(error).to.have.property(
@@ -67,7 +68,7 @@ describe("Offcanvas Class Tests", () => {
 
     const update = () => styleTip({ element, container, tooltip, arrow, _observer: observer });
 
-    element.addEventListener('click', (e) => {
+    element.addEventListener('click', async (e) => {
       if (isOpen) {
         tooltip.classList.remove('show');
         tooltip.classList.add('d-none');
@@ -87,9 +88,10 @@ describe("Offcanvas Class Tests", () => {
 
     element.click();
     await new Promise(res => setTimeout(res, 50));
+    // console.log(observer.entries)
 
     await vi.waitFor(() => {
-        expect(observer.entries.length).to.equal(1);
+        expect(PositionObserver.entries.size).to.equal(1);
         expect(tooltip.className).to.contain('show');
         expect(tooltip.className).to.contain('bs-tooltip-top');
     }, 50);
@@ -104,13 +106,13 @@ describe("Offcanvas Class Tests", () => {
     element.click();
     await vi.waitFor(() => {
         expect(tooltip.className).to.not.contain('show');
-        expect(observer.entries.length).to.equal(0);
+        expect(PositionObserver.entries.size).to.equal(0);
     }, 50);
 
     win.scrollTo({ top: 0, behavior: 'instant' });
     observer.disconnect();
     await vi.waitFor(() => {
-        expect(observer.entries.length).to.equal(0);
+        expect(PositionObserver.entries.size).to.equal(0);
     }, 150);
   });
 });
