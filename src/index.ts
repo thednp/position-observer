@@ -125,7 +125,7 @@ export default class PositionObserver {
       resolve(updates);
     });
 
-    requestAnimationFrame(async () => {
+    this._tick = requestAnimationFrame(async () => {
       const updates = await queue;
 
       // only execute the callback if position actually changed

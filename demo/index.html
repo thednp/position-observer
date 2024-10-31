@@ -3,6 +3,7 @@
 
 <head>
   <meta charset="utf-8">
+  <link rel="icon" type="image/svg+xml" href="./vite.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description"
     content="The PositionObserver class provides a way to asynchronously observe changes in the position of a target element with the top-level document's viewport.">
@@ -13,21 +14,51 @@
 </head>
 
 <body class="container">
-  <div class="d-flex align-items-center mx-auto" style="padding: 40vh 3rem; margin: 50vh 0">
+  <div class="d-flex align-items-center mx-auto" style="padding: 30vh 3rem; margin: 40vh 0">
     <div>
       <h3>PositionObserver Example</h3>
-      <div class="btn-toolbar">
-        <button class="btn btn-warning me-3 mb-1" data-test="tooltip">Click</button>
-        <button class="btn border-0" disabled>
-          Average: <span class="bench-result">0µ</span>
-        </button>
+      <div class="btn-toolbar mb-3">
+        <button class="btn btn-success mb-1" data-test="tooltip1">Observer</button>
+        <button class="btn btn-secondary ms-auto mb-1" data-test="tooltip2">Scroll</button>
+      </div>
+      <div class="row gap-5">
+        <div class="col">
+          <dl class="row">
+            <dt class="col-sm-9">Average</dt>
+            <dd class="col-sm-3"><span class="bench-average1 text-end">0µ</span></dd>
+          </dl>
+          <dl class="row">
+            <dt class="col-sm-9">Maximum</dt>
+            <dd class="col-sm-3"><span class="bench-max1 text-end">0µ</span></dd>
+          </dl>
+        </div>
+        <div class="col">
+          <dl class="flex-column-reverse flex-sm-row row">
+            <dd class="col-sm-3"><span class="bench-average2">0µ</span></dd>
+            <dt class="col-sm-9 text-sm-end">Average</dt>
+          </dl>
+          <dl class="flex-column-reverse flex-sm-row row">
+            <dd class="col-sm-3"><span class="bench-max2">0µ</span></dd>
+            <dt class="col-sm-9 text-sm-end order-0 order-sm-1">Maximum</dt>
+          </dl>
+        </div>
       </div>
       <div>
-        <div class="tooltip position-fixed d-none bs-tooltip-top" role="tooltip" style="top: 0px; left: 0px;">
+        <div class="tooltip first position-fixed d-none bs-tooltip-top" role="tooltip" style="top: 0px; left: 0px;">
           <div class="tooltip-arrow position-absolute" style="left: 93.5px;"></div>
           <div class="tooltip-inner">
-            <b>Manual Tooltip</b>
+            <b>Observer Tooltip</b>
             <span class="badge bg-success">NEW</span><br>
+            Perhaps adding even more content would make the job more difficult? Nope, same as if this was a very very
+            short tooltip. Efficiently unleash cross-media information without cross-media value. Quickly maximize
+            timely deliverables for real-time schemas.
+          </div>
+        </div>
+        <div class="tooltip second position-fixed d-none bs-tooltip-top" role="tooltip" style="top: 0px; left: 0px;">
+          <div class="tooltip-arrow position-absolute" style="left: 93.5px;"></div>
+          <div class="tooltip-inner">
+            <b>Scroll Tooltip</b>
+            <span class="badge bg-danger">OLD</span><br>
             Perhaps adding even more content would make the job more difficult? Nope, same as if this was a very very
             short tooltip. Efficiently unleash cross-media information without cross-media value. Quickly maximize
             timely deliverables for real-time schemas.
@@ -39,62 +70,124 @@
 
   <script type="module">
     // 0.2616 0.23 0.26 0.19 0.2236 0.198 0.2268 0.2174 | 0.1478 | 0.0122 0.01199 0.008 0.0070 0.0067 | 0.0038
+    // import PositionObserver from '../dist/index';
     import PositionObserver from '../src/index';
     import styleTip from '../test/styleTip';
     window.PositionObserver = PositionObserver;
 
-    const element = document.querySelector('[data-test="tooltip"]');
-    const benchResult = document.querySelector('.bench-result');
-    const tooltip = document.querySelector('.tooltip');
-    const arrow = tooltip.querySelector('.tooltip-arrow');
+    const element1 = document.querySelector('[data-test="tooltip1"]');
+    const element2 = document.querySelector('[data-test="tooltip2"]');
+    const benchAverage1 = document.querySelector('.bench-average1');
+    const benchMin1 = document.querySelector('.bench-min1');
+    const benchMax1 = document.querySelector('.bench-max1');
+    const benchAverage2 = document.querySelector('.bench-average2');
+    const benchMin2 = document.querySelector('.bench-min2');
+    const benchMax2 = document.querySelector('.bench-max2');
+    const tooltip1 = document.querySelector('.tooltip.first');
+    const arrow1 = tooltip1.querySelector('.tooltip-arrow');
+    const tooltip2 = document.querySelector('.tooltip.second');
+    const arrow2 = tooltip2.querySelector('.tooltip-arrow');
     const container = document.body;
-    let isOpen = false;
+    let isOpen = null;
+    let start = 0;
+    let end = 0;
 
     const testRuns = [];
-    const showTip = () => {
-      tooltip.classList.remove('d-none');
-      tooltip.classList.add('show');
+    const getResults = () => {
+      // console.log(testRuns.filter(x => x > 0).length);
+      // const filteredResults = testRuns.filter(x => x > 0);
+      const len = testRuns.length;
+      let total = 0;
+      for (let i = 0; i < len; i += 1) {
+        total += testRuns[i];
+      }
+      const average = ((total / len) * 1000).toFixed(2);
+      const max = (Math.max(...testRuns) * 1000).toFixed(2);
+      return { average, max };
     }
-    const hideTip = () => {
-      tooltip.classList.add('d-none');
-      tooltip.classList.remove('show');
+    const showTip = (tip) => {
+      tip.classList.remove('d-none');
+      tip.classList.add('show');
     }
+    const hideTip = (tip) => {
+      tip.classList.add('d-none');
+      tip.classList.remove('show');
+    }
+    const toggleEvents = (add) => {
+      const action = add ? 'addEventListener' : 'removeEventListener';
+      window[action]('scroll', handleUpdate, { passive: true });
+    }
+    const updateObserver = () => 
+      styleTip({ element: element1, container, tooltip: tooltip1, arrow: arrow1, _observer: observer });
 
-    const observer = new PositionObserver(([entry], ob) => {
-      const start = window.performance.now();
-      requestAnimationFrame(update);
+    const updateEvent = () => 
+      styleTip({ element: element2, container, tooltip: tooltip2, arrow: arrow2, _observer: null });
+
+    const handleUpdate = (e) => {
+      start = window.performance.now();
+      requestAnimationFrame(updateEvent);
+      // updateEvent();
       if (testRuns.length < 500) {
-        testRuns.push(window.performance.now() - start)
+        end = window.performance.now();
+        testRuns.push(end - start);
       } else {
         // console.log({ ...ob });
-        isOpen = false;
-        hideTip();
+        isOpen = null;
+        hideTip(tooltip2);
+        toggleEvents();
+
+        const { average, max } = getResults();
+        benchAverage2.textContent = average + 'µ';
+        benchMax2.textContent = max + 'µ';
+        testRuns.length = 0;
+      }
+    }
+
+    const observer = new PositionObserver((_, ob) => {
+      start = window.performance.now();
+      requestAnimationFrame(updateObserver);
+      // updateObserver();
+      if (testRuns.length < 500) {
+        end = window.performance.now();
+        testRuns.push(end - start);
+      } else {
+        isOpen = null;
+        hideTip(tooltip1);
         ob.disconnect();
-        const len = testRuns.length;
-        let total = 0;
-        for (let i = 0; i < len; i += 1) {
-          total += testRuns[i];
-        }
-        const microSecs = ((total / len) * 1000).toFixed(2)
-        // console.log(microSecs);
-        benchResult.textContent = microSecs + 'µ';
+
+        const { average, max } = getResults();
+        benchAverage1.textContent = average + 'µ';
+        benchMax1.textContent = max + 'µ';
         testRuns.length = 0;
       }
     });
-    const update = () => 
-      styleTip({ element, container, tooltip, arrow, _observer: observer });
 
-    element.addEventListener('click', (e) => {
-      if (isOpen) {
+    element1.addEventListener('click', (e) => {
+      if (isOpen === tooltip1) {
         observer.disconnect();
-        hideTip()
+        hideTip(tooltip1)
         testRuns.length = 0;
+        isOpen = null;
       } else {
-        showTip()
-        update();
-        observer.observe(element);
+        isOpen = tooltip1;
+        showTip(tooltip1);
+        updateObserver();
+        observer.observe(element1);
       }
-      isOpen = !isOpen;
+    });
+
+    element2.addEventListener('click', (e) => {
+      if (isOpen === tooltip2) {
+        toggleEvents();
+        hideTip(tooltip2)
+        testRuns.length = 0;
+        isOpen = null;
+      } else {
+        isOpen = tooltip2;
+        showTip(tooltip2);
+        updateEvent();
+        toggleEvents(true);
+      }
     });
   </script>
 </body>

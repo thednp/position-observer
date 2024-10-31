@@ -1,10 +1,10 @@
 {
   "name": "@thednp/position-observer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "thednp",
   "license": "MIT",
   "description": "🏯 The PositionObserver class provides a way to asynchronously observe changes in the position of a target element with the top-level document's viewport.",
-  "homepage": "https://github.com/thednp/position-observer",
+  "homepage": "https://thednp.github.io/position-observer/",
   "source": "./src/index.ts",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -18,14 +18,18 @@
   "scripts": {
     "pre-test": "pnpm clean-coverage",
     "dev": "vite --open ./demo/index.html --port 8577",
+    "serve": "vite --open ./docs/index.html --port 8577",
     "test": "pnpm pre-test && vitest --config vitest.config.mts",
     "test-ui": "pnpm pre-test && vitest --config vitest.config-ui.mts --browser=chrome",
     "clean-coverage": "rm -rf coverage .nyc_output",
     "badges": "npx -p dependency-version-badge update-badge typescript vitest vite",
     "build": "pnpm vite build",
+    "build:all": "pnpm build && pnpm build:docs",
+    "build:docs": "vite build demo --config demo/vite.config.ts",
     "lint": "deno lint src && pnpm check:ts",
+    "format": "deno fmt src",
     "check:ts": "tsc --noEmit",
-    "prepublishOnly": "pnpm up && pnpm lint && deno fmt src && pnpm build && pnpm badges"
+    "prepublishOnly": "pnpm up && pnpm lint && pnpm format && pnpm build:all && pnpm badges"
   },
   "bugs": {
     "url": "https://github.com/thednp/position-observer/issues"
@@ -50,7 +54,7 @@
     "@thednp/shorty": "^2.0.7"
   },
   "devDependencies": {
-    "@types/node": "^20.17.4",
+    "@types/node": "^20.17.5",
     "@vitest/browser": "^2.1.4",
     "@vitest/coverage-istanbul": "^2.1.4",
     "@vitest/ui": "^2.1.4",

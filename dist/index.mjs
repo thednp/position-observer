@@ -1,6 +1,6 @@
-const p = (e) => e != null && typeof e == "object" || !1, y = (e) => p(e) && typeof e.nodeType == "number" && [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].some(
+const p = (e) => e != null && typeof e == "object" || !1, k = (e) => p(e) && typeof e.nodeType == "number" && [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].some(
   (t) => e.nodeType === t
-) || !1, b = (e) => y(e) && e.nodeType === 1 || !1, k = (e) => typeof e == "function" || !1, v = "1.0.0", m = "PositionObserver Error";
+) || !1, b = (e) => k(e) && e.nodeType === 1 || !1, y = (e) => typeof e == "function" || !1, v = "1.0.1", m = "PositionObserver Error";
 class E {
   entries;
   static version = v;
@@ -17,7 +17,7 @@ class E {
    * @param options the options of this observer
    */
   constructor(t, i) {
-    if (!k(t))
+    if (!y(t))
       throw new Error(`${m}: ${t} is not a function.`);
     this.entries = /* @__PURE__ */ new Map(), this._callback = t, this._root = b(i?.root) ? i.root : document?.documentElement, this._tick = 0;
   }
@@ -56,8 +56,8 @@ class E {
       this.entries.forEach(
         async ({ target: s, boundingClientRect: n }) => {
           this._root.contains(s) && await this._new(s).then(({ boundingClientRect: r, isVisible: h }) => {
-            const { left: a, top: f, bottom: l, right: u } = r;
-            if (n.top !== f || n.left !== a || n.right !== u || n.bottom !== l) {
+            const { left: a, top: f, bottom: _, right: l } = r;
+            if (n.top !== f || n.left !== a || n.right !== l || n.bottom !== _) {
               const o = { target: s, boundingClientRect: r, isVisible: h };
               this.entries.set(s, o), c.push(o);
             }
@@ -65,7 +65,7 @@ class E {
         }
       ), i(c);
     });
-    requestAnimationFrame(async () => {
+    this._tick = requestAnimationFrame(async () => {
       const i = await t;
       i.length && this._callback(i, this), this._runCallback();
     });
@@ -82,7 +82,7 @@ class E {
       new IntersectionObserver(
         ([{ boundingClientRect: r }], h) => {
           h.disconnect();
-          const { left: a, top: f, bottom: l, right: u, width: o, height: _ } = r, w = f > 1 - _ && a > 1 - o && l <= c + _ - 1 && u <= i + o - 1;
+          const { left: a, top: f, bottom: _, right: l, width: o, height: u } = r, w = f > 1 - u && a > 1 - o && _ <= c + u - 1 && l <= i + o - 1;
           s({
             target: t,
             isVisible: w,
