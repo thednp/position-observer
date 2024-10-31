@@ -11,14 +11,6 @@ If you were looking for an observer that could replace all your `resize` and/or 
 What can you use after your element has intersected? How to listen to resize or scroll without attaching event listeners? What's the most efficient solution to observe scroll, size and position all at once? Why doesn't MutationObserver cover this? Here's where the **PositionObserver** comes in handy.
 
 
-## How it works
-* when the observer is initialized without a callback, it will throw an `Error`;
-* if you call the `observe()` method without a valid HTMLElement target, it will throw an `Error`;
-* if the target isn't attached to the DOM, it will not be added to the observer entries;
-* once propertly set up, the **PositionObserver** will observe the changes of either top, left, width or height for a given HTMLElement target, all in relation to the designated parent element;
-* only when at least one of these values changes the target's entry will be queued for the callback invokations.
-
-
 ## Installation
 
 ```bash
@@ -36,6 +28,7 @@ pnpm install @thednp/position-observer
 ```bash
 deno install npm:@thednp/position-observer@latest
 ```
+
 
 ## Usage
 
@@ -73,10 +66,10 @@ observer.observe(target);
 
 // when the position of the element changes from DOM manipulations and/or
 // the position change was triggered by either scroll / resize events
-// this will be the output of this observer callback example
+// these will be the entries of this observer callback example
 [{
   // the observed target element
-  target: <div#myelement>,
+  target: <div#myElement>,
   // the target's bounding client react
   boundingClientRect: DOMRect,
   // this will always be true when at least one pixel of the target is visible in the viewport
@@ -89,8 +82,8 @@ observer.getEntry(target);
 // stop observing the changes for #myElement at any point
 observer.unobserve(target);
 
-// when no targets require any observation
-// you can disconect the observer
+// when no targets require observation
+// you should disconect the observer
 observer.disconect();
 ```
 
@@ -100,6 +93,14 @@ observer.disconect();
 Sets the `instance._root` private property which identifies the `Element` whose bounds are treated as the bounding box of the viewport for the element which is the observer's target. If not defined then the `Document.documentElement` will be used.
 
 When observing multiple targets from a **scrollable** parent element, that parent must be set as root. The same applies to embeddings and `IFrame`s. See the [ScrollSpy](https://github.com/thednp/bootstrap.native/blob/master/src/components/scrollspy.ts) example for implementation details.
+
+
+## How it works
+* when the observer is initialized without a callback, it will throw an `Error`;
+* if you call the `observe()` method without a valid HTMLElement target, it will throw an `Error`;
+* if the target isn't attached to the DOM, it will not be added to the observer entries;
+* once propertly set up, the **PositionObserver** will observe the changes of either top, left, width or height for a given HTMLElement target, all in relation to the designated parent element;
+* only when at least one of these values changes the target's entry will be queued for the callback runtime.
 
 
 ## Notes
