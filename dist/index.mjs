@@ -1,9 +1,9 @@
-const v = (e) => e != null && typeof e == "object" || !1, y = (e) => v(e) && typeof e.nodeType == "number" && [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].some(
+const p = (e) => e != null && typeof e == "object" || !1, y = (e) => p(e) && typeof e.nodeType == "number" && [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].some(
   (t) => e.nodeType === t
-) || !1, m = (e) => y(e) && e.nodeType === 1 || !1, k = (e) => typeof e == "function" || !1, E = "1.0.0", s = /* @__PURE__ */ new Map(), p = "PositionObserver Error";
-class O {
-  static entries = s;
-  static version = E;
+) || !1, b = (e) => y(e) && e.nodeType === 1 || !1, k = (e) => typeof e == "function" || !1, v = "1.0.0", m = "PositionObserver Error";
+class E {
+  entries;
+  static version = v;
   _tick;
   _root;
   _callback;
@@ -18,8 +18,8 @@ class O {
    */
   constructor(t, i) {
     if (!k(t))
-      throw new Error(`${p}: ${t} is not a function.`);
-    this._callback = t, this._root = m(i?.root) ? i.root : document?.documentElement, this._tick = 0;
+      throw new Error(`${m}: ${t} is not a function.`);
+    this.entries = /* @__PURE__ */ new Map(), this._callback = t, this._root = b(i?.root) ? i.root : document?.documentElement, this._tick = 0;
   }
   /**
    * Start observing the position of the specified element.
@@ -29,12 +29,12 @@ class O {
    * @param target an `HTMLElement` target
    */
   observe = (t) => {
-    if (!m(t))
+    if (!b(t))
       throw new Error(
-        `${p}: ${t} is not an instance of HTMLElement.`
+        `${m}: ${t} is not an instance of HTMLElement.`
       );
     this._root.contains(t) && this._new(t).then((i) => {
-      this.getEntry(t) || s.set(t, i), this._tick || (this._tick = requestAnimationFrame(this._runCallback));
+      this.getEntry(t) || this.entries.set(t, i), this._tick || (this._tick = requestAnimationFrame(this._runCallback));
     });
   };
   /**
@@ -43,27 +43,27 @@ class O {
    * @param target an `HTMLElement` target
    */
   unobserve = (t) => {
-    s.has(t) && s.delete(t);
+    this.entries.has(t) && this.entries.delete(t);
   };
   /**
    * Private method responsible for all the heavy duty,
    * the observer's runtime.
    */
   _runCallback = () => {
-    if (!s.size) return;
+    if (!this.entries.size) return;
     const t = new Promise((i) => {
-      const h = [];
-      s.forEach(
-        async ({ target: n, boundingClientRect: o }) => {
-          this._root.contains(n) && await this._new(n).then(({ boundingClientRect: r, isVisible: a }) => {
-            const { left: f, top: l, bottom: u, right: _ } = r;
-            if (o.top !== l || o.left !== f || o.right !== _ || o.bottom !== u) {
-              const c = { target: n, boundingClientRect: r, isVisible: a };
-              s.set(n, c), h.push(c);
+      const c = [];
+      this.entries.forEach(
+        async ({ target: s, boundingClientRect: n }) => {
+          this._root.contains(s) && await this._new(s).then(({ boundingClientRect: r, isVisible: h }) => {
+            const { left: a, top: f, bottom: l, right: u } = r;
+            if (n.top !== f || n.left !== a || n.right !== u || n.bottom !== l) {
+              const o = { target: s, boundingClientRect: r, isVisible: h };
+              this.entries.set(s, o), c.push(o);
             }
           });
         }
-      ), i(h);
+      ), i(c);
     });
     requestAnimationFrame(async () => {
       const i = await t;
@@ -77,13 +77,13 @@ class O {
    * @param target an `HTMLElement` target
    */
   _new = (t) => {
-    const { clientWidth: i, clientHeight: h } = this._root;
-    return new Promise((n) => {
+    const { clientWidth: i, clientHeight: c } = this._root;
+    return new Promise((s) => {
       new IntersectionObserver(
-        ([{ boundingClientRect: r }], a) => {
-          a.disconnect();
-          const { left: f, top: l, bottom: u, right: _, width: c, height: b } = r, w = l > 1 - b && f > 1 - c && u <= h + b - 1 && _ <= i + c - 1;
-          n({
+        ([{ boundingClientRect: r }], h) => {
+          h.disconnect();
+          const { left: a, top: f, bottom: l, right: u, width: o, height: _ } = r, w = f > 1 - _ && a > 1 - o && l <= c + _ - 1 && u <= i + o - 1;
+          s({
             target: t,
             isVisible: w,
             boundingClientRect: r
@@ -97,15 +97,15 @@ class O {
    *
    * @param target an `HTMLElement` target
    */
-  getEntry = (t) => s.get(t);
+  getEntry = (t) => this.entries.get(t);
   /**
    * Immediately stop observing all elements.
    */
   disconnect = () => {
-    cancelAnimationFrame(this._tick), s.clear(), this._tick = 0;
+    cancelAnimationFrame(this._tick), this.entries.clear(), this._tick = 0;
   };
 }
 export {
-  O as default
+  E as default
 };
 //# sourceMappingURL=index.mjs.map

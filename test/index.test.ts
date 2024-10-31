@@ -91,7 +91,7 @@ describe("Offcanvas Class Tests", () => {
     // console.log(observer.entries)
 
     await vi.waitFor(() => {
-        expect(PositionObserver.entries.size).to.equal(1);
+        expect(observer.entries.size).to.equal(1);
         expect(tooltip.className).to.contain('show');
         expect(tooltip.className).to.contain('bs-tooltip-top');
     }, 50);
@@ -106,13 +106,13 @@ describe("Offcanvas Class Tests", () => {
     element.click();
     await vi.waitFor(() => {
         expect(tooltip.className).to.not.contain('show');
-        expect(PositionObserver.entries.size).to.equal(0);
+        expect(observer.entries.size).to.equal(0);
     }, 50);
 
     win.scrollTo({ top: 0, behavior: 'instant' });
     observer.disconnect();
     await vi.waitFor(() => {
-        expect(PositionObserver.entries.size).to.equal(0);
+        expect(observer.entries.size).to.equal(0);
     }, 150);
   });
 });

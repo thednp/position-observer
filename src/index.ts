@@ -16,7 +16,6 @@ export type PositionObserverOptions = {
   root: HTMLElement;
 };
 
-const positionObserverMap = new Map<HTMLElement, PositionObserverEntry>();
 const errorString = "PositionObserver Error";
 
 /**
@@ -24,7 +23,7 @@ const errorString = "PositionObserver Error";
  * of DOM elements and triggers a callback when their position changes.
  */
 export default class PositionObserver {
-  public static entries = positionObserverMap;
+  public entries: Map<HTMLElement, PositionObserverEntry>;
   public static version = version;
   private _tick: number;
   private _root: HTMLElement;
@@ -46,7 +45,7 @@ export default class PositionObserver {
     if (!isFunction(callback)) {
       throw new Error(`${errorString}: ${callback} is not a function.`);
     }
-    // this.entries = [];
+    this.entries = new Map();
     this._callback = callback;
     this._root = isHTMLElement(options?.root)
       ? options.root
@@ -76,7 +75,7 @@ export default class PositionObserver {
     // push the entry into the queue
     this._new(target).then((newEntry) => {
       /* istanbul ignore else @preserve - don't allow duplicate entries */
-      if (!this.getEntry(target)) positionObserverMap.set(target, newEntry);
+      if (!this.getEntry(target)) this.entries.set(target, newEntry);
 
       /* istanbul ignore else @preserve */
       if (!this._tick) this._tick = requestAnimationFrame(this._runCallback);
@@ -90,7 +89,7 @@ export default class PositionObserver {
    */
   public unobserve = (target: HTMLElement) => {
     /* istanbul ignore else @preserve */
-    if (positionObserverMap.has(target)) positionObserverMap.delete(target);
+    if (this.entries.has(target)) this.entries.delete(target);
   };
 
   /**
@@ -99,11 +98,11 @@ export default class PositionObserver {
    */
   private _runCallback = () => {
     /* istanbul ignore if @preserve - a guard must be set */
-    if (!positionObserverMap.size) return;
+    if (!this.entries.size) return;
 
     const queue = new Promise<PositionObserverEntry[]>((resolve) => {
       const updates: PositionObserverEntry[] = [];
-      positionObserverMap.forEach(
+      this.entries.forEach(
         async ({ target, boundingClientRect: oldBoundingBox }) => {
           /* istanbul ignore if @preserve - a guard must be set when target has been removed */
           if (!this._root.contains(target)) return;
@@ -116,7 +115,7 @@ export default class PositionObserver {
               oldBoundingBox.right !== right || oldBoundingBox.bottom !== bottom
             ) {
               const newEntry = { target, boundingClientRect, isVisible };
-              positionObserverMap.set(target, newEntry);
+              this.entries.set(target, newEntry);
               updates.push(newEntry);
             }
           });
@@ -173,14 +172,14 @@ export default class PositionObserver {
    *
    * @param target an `HTMLElement` target
    */
-  public getEntry = (target: HTMLElement) => positionObserverMap.get(target);
+  public getEntry = (target: HTMLElement) => this.entries.get(target);
 
   /**
    * Immediately stop observing all elements.
    */
   public disconnect = () => {
     cancelAnimationFrame(this._tick);
-    positionObserverMap.clear();
+    this.entries.clear();
     this._tick = 0;
   };
 }

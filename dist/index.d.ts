@@ -3,7 +3,7 @@
  * of DOM elements and triggers a callback when their position changes.
  */
 declare class PositionObserver {
-    static entries: Map<HTMLElement, PositionObserverEntry>;
+    entries: Map<HTMLElement, PositionObserverEntry>;
     static version: string;
     private _tick;
     private _root;
