@@ -1,0 +1,26 @@
+:root {
+    --bs-font-sans-serif: Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+.backdrop-blur {
+    backdrop-filter: blur(15px);
+    background-color: rgba(0, 0, 0, 0.75);
+}
+
+.scrollbar::-webkit-scrollbar {
+    height: .75rem;
+    width: .75rem
+}
+
+.scrollbar::-webkit-scrollbar-track {
+    background-color: rgb(0 0 0 / 0)
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+    border-radius: 9999px;
+    background-color: var(--bs-success-bg-subtle)
+}
+
+.scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: var(--bs-success)
+}

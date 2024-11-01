@@ -8,7 +8,7 @@ const copyToClipboard = (
     const cli = btn.dataset.cli;
     const [pm] = textContent.split(/\s/);
     navigator.clipboard.writeText(cli!);
-    alert(`${pm} CLI copied to clipboard`);
+    alert(`${pm} installation CLI was copied to clipboard`);
   }
 };
 
