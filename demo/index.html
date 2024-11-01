@@ -6,190 +6,143 @@
   <link rel="icon" type="image/svg+xml" href="./vite.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description"
-    content="The PositionObserver class provides a way to asynchronously observe changes in the position of a target element with the top-level document's viewport.">
+    content="🏯 PositionObserver is a JavaScript tool that provides a way to asynchronously observe changes in the position of a target element within its viewport.">
   <meta name="keywords" content="Typescript,PositionObserver,position-observer">
   <meta name="author" content="thednp">
   <title>PositionObserver</title>
   <link id="bsCSS" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --bs-font-sans-serif: Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    }
+  </style>
 </head>
 
-<body class="container">
-  <div class="d-flex align-items-center mx-auto" style="padding: 30vh 3rem; margin: 40vh 0">
-    <div>
-      <h3>PositionObserver Example</h3>
-      <div class="btn-toolbar mb-3">
-        <button class="btn btn-success mb-1" data-test="tooltip1">Observer</button>
-        <button class="btn btn-secondary ms-auto mb-1" data-test="tooltip2">Scroll</button>
+<body>
+  <header class="sticky-top">
+    <div class="position-absolute bg-black opacity-75" style="backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); inset: 0;"></div>
+    <nav class="navbar navbar-dark navbar-expand-sm">
+      <div class="container">
+        <a class="navbar-brand text-white"
+          href="https://github.com/thednp/position-observer"><span class="fw-bold">Position</span>Observer</a>
+        <button class="navbar-toggler border-0" type="button" aria-controls="navbarNav" aria-expanded="false"
+          aria-label="Toggle navigation">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="21" y1="10" x2="3" y2="10"></line>
+            <line x1="21" y1="14" x2="3" y2="14"></line>
+          </svg>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="ms-sm-auto navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="https://github.com/thednp/position-observer">
+                <span class="visually-hidden">Github</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path
+                    d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+                  </path>
+                </svg>
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
-      <div class="row gap-5">
-        <div class="col">
-          <dl class="row">
-            <dt class="col-sm-9">Average</dt>
-            <dd class="col-sm-3"><span class="bench-average1 text-end">0µ</span></dd>
-          </dl>
-          <dl class="row">
-            <dt class="col-sm-9">Maximum</dt>
-            <dd class="col-sm-3"><span class="bench-max1 text-end">0µ</span></dd>
-          </dl>
-        </div>
-        <div class="col">
-          <dl class="flex-column-reverse flex-sm-row row">
-            <dd class="col-sm-3"><span class="bench-average2">0µ</span></dd>
-            <dt class="col-sm-9 text-sm-end">Average</dt>
-          </dl>
-          <dl class="flex-column-reverse flex-sm-row row">
-            <dd class="col-sm-3"><span class="bench-max2">0µ</span></dd>
-            <dt class="col-sm-9 text-sm-end order-0 order-sm-1">Maximum</dt>
-          </dl>
+    </nav>
+  </header>
+  <main>
+    <div class="bg-info-subtle">
+      <div class="container d-flex align-items-center" style="height: 75vh">
+        <div>
+          <h1 class="display-1 lh-1"><span class="fw-bold">Position</span>Observer</h1>
+          <p class="fw-bold lead">The tool that can easily <i>replace</i> most of your scroll and resize event listeners.
+            <span class="d-block">Simple design and easy to use.</span></p>
         </div>
       </div>
-      <div>
-        <div class="tooltip first position-fixed d-none bs-tooltip-top" role="tooltip" style="top: 0px; left: 0px;">
-          <div class="tooltip-arrow position-absolute" style="left: 93.5px;"></div>
-          <div class="tooltip-inner">
-            <b>Observer Tooltip</b>
-            <span class="badge bg-success">NEW</span><br>
-            Perhaps adding even more content would make the job more difficult? Nope, same as if this was a very very
-            short tooltip. Efficiently unleash cross-media information without cross-media value. Quickly maximize
-            timely deliverables for real-time schemas.
-          </div>
-        </div>
-        <div class="tooltip second position-fixed d-none bs-tooltip-top" role="tooltip" style="top: 0px; left: 0px;">
-          <div class="tooltip-arrow position-absolute" style="left: 93.5px;"></div>
-          <div class="tooltip-inner">
-            <b>Scroll Tooltip</b>
-            <span class="badge bg-danger">OLD</span><br>
-            Perhaps adding even more content would make the job more difficult? Nope, same as if this was a very very
-            short tooltip. Efficiently unleash cross-media information without cross-media value. Quickly maximize
-            timely deliverables for real-time schemas.
+    </div>
+    <div class="bg-light-subtle">
+      <div class="container d-flex align-items-center" style="height: 25vh">
+        <div class="d-flex flex-column items-start">
+          <h2 class="lh-1"><span class="fw-bold">Position</span>Observer Installation</h2>
+          <div class="btn-toolbar">
+            <button class="btn font-monospace rounded-pill" data-cli="npm install @thednp/position-observer">npm</button>
+            <button class="btn font-monospace rounded-pill" data-cli="pnpm install @thednp/position-observer">pnpm</button>
+            <button class="btn font-monospace rounded-pill" data-cli="yarn add @thednp/position-observer">yarn</button>
+            <button class="btn font-monospace rounded-pill" data-cli="deno install npm:@thednp/position-observer">deno</button>
           </div>
         </div>
       </div>
     </div>
-  </div>
+    <div class="container" style="padding: 30vh auto; margin: 40vh auto">
+      <div>
+        <h2 class="lh-1"><span class="fw-bold">Position</span>Observer Example</h2>
+        <p class="mb-3">In this example these tooltips will stick to their trigger button while you scroll up and down
+          or resize the window. First is handled by via the PositionObserver callback, while the second is handled by
+          both scroll and resize event handlers. Both callbacks are wrapped in a <code>requestAnimationFrame</code>
+          wrapper and both event listeners are set as passive, just to make sure we have a fair comparison.</p>
+        <p>Click one of the buttons below and start scrolling and or resize the window for a couple of seconds. After
+          500 updates, an average and a maximum execution time in microseconds will be calculated and displayed in the
+          middle .</p>
+        <div class="btn-toolbar mb-3">
+          <button class="btn btn-success mb-1" data-test="tooltip1">Observer</button>
+          <button class="btn btn-secondary ms-auto mb-1" data-test="tooltip2">Scroll & Resize</button>
+        </div>
+        <div class="row gap-5">
+          <div class="col">
+            <dl class="row">
+              <dt class="col-sm-9">Average</dt>
+              <dd class="col-sm-3 text-md-end"><span class="bench-average1">0µ</span></dd>
+            </dl>
+            <dl class="row">
+              <dt class="col-sm-9">Maximum</dt>
+              <dd class="col-sm-3 text-md-end"><span class="bench-max1">0µ</span></dd>
+            </dl>
+          </div>
+          <div class="col">
+            <dl class="flex-column-reverse flex-sm-row row">
+              <dd class="col-sm-3"><span class="bench-average2">0µ</span></dd>
+              <dt class="col-sm-9 text-sm-end">Average</dt>
+            </dl>
+            <dl class="flex-column-reverse flex-sm-row row">
+              <dd class="col-sm-3"><span class="bench-max2">0µ</span></dd>
+              <dt class="col-sm-9 text-sm-end order-0 order-sm-1">Maximum</dt>
+            </dl>
+          </div>
+        </div>
+        <div>
+          <div class="tooltip first position-fixed d-none bs-tooltip-top" role="tooltip" style="top: 0px; left: 0px;">
+            <div class="tooltip-arrow position-absolute" style="left: 93.5px;"></div>
+            <div class="tooltip-inner">
+              <b>Observer Tooltip</b>
+              <span class="badge bg-success">NEW</span><br>
+              In this example this tooltip will stick to the button via the PositionObserver callback. You will notice
+              that the average execution time while scrolling is slightly faster and even faster while resizing.
+            </div>
+          </div>
+          <div class="tooltip second position-fixed d-none bs-tooltip-top" role="tooltip" style="top: 0px; left: 0px;">
+            <div class="tooltip-arrow position-absolute" style="left: 93.5px;"></div>
+            <div class="tooltip-inner">
+              <b>Scroll Tooltip</b>
+              <span class="badge bg-danger">OLD</span><br>
+              In this example this tooltip will stick to the button via the scroll and or resize event handlers. You
+              will notice that the average execution time while scrolling is slightly slower and considerably slower
+              while resizing.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer>
+    <div class="container d-flex py-3">
+      <b>PositionObserver</b>
+      <span class="ms-auto text-sm"><span class="fw-bold">thednp</span> © 2024</span>
 
-  <script type="module">
-    // 0.2616 0.23 0.26 0.19 0.2236 0.198 0.2268 0.2174 | 0.1478 | 0.0122 0.01199 0.008 0.0070 0.0067 | 0.0038
-    // import PositionObserver from '../dist/index';
-    import PositionObserver from '../src/index';
-    import styleTip from '../test/styleTip';
-    window.PositionObserver = PositionObserver;
+    </div>
+    <script type="module" src="./script.js"></script>
+  </footer>
 
-    const element1 = document.querySelector('[data-test="tooltip1"]');
-    const element2 = document.querySelector('[data-test="tooltip2"]');
-    const benchAverage1 = document.querySelector('.bench-average1');
-    const benchMin1 = document.querySelector('.bench-min1');
-    const benchMax1 = document.querySelector('.bench-max1');
-    const benchAverage2 = document.querySelector('.bench-average2');
-    const benchMin2 = document.querySelector('.bench-min2');
-    const benchMax2 = document.querySelector('.bench-max2');
-    const tooltip1 = document.querySelector('.tooltip.first');
-    const arrow1 = tooltip1.querySelector('.tooltip-arrow');
-    const tooltip2 = document.querySelector('.tooltip.second');
-    const arrow2 = tooltip2.querySelector('.tooltip-arrow');
-    const container = document.body;
-    let isOpen = null;
-    let start = 0;
-    let end = 0;
-
-    const testRuns = [];
-    const getResults = () => {
-      // console.log(testRuns.filter(x => x > 0).length);
-      // const filteredResults = testRuns.filter(x => x > 0);
-      const len = testRuns.length;
-      let total = 0;
-      for (let i = 0; i < len; i += 1) {
-        total += testRuns[i];
-      }
-      const average = ((total / len) * 1000).toFixed(2);
-      const max = (Math.max(...testRuns) * 1000).toFixed(2);
-      return { average, max };
-    }
-    const showTip = (tip) => {
-      tip.classList.remove('d-none');
-      tip.classList.add('show');
-    }
-    const hideTip = (tip) => {
-      tip.classList.add('d-none');
-      tip.classList.remove('show');
-    }
-    const toggleEvents = (add) => {
-      const action = add ? 'addEventListener' : 'removeEventListener';
-      window[action]('scroll', handleUpdate, { passive: true });
-    }
-    const updateObserver = () => 
-      styleTip({ element: element1, container, tooltip: tooltip1, arrow: arrow1, _observer: observer });
-
-    const updateEvent = () => 
-      styleTip({ element: element2, container, tooltip: tooltip2, arrow: arrow2, _observer: null });
-
-    const handleUpdate = (e) => {
-      start = window.performance.now();
-      requestAnimationFrame(updateEvent);
-      // updateEvent();
-      if (testRuns.length < 500) {
-        end = window.performance.now();
-        testRuns.push(end - start);
-      } else {
-        // console.log({ ...ob });
-        isOpen = null;
-        hideTip(tooltip2);
-        toggleEvents();
-
-        const { average, max } = getResults();
-        benchAverage2.textContent = average + 'µ';
-        benchMax2.textContent = max + 'µ';
-        testRuns.length = 0;
-      }
-    }
-
-    const observer = new PositionObserver((_, ob) => {
-      start = window.performance.now();
-      requestAnimationFrame(updateObserver);
-      // updateObserver();
-      if (testRuns.length < 500) {
-        end = window.performance.now();
-        testRuns.push(end - start);
-      } else {
-        isOpen = null;
-        hideTip(tooltip1);
-        ob.disconnect();
-
-        const { average, max } = getResults();
-        benchAverage1.textContent = average + 'µ';
-        benchMax1.textContent = max + 'µ';
-        testRuns.length = 0;
-      }
-    });
-
-    element1.addEventListener('click', (e) => {
-      if (isOpen === tooltip1) {
-        observer.disconnect();
-        hideTip(tooltip1)
-        testRuns.length = 0;
-        isOpen = null;
-      } else {
-        isOpen = tooltip1;
-        showTip(tooltip1);
-        updateObserver();
-        observer.observe(element1);
-      }
-    });
-
-    element2.addEventListener('click', (e) => {
-      if (isOpen === tooltip2) {
-        toggleEvents();
-        hideTip(tooltip2)
-        testRuns.length = 0;
-        isOpen = null;
-      } else {
-        isOpen = tooltip2;
-        showTip(tooltip2);
-        updateEvent();
-        toggleEvents(true);
-      }
-    });
-  </script>
 </body>
 
 </html>

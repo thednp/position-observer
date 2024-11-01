@@ -3,7 +3,7 @@
   "version": "1.0.1",
   "author": "thednp",
   "license": "MIT",
-  "description": "🏯 The PositionObserver class provides a way to asynchronously observe changes in the position of a target element with the top-level document's viewport.",
+  "description": "🏯 PositionObserver is a JavaScript tool that provides a way to asynchronously observe changes in the position of a target element within its viewport.",
   "homepage": "https://thednp.github.io/position-observer/",
   "source": "./src/index.ts",
   "main": "./dist/index.js",
