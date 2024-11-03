@@ -38,7 +38,7 @@ describe("Offcanvas Class Tests", () => {
       expect(error).to.be.instanceOf(Error);
       expect(error).to.have.property(
         "message",
-        `PositionObserver Error: undefined is not an instance of HTMLElement.`,
+        `PositionObserver Error: undefined is not an instance of Element.`,
       );
     }
   });
