@@ -3,7 +3,7 @@
  * of DOM elements and triggers a callback when their position changes.
  */
 declare class PositionObserver {
-    entries: Map<HTMLElement, PositionObserverEntry>;
+    entries: Map<Element, PositionObserverEntry>;
     static version: string;
     private _tick;
     private _root;
@@ -23,9 +23,9 @@ declare class PositionObserver {
      * If the element is not currently attached to the DOM,
      * it will NOT be added to the entries.
      *
-     * @param target an `HTMLElement` target
+     * @param target an `Element` target
      */
-    observe: (target: HTMLElement) => void;
+    observe: (target: Element) => void;
     /**
      * Stop observing the position of the specified element.
      *
@@ -41,7 +41,7 @@ declare class PositionObserver {
      * Calculate the target bounding box and determine
      * the value of `isVisible`.
      *
-     * @param target an `HTMLElement` target
+     * @param target an `Element` target
      */
     private _new;
     /**
@@ -49,7 +49,7 @@ declare class PositionObserver {
      *
      * @param target an `HTMLElement` target
      */
-    getEntry: (target: HTMLElement) => PositionObserverEntry | undefined;
+    getEntry: (target: Element) => PositionObserverEntry | undefined;
     /**
      * Immediately stop observing all elements.
      */
@@ -60,7 +60,7 @@ export default PositionObserver;
 declare type PositionObserverCallback = (entries: PositionObserverEntry[], observer: PositionObserver) => void;
 
 declare type PositionObserverEntry = {
-    target: HTMLElement;
+    target: Element;
     boundingClientRect: DOMRect;
     isVisible: boolean;
 };

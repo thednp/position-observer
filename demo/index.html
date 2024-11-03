@@ -79,21 +79,21 @@
       </div>
     </div>
     <div class="bg-success-subtle">
-      <div class="container d-flex align-items-center" style="height: 50vh">
+      <div class="container d-flex align-items-center" style="min-height: 25rem; height: 50vh">
         <div class="mw-100">
           <h2 class="lh-1 mb-3">Usage</h2>
 <pre class="bg-white border border-success p-4 rounded-3 scrollbar">
 <code class="text-danger">import</code> <code class="text-primary">PositionObserver</code> from <span class="text-muted">'@thednp/position-observer'</span>;
 
-<code class="text-danger">const</code> target = document.<code class="text-info">getElementById</code>('myElement');
+<code class="text-danger">const</code> target = document.<code class="text-success">getElementById</code>('myElement');
 <code class="text-danger">const</code> observer = <code class="text-danger">new</code> <code class="text-primary">PositionObserver</code>((entries, currentObserver) => {
-  <code class="text-danger">const</code> entry = currentObserver.<code class="text-info">getEntry</code>(target);
+  <code class="text-danger">const</code> entry = currentObserver.<code class="text-success">getEntry</code>(target);
 
-  <code class="text-danger">if</code> (entry.isVisible) console.log(<span class="text-muted">'myTarget is visible!'</span>);
-  <code class="text-danger">else</code> console.log(<span class="text-muted">'myTarget is NOT visible!'</span>)
+  <code class="text-danger">if</code> (entry.<code class="text-success">isVisible</code>) console.<code class="text-success">log</code>(<span class="text-muted">'myTarget is visible!'</span>);
+  <code class="text-danger">else</code> console.<code class="text-success">log</code>(<span class="text-muted">'myTarget is NOT visible!'</span>)
 });
 
-observer.<code class="text-info">observe</code>(target);</pre>
+observer.<code class="text-success">observe</code>(target);</pre>
         </div>
       </div>
     </div>
@@ -108,8 +108,8 @@ observer.<code class="text-info">observe</code>(target);</pre>
           500 updates, an average and a maximum execution time in microseconds will be calculated and displayed in the
           middle of the page somewhere.</p>
         <div class="btn-toolbar mb-3">
-          <button class="btn btn-success mb-1" data-test="tooltip1">Observer</button>
-          <button class="btn btn-secondary ms-auto mb-1" data-test="tooltip2">Scroll & Resize</button>
+          <button class="btn btn-success rounded-pill mb-1" data-test="tooltip1">Observer</button>
+          <button class="btn btn-secondary rounded-pill ms-auto mb-1" data-test="tooltip2">Scroll & Resize</button>
         </div>
         <div class="row gap-5">
           <div class="col">
@@ -161,7 +161,6 @@ observer.<code class="text-info">observe</code>(target);</pre>
     <div class="container d-flex py-3">
       <b>Position</b>Observer
       <span class="ms-auto text-sm"><span class="fw-bold">thednp</span> © 2024</span>
-
     </div>
     <script type="module" src="./script.js"></script>
   </footer>

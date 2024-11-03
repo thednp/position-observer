@@ -1,4 +1,4 @@
-import { isFunction, isHTMLElement } from "@thednp/shorty";
+import { isElement, isFunction } from "@thednp/shorty";
 import { version } from "../package.json";
 
 export type PositionObserverCallback = (
@@ -7,7 +7,7 @@ export type PositionObserverCallback = (
 ) => void;
 
 export type PositionObserverEntry = {
-  target: HTMLElement;
+  target: Element;
   boundingClientRect: DOMRect;
   isVisible: boolean;
 };
@@ -23,10 +23,10 @@ const errorString = "PositionObserver Error";
  * of DOM elements and triggers a callback when their position changes.
  */
 export default class PositionObserver {
-  public entries: Map<HTMLElement, PositionObserverEntry>;
+  public entries: Map<Element, PositionObserverEntry>;
   public static version = version;
   private _tick: number;
-  private _root: HTMLElement;
+  private _root: Element;
   private _callback: PositionObserverCallback;
 
   /**
@@ -47,7 +47,7 @@ export default class PositionObserver {
     }
     this.entries = new Map();
     this._callback = callback;
-    this._root = isHTMLElement(options?.root)
+    this._root = isElement(options?.root)
       ? options.root
       /* istanbul ignore next @preserve */
       : document?.documentElement;
@@ -59,12 +59,12 @@ export default class PositionObserver {
    * If the element is not currently attached to the DOM,
    * it will NOT be added to the entries.
    *
-   * @param target an `HTMLElement` target
+   * @param target an `Element` target
    */
-  public observe = (target: HTMLElement) => {
-    if (!isHTMLElement(target)) {
+  public observe = (target: Element) => {
+    if (!isElement(target)) {
       throw new Error(
-        `${errorString}: ${target} is not an instance of HTMLElement.`,
+        `${errorString}: ${target} is not an instance of Element.`,
       );
     }
 
@@ -103,11 +103,11 @@ export default class PositionObserver {
     const queue = new Promise<PositionObserverEntry[]>((resolve) => {
       const updates: PositionObserverEntry[] = [];
       this.entries.forEach(
-        async ({ target, boundingClientRect: oldBoundingBox }) => {
+        ({ target, boundingClientRect: oldBoundingBox }) => {
           /* istanbul ignore if @preserve - a guard must be set when target has been removed */
           if (!this._root.contains(target)) return;
 
-          await this._new(target).then(({ boundingClientRect, isVisible }) => {
+          this._new(target).then(({ boundingClientRect, isVisible }) => {
             const { left, top, bottom, right } = boundingClientRect;
 
             if (
@@ -126,6 +126,7 @@ export default class PositionObserver {
     });
 
     this._tick = requestAnimationFrame(async () => {
+      // execute the queue
       const updates = await queue;
 
       // only execute the callback if position actually changed
@@ -140,9 +141,9 @@ export default class PositionObserver {
    * Calculate the target bounding box and determine
    * the value of `isVisible`.
    *
-   * @param target an `HTMLElement` target
+   * @param target an `Element` target
    */
-  private _new = (target: HTMLElement) => {
+  private _new = (target: Element) => {
     const { clientWidth, clientHeight } = this._root;
 
     return new Promise<PositionObserverEntry>((resolve) => {
@@ -172,7 +173,7 @@ export default class PositionObserver {
    *
    * @param target an `HTMLElement` target
    */
-  public getEntry = (target: HTMLElement) => this.entries.get(target);
+  public getEntry = (target: Element) => this.entries.get(target);
 
   /**
    * Immediately stop observing all elements.

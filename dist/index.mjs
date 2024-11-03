@@ -1,9 +1,9 @@
 const p = (e) => e != null && typeof e == "object" || !1, k = (e) => p(e) && typeof e.nodeType == "number" && [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].some(
   (t) => e.nodeType === t
-) || !1, b = (e) => k(e) && e.nodeType === 1 || !1, y = (e) => typeof e == "function" || !1, v = "1.0.1", m = "PositionObserver Error";
+) || !1, b = (e) => k(e) && e.nodeType === 1 || !1, v = (e) => typeof e == "function" || !1, y = "1.0.2", m = "PositionObserver Error";
 class E {
   entries;
-  static version = v;
+  static version = y;
   _tick;
   _root;
   _callback;
@@ -17,7 +17,7 @@ class E {
    * @param options the options of this observer
    */
   constructor(t, i) {
-    if (!y(t))
+    if (!v(t))
       throw new Error(`${m}: ${t} is not a function.`);
     this.entries = /* @__PURE__ */ new Map(), this._callback = t, this._root = b(i?.root) ? i.root : document?.documentElement, this._tick = 0;
   }
@@ -26,12 +26,12 @@ class E {
    * If the element is not currently attached to the DOM,
    * it will NOT be added to the entries.
    *
-   * @param target an `HTMLElement` target
+   * @param target an `Element` target
    */
   observe = (t) => {
     if (!b(t))
       throw new Error(
-        `${m}: ${t} is not an instance of HTMLElement.`
+        `${m}: ${t} is not an instance of Element.`
       );
     this._root.contains(t) && this._new(t).then((i) => {
       this.getEntry(t) || this.entries.set(t, i), this._tick || (this._tick = requestAnimationFrame(this._runCallback));
@@ -54,12 +54,12 @@ class E {
     const t = new Promise((i) => {
       const c = [];
       this.entries.forEach(
-        async ({ target: s, boundingClientRect: n }) => {
-          this._root.contains(s) && await this._new(s).then(({ boundingClientRect: r, isVisible: h }) => {
-            const { left: a, top: f, bottom: _, right: l } = r;
+        ({ target: s, boundingClientRect: n }) => {
+          this._root.contains(s) && this._new(s).then(({ boundingClientRect: o, isVisible: h }) => {
+            const { left: a, top: f, bottom: _, right: l } = o;
             if (n.top !== f || n.left !== a || n.right !== l || n.bottom !== _) {
-              const o = { target: s, boundingClientRect: r, isVisible: h };
-              this.entries.set(s, o), c.push(o);
+              const r = { target: s, boundingClientRect: o, isVisible: h };
+              this.entries.set(s, r), c.push(r);
             }
           });
         }
@@ -74,19 +74,19 @@ class E {
    * Calculate the target bounding box and determine
    * the value of `isVisible`.
    *
-   * @param target an `HTMLElement` target
+   * @param target an `Element` target
    */
   _new = (t) => {
     const { clientWidth: i, clientHeight: c } = this._root;
     return new Promise((s) => {
       new IntersectionObserver(
-        ([{ boundingClientRect: r }], h) => {
+        ([{ boundingClientRect: o }], h) => {
           h.disconnect();
-          const { left: a, top: f, bottom: _, right: l, width: o, height: u } = r, w = f > 1 - u && a > 1 - o && _ <= c + u - 1 && l <= i + o - 1;
+          const { left: a, top: f, bottom: _, right: l, width: r, height: u } = o, w = f > 1 - u && a > 1 - r && _ <= c + u - 1 && l <= i + r - 1;
           s({
             target: t,
             isVisible: w,
-            boundingClientRect: r
+            boundingClientRect: o
           });
         }
       ).observe(t);
