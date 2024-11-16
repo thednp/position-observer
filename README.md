@@ -47,7 +47,7 @@ const callback = (entries: PositionObserverEntry[], currentObserver: PositionObs
   // access the observer inside your callback
   // to find entry for myTarget
   const entry = currentObserver.getEntry(target);
-  if (entry.isVisible/* and/or other conditions */) {
+  if (entry.target === myTarget/* and/or other conditions */) {
     // do something about it
   }
 };
@@ -72,8 +72,6 @@ observer.observe(target);
   target: <div#myElement>,
   // the target's bounding client react
   boundingClientRect: DOMRect,
-  // this will always be true when at least one pixel of the target is visible in the viewport
-  isVisible: true,
 }]
 
 // anytime you need the entry, find it!!
@@ -106,12 +104,10 @@ When observing multiple targets from a **scrollable** parent element, that paren
 ## Notes
 * **use with caution**: for performance reasons, if your callback is focused on values of the target's bounding client rect, be sure to make use of `entry.boundingClientRect` values (`observer.getEntry(target)`) instead of invoking `getBoundingClientRect()` again on your target;
 * this implementation is partially inspired by the [async-bounds](https://github.com/glued/async-bounds), the async model is very efficient;
-* the `entry.isVisible` property is limited to the position of the target within the specified viewport, it doesn't take into account CSS properties or other specific attributes;
 * if nothing happens when observing a target, please know that the observer's runtime will only call the callback for elements that are descendents of the given root element; this also means that if a target is removed from the document, the target's entry will not be queued into the runtime;
 * also if the target element is hidden with either `display: none` or `visibility: hidden` or attributes with the same effect, the bounding box always has ZERO values and never changes, so make sure to have your target visible before calling `observer.observe(target)`;
 * because the functionality is powered by `requestAnimationFrame` and **IntersectionObserver**, all computation is always processed asynchronously before the next paint, in some cases you might want to consider wrapping your **PositionObserver** callback in a `requestAnimationFrame()` invokation for a consistent syncronicity and to eliminate any [unwanted anomalies](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver#observation_errors);
 * while the performance benefits over the use of event listeners is undeniable, it's still **important** to `unobserve` targets or `disconnect` the observer to make room in the main thread;
-* if you keep track of the changes to the `entry.isVisible` property you could say you have an equivalent for `IntersectionObserver.isIntersecting`; 
 * how about an idea to make your **PositionObserver** instance work like a `ResizeObserver`, well you can simply filter your callback with the inequality of `entry.boundingClientRect.height` and `lastHeight` OR `entry.boundingClientRect.width` and `lastWidth` cases, easy right?
 * lastly, the **PositionObserver** will observe changes to all sides of a target, but in some cases you might want to narrow down to the changes triggered by scroll, mainly top and left, in which case you can filter your callback to a single side `entry.boundingClientRect.top !== lastTop`, further increasing performance.
 

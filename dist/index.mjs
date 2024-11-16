@@ -1,6 +1,6 @@
 const m = (e) => e != null && typeof e == "object" || !1, p = (e) => m(e) && typeof e.nodeType == "number" && [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].some(
   (t) => e.nodeType === t
-) || !1, a = (e) => p(e) && e.nodeType === 1 || !1, w = (e) => typeof e == "function" || !1, k = "1.0.2", u = "PositionObserver Error";
+) || !1, h = (e) => p(e) && e.nodeType === 1 || !1, w = (e) => typeof e == "function" || !1, k = "1.0.2", a = "PositionObserver Error";
 class v {
   entries;
   static version = k;
@@ -18,8 +18,8 @@ class v {
    */
   constructor(t, s) {
     if (!w(t))
-      throw new Error(`${u}: ${t} is not a function.`);
-    this.entries = /* @__PURE__ */ new Map(), this._callback = t, this._root = a(s?.root) ? s.root : document?.documentElement, this._tick = 0;
+      throw new Error(`${a}: ${t} is not a function.`);
+    this.entries = /* @__PURE__ */ new Map(), this._callback = t, this._root = h(s?.root) ? s.root : document?.documentElement, this._tick = 0;
   }
   /**
    * Start observing the position of the specified element.
@@ -29,9 +29,9 @@ class v {
    * @param target an `Element` target
    */
   observe = (t) => {
-    if (!a(t))
+    if (!h(t))
       throw new Error(
-        `${u}: ${t} is not an instance of Element.`
+        `${a}: ${t} is not an instance of Element.`
       );
     this._root.contains(t) && this._new(t).then((s) => {
       s && !this.getEntry(t) && this.entries.set(t, s), this._tick || (this._tick = requestAnimationFrame(this._runCallback));
@@ -52,19 +52,19 @@ class v {
   _runCallback = () => {
     if (!this.entries.size) return;
     const t = new Promise((s) => {
-      const o = [];
+      const r = [];
       this.entries.forEach(
         ({ target: i, boundingClientRect: n }) => {
-          this._root.contains(i) && this._new(i).then(({ boundingClientRect: r, isVisible: c }) => {
-            if (!c) return;
-            const { left: f, top: _, bottom: l, right: b } = r;
+          this._root.contains(i) && this._new(i).then(({ boundingClientRect: o, isIntersecting: u }) => {
+            if (!u) return;
+            const { left: f, top: _, bottom: l, right: b } = o;
             if (n.top !== _ || n.left !== f || n.right !== b || n.bottom !== l) {
-              const h = { target: i, boundingClientRect: r, isVisible: c };
-              this.entries.set(i, h), o.push(h);
+              const c = { target: i, boundingClientRect: o };
+              this.entries.set(i, c), r.push(c);
             }
           });
         }
-      ), s(o);
+      ), s(r);
     });
     this._tick = requestAnimationFrame(async () => {
       const s = await t;
@@ -79,12 +79,8 @@ class v {
    */
   _new = (t) => new Promise((s) => {
     new IntersectionObserver(
-      ([{ boundingClientRect: i, isIntersecting: n }], r) => {
-        r.disconnect(), s({
-          target: t,
-          isVisible: n,
-          boundingClientRect: i
-        });
+      ([i], n) => {
+        n.disconnect(), s(i);
       }
     ).observe(t);
   });

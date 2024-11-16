@@ -62,7 +62,6 @@ declare type PositionObserverCallback = (entries: PositionObserverEntry[], obser
 declare type PositionObserverEntry = {
     target: Element;
     boundingClientRect: DOMRect;
-    isVisible: boolean;
 };
 
 declare type PositionObserverOptions = {

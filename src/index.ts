@@ -9,7 +9,6 @@ export type PositionObserverCallback = (
 export type PositionObserverEntry = {
   target: Element;
   boundingClientRect: DOMRect;
-  isVisible: boolean;
 };
 
 export type PositionObserverOptions = {
@@ -109,16 +108,16 @@ export default class PositionObserver {
           /* istanbul ignore if @preserve - a guard must be set when target has been removed */
           if (!this._root.contains(target)) return;
 
-          this._new(target).then(({ boundingClientRect, isVisible }) => {
+          this._new(target).then(({ boundingClientRect, isIntersecting }) => {
             /* istanbul ignore if @preserve - make sure to only count visible entries */
-            if (!isVisible) return;
+            if (!isIntersecting) return;
             const { left, top, bottom, right } = boundingClientRect;
 
             if (
               oldBoundingBox.top !== top || oldBoundingBox.left !== left ||
               oldBoundingBox.right !== right || oldBoundingBox.bottom !== bottom
             ) {
-              const newEntry = { target, boundingClientRect, isVisible };
+              const newEntry = { target, boundingClientRect };
               this.entries.set(target, newEntry);
               updates.push(newEntry);
             }
@@ -148,16 +147,12 @@ export default class PositionObserver {
    * @param target an `Element` target
    */
   private _new = (target: Element) => {
-    return new Promise<PositionObserverEntry>((resolve) => {
+    return new Promise<IntersectionObserverEntry>((resolve) => {
       const intersectionObserver = new IntersectionObserver(
-        ([{ boundingClientRect, isIntersecting }], ob) => {
+        ([entry], ob) => {
           ob.disconnect();
 
-          resolve({
-            target,
-            isVisible: isIntersecting,
-            boundingClientRect,
-          });
+          resolve(entry);
         },
       );
 
