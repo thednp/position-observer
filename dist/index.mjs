@@ -1,9 +1,9 @@
-const p = (e) => e != null && typeof e == "object" || !1, k = (e) => p(e) && typeof e.nodeType == "number" && [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].some(
+const m = (e) => e != null && typeof e == "object" || !1, p = (e) => m(e) && typeof e.nodeType == "number" && [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].some(
   (t) => e.nodeType === t
-) || !1, b = (e) => k(e) && e.nodeType === 1 || !1, v = (e) => typeof e == "function" || !1, y = "1.0.2", m = "PositionObserver Error";
-class E {
+) || !1, a = (e) => p(e) && e.nodeType === 1 || !1, w = (e) => typeof e == "function" || !1, k = "1.0.2", u = "PositionObserver Error";
+class v {
   entries;
-  static version = y;
+  static version = k;
   _tick;
   _root;
   _callback;
@@ -16,10 +16,10 @@ class E {
    * @param callback the callback that applies to all targets of this observer
    * @param options the options of this observer
    */
-  constructor(t, i) {
-    if (!v(t))
-      throw new Error(`${m}: ${t} is not a function.`);
-    this.entries = /* @__PURE__ */ new Map(), this._callback = t, this._root = b(i?.root) ? i.root : document?.documentElement, this._tick = 0;
+  constructor(t, s) {
+    if (!w(t))
+      throw new Error(`${u}: ${t} is not a function.`);
+    this.entries = /* @__PURE__ */ new Map(), this._callback = t, this._root = a(s?.root) ? s.root : document?.documentElement, this._tick = 0;
   }
   /**
    * Start observing the position of the specified element.
@@ -29,12 +29,12 @@ class E {
    * @param target an `Element` target
    */
   observe = (t) => {
-    if (!b(t))
+    if (!a(t))
       throw new Error(
-        `${m}: ${t} is not an instance of Element.`
+        `${u}: ${t} is not an instance of Element.`
       );
-    this._root.contains(t) && this._new(t).then((i) => {
-      this.getEntry(t) || this.entries.set(t, i), this._tick || (this._tick = requestAnimationFrame(this._runCallback));
+    this._root.contains(t) && this._new(t).then((s) => {
+      s && !this.getEntry(t) && this.entries.set(t, s), this._tick || (this._tick = requestAnimationFrame(this._runCallback));
     });
   };
   /**
@@ -51,23 +51,24 @@ class E {
    */
   _runCallback = () => {
     if (!this.entries.size) return;
-    const t = new Promise((i) => {
-      const c = [];
+    const t = new Promise((s) => {
+      const o = [];
       this.entries.forEach(
-        ({ target: s, boundingClientRect: n }) => {
-          this._root.contains(s) && this._new(s).then(({ boundingClientRect: o, isVisible: h }) => {
-            const { left: a, top: f, bottom: _, right: l } = o;
-            if (n.top !== f || n.left !== a || n.right !== l || n.bottom !== _) {
-              const r = { target: s, boundingClientRect: o, isVisible: h };
-              this.entries.set(s, r), c.push(r);
+        ({ target: i, boundingClientRect: n }) => {
+          this._root.contains(i) && this._new(i).then(({ boundingClientRect: r, isVisible: c }) => {
+            if (!c) return;
+            const { left: f, top: _, bottom: l, right: b } = r;
+            if (n.top !== _ || n.left !== f || n.right !== b || n.bottom !== l) {
+              const h = { target: i, boundingClientRect: r, isVisible: c };
+              this.entries.set(i, h), o.push(h);
             }
           });
         }
-      ), i(c);
+      ), s(o);
     });
     this._tick = requestAnimationFrame(async () => {
-      const i = await t;
-      i.length && this._callback(i, this), this._runCallback();
+      const s = await t;
+      s.length && this._callback(s, this), this._runCallback();
     });
   };
   /**
@@ -76,22 +77,17 @@ class E {
    *
    * @param target an `Element` target
    */
-  _new = (t) => {
-    const { clientWidth: i, clientHeight: c } = this._root;
-    return new Promise((s) => {
-      new IntersectionObserver(
-        ([{ boundingClientRect: o }], h) => {
-          h.disconnect();
-          const { left: a, top: f, bottom: _, right: l, width: r, height: u } = o, w = f > 1 - u && a > 1 - r && _ <= c + u - 1 && l <= i + r - 1;
-          s({
-            target: t,
-            isVisible: w,
-            boundingClientRect: o
-          });
-        }
-      ).observe(t);
-    });
-  };
+  _new = (t) => new Promise((s) => {
+    new IntersectionObserver(
+      ([{ boundingClientRect: i, isIntersecting: n }], r) => {
+        r.disconnect(), s({
+          target: t,
+          isVisible: n,
+          boundingClientRect: i
+        });
+      }
+    ).observe(t);
+  });
   /**
    * Find the entry for a given target.
    *
@@ -106,6 +102,6 @@ class E {
   };
 }
 export {
-  E as default
+  v as default
 };
 //# sourceMappingURL=index.mjs.map

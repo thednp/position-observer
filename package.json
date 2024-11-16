@@ -25,7 +25,7 @@
     "badges": "npx -p dependency-version-badge update-badge typescript vitest vite",
     "build": "pnpm vite build",
     "build:all": "pnpm build && pnpm build:docs",
-    "build:docs": "vite build demo --config demo/vite.config.ts",
+    "build:docs": "vite build demo --config demo/vite.config.mts",
     "lint": "deno lint src && pnpm check:ts",
     "format": "deno fmt src",
     "check:ts": "tsc --noEmit",
@@ -55,14 +55,14 @@
   },
   "devDependencies": {
     "@types/node": "^20.17.6",
-    "@vitest/browser": "^2.1.4",
-    "@vitest/coverage-istanbul": "^2.1.4",
-    "@vitest/ui": "^2.1.4",
+    "@vitest/browser": "^2.1.5",
+    "@vitest/coverage-istanbul": "^2.1.5",
+    "@vitest/ui": "^2.1.5",
     "playwright": "^1.48.2",
     "typescript": "^5.6.3",
-    "vite": "^5.4.10",
+    "vite": "^5.4.11",
     "vite-plugin-dts": "^4.3.0",
-    "vitest": "^2.1.4"
+    "vitest": "^2.1.5"
   },
   "packageManager": "pnpm@8.6.12",
   "engines": {

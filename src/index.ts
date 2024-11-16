@@ -75,7 +75,9 @@ export default class PositionObserver {
     // push the entry into the queue
     this._new(target).then((newEntry) => {
       /* istanbul ignore else @preserve - don't allow duplicate entries */
-      if (!this.getEntry(target)) this.entries.set(target, newEntry);
+      if (newEntry && !this.getEntry(target)) {
+        this.entries.set(target, newEntry);
+      }
 
       /* istanbul ignore else @preserve */
       if (!this._tick) this._tick = requestAnimationFrame(this._runCallback);
@@ -108,6 +110,8 @@ export default class PositionObserver {
           if (!this._root.contains(target)) return;
 
           this._new(target).then(({ boundingClientRect, isVisible }) => {
+            /* istanbul ignore if @preserve - make sure to only count visible entries */
+            if (!isVisible) return;
             const { left, top, bottom, right } = boundingClientRect;
 
             if (
@@ -144,21 +148,14 @@ export default class PositionObserver {
    * @param target an `Element` target
    */
   private _new = (target: Element) => {
-    const { clientWidth, clientHeight } = this._root;
-
     return new Promise<PositionObserverEntry>((resolve) => {
       const intersectionObserver = new IntersectionObserver(
-        ([{ boundingClientRect }], ob) => {
+        ([{ boundingClientRect, isIntersecting }], ob) => {
           ob.disconnect();
-          const { left, top, bottom, right, width, height } =
-            boundingClientRect;
-          const isVisible = top > 1 - height && left > 1 - width &&
-            bottom <= clientHeight + height - 1 &&
-            right <= clientWidth + width - 1;
 
           resolve({
             target,
-            isVisible,
+            isVisible: isIntersecting,
             boundingClientRect,
           });
         },

@@ -3,8 +3,8 @@
 [![ci](https://github.com/thednp/position-observer/actions/workflows/ci.yml/badge.svg)](https://github.com/thednp/position-observer/actions/workflows/ci.yml)
 [![NPM Version](https://img.shields.io/npm/v/@thednp/position-observer.svg)](https://www.npmjs.com/package/@thednp/position-observer)
 [![typescript version](https://img.shields.io/badge/typescript-5.6.3-brightgreen)](https://www.typescriptlang.org/)
-[![vitest version](https://img.shields.io/badge/vitest-2.1.4-brightgreen)](https://vitest.dev/)
-[![vite version](https://img.shields.io/badge/vite-5.4.10-brightgreen)](https://vitejs.dev/)
+[![vitest version](https://img.shields.io/badge/vitest-2.1.5-brightgreen)](https://vitest.dev/)
+[![vite version](https://img.shields.io/badge/vite-5.4.11-brightgreen)](https://vitejs.dev/)
 
 If you were looking for an observer that could replace all your `resize` and/or `scroll` EventListeners, this should be it! The **PositionObserver** works with the [IntersectionObserver API](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver) under the hood and the functionality resembles very much to it, but with a much more simple design.
 
