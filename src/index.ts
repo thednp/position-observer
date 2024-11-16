@@ -113,6 +113,7 @@ export default class PositionObserver {
             if (!isIntersecting) return;
             const { left, top, bottom, right } = boundingClientRect;
 
+            /* istanbul ignore else @preserve - only schedule entries that changed position */
             if (
               oldBoundingBox.top !== top || oldBoundingBox.left !== left ||
               oldBoundingBox.right !== right || oldBoundingBox.bottom !== bottom
