@@ -89,8 +89,8 @@
 <code class="text-danger">const</code> observer = <code class="text-danger">new</code> <code class="text-primary">PositionObserver</code>((entries, currentObserver) => {
   <code class="text-danger">const</code> entry = currentObserver.<code class="text-success">getEntry</code>(target);
 
-  <code class="text-danger">if</code> (entry.<code class="text-success">isVisible</code>) console.<code class="text-success">log</code>(<span class="text-muted">'myTarget is visible!'</span>);
-  <code class="text-danger">else</code> console.<code class="text-success">log</code>(<span class="text-muted">'myTarget is NOT visible!'</span>)
+  <code class="text-danger">if</code> (entry.<code class="text-success">target</code> === target) console.<code class="text-success">log</code>(<span class="text-muted">'this is myTarget!'</span>);
+  <code class="text-danger">else</code> console.<code class="text-success">log</code>(<span class="text-muted">'this is NOT myTarget!'</span>)
 });
 
 observer.<code class="text-success">observe</code>(target);</pre>
