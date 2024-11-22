@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@thednp/shorty':
-        specifier: github:thednp/shorty
-        version: https://codeload.github.com/thednp/shorty/tar.gz/9f11a7b428505a265ec6010877a119f6f3801fa7
+        specifier: ^2.0.8
+        version: 2.0.8
     devDependencies:
       '@types/node':
         specifier: ^20.17.6
@@ -28,7 +28,7 @@ importers:
         specifier: ^1.49.0
         version: 1.49.0
       typescript:
-        specifier: ^5.6.3
+        specifier: 5.6.3
         version: 5.6.3
       vite:
         specifier: ^5.4.11
@@ -470,9 +470,8 @@ packages:
     peerDependencies:
       '@testing-library/dom': '>=7.21.4'
 
-  '@thednp/shorty@https://codeload.github.com/thednp/shorty/tar.gz/9f11a7b428505a265ec6010877a119f6f3801fa7':
-    resolution: {tarball: https://codeload.github.com/thednp/shorty/tar.gz/9f11a7b428505a265ec6010877a119f6f3801fa7}
-    version: 2.0.8
+  '@thednp/shorty@2.0.8':
+    resolution: {integrity: sha512-SFuypeDaLrRmbmEpwIdeWfopLAeib3EqKNU5QOc+ZJgcWJnJZmbpLHRr99Sh27JWzqoaiRlKRsyegur/g31Yxw==}
     engines: {node: '>=16', pnpm: '>=8.6.0'}
 
   '@types/argparse@1.0.38':
@@ -1806,7 +1805,7 @@ snapshots:
     dependencies:
       '@testing-library/dom': 10.4.0
 
-  '@thednp/shorty@https://codeload.github.com/thednp/shorty/tar.gz/9f11a7b428505a265ec6010877a119f6f3801fa7': {}
+  '@thednp/shorty@2.0.8': {}
 
   '@types/argparse@1.0.38': {}
 

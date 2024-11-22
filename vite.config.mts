@@ -16,11 +16,14 @@ export default defineConfig({
     legalComments: 'none',
   },
   plugins: [
-    dts({
-      outDir: 'dist',
-      copyDtsFiles: true,
-      rollupTypes: true,
-    })
+    {
+      ...dts({
+        outDir: 'dist',
+        copyDtsFiles: true,
+        rollupTypes: true,
+      }),
+      apply: 'build'
+    }
   ],
   build: {
     minify: 'esbuild',

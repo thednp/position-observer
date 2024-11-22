@@ -1,23 +1,25 @@
+// @ts-nocheck
 // 0.2616 0.23 0.26 0.19 0.2236 0.198 0.2268 0.2174 | 0.1478 | 0.0122 0.01199 0.008 0.0070 0.0067 | 0.0038
 // import PositionObserver from '../dist/index';
 import PositionObserver from '../src/index';
 import styleTip from '../test/styleTip';
 import copyToClipboard from './copyToClipboard';
+// @ts-expect-error
 window.PositionObserver = PositionObserver;
 // window.copyToClipboard = copyToClipboard;
 
-const element1 = document.querySelector('[data-test="tooltip1"]');
-const element2 = document.querySelector('[data-test="tooltip2"]');
-const benchAverage1 = document.querySelector('.bench-average1');
+const element1 = document.querySelector<HTMLElement>('[data-test="tooltip1"]')!;
+const element2 = document.querySelector<HTMLElement>('[data-test="tooltip2"]')!;
+const benchAverage1 = document.querySelector<HTMLElement>('.bench-average1')!;
 // const benchMin1 = document.querySelector('.bench-min1');
-const benchMax1 = document.querySelector('.bench-max1');
-const benchAverage2 = document.querySelector('.bench-average2');
+const benchMax1 = document.querySelector<HTMLElement>('.bench-max1')!;
+const benchAverage2 = document.querySelector<HTMLElement>('.bench-average2')!;
 // const benchMin2 = document.querySelector('.bench-min2');
-const benchMax2 = document.querySelector('.bench-max2');
-const tooltip1 = document.querySelector('.tooltip.first');
-const arrow1 = tooltip1.querySelector('.tooltip-arrow');
-const tooltip2 = document.querySelector('.tooltip.second');
-const arrow2 = tooltip2.querySelector('.tooltip-arrow');
+const benchMax2 = document.querySelector<HTMLElement>('.bench-max2')!;
+const tooltip1 = document.querySelector<HTMLElement>('.tooltip.first')!;
+const arrow1 = tooltip1?.querySelector<HTMLElement>('.tooltip-arrow')!;
+const tooltip2 = document.querySelector<HTMLElement>('.tooltip.second')!;
+const arrow2 = tooltip2?.querySelector<HTMLElement>('.tooltip-arrow')!;
 const container = document.body;
 let isOpen = null;
 let start = 0;
@@ -53,7 +55,7 @@ const updateObserver = () =>
   styleTip({ element: element1, container, tooltip: tooltip1, arrow: arrow1, _observer: observer });
 
 const updateEvent = () =>
-  styleTip({ element: element2, container, tooltip: tooltip2, arrow: arrow2, _observer: null });
+  styleTip({ element: element2, container, tooltip: tooltip2, arrow: arrow2, _observer: observer });
 
 const handleUpdate = (e) => {
   start = window.performance.now();
