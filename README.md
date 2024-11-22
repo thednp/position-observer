@@ -26,7 +26,7 @@ pnpm install @thednp/position-observer
 ```
 
 ```bash
-deno install npm:@thednp/position-observer@latest
+deno add npm:@thednp/position-observer@latest
 ```
 
 

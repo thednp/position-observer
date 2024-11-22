@@ -1,0 +1,14 @@
+.github
+.gitignore
+.nyc_output
+package-lock.json
+node_modules
+experiments
+demo
+docs
+coverage
+vite.config.mts
+vitest.config.mts
+vitest.config-ui.mts
+test
+src

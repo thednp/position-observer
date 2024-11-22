@@ -16,10 +16,10 @@ class v {
    * @param callback the callback that applies to all targets of this observer
    * @param options the options of this observer
    */
-  constructor(t, s) {
+  constructor(t, i) {
     if (!w(t))
       throw new Error(`${a}: ${t} is not a function.`);
-    this.entries = /* @__PURE__ */ new Map(), this._callback = t, this._root = h(s?.root) ? s.root : document?.documentElement, this._tick = 0;
+    this.entries = /* @__PURE__ */ new Map(), this._callback = t, this._root = h(i?.root) ? i.root : document?.documentElement, this._tick = 0;
   }
   /**
    * Start observing the position of the specified element.
@@ -33,8 +33,8 @@ class v {
       throw new Error(
         `${a}: ${t} is not an instance of Element.`
       );
-    this._root.contains(t) && this._new(t).then((s) => {
-      s && !this.getEntry(t) && this.entries.set(t, s), this._tick || (this._tick = requestAnimationFrame(this._runCallback));
+    this._root.contains(t) && this._new(t).then((i) => {
+      i && !this.getEntry(t) && this.entries.set(t, i), this._tick || (this._tick = requestAnimationFrame(this._runCallback));
     });
   };
   /**
@@ -51,24 +51,24 @@ class v {
    */
   _runCallback = () => {
     if (!this.entries.size) return;
-    const t = new Promise((s) => {
+    const t = new Promise((i) => {
       const r = [];
       this.entries.forEach(
-        ({ target: i, boundingClientRect: n }) => {
-          this._root.contains(i) && this._new(i).then(({ boundingClientRect: o, isIntersecting: u }) => {
+        ({ target: s, boundingClientRect: n }) => {
+          this._root.contains(s) && this._new(s).then(({ boundingClientRect: o, isIntersecting: u }) => {
             if (!u) return;
             const { left: f, top: _, bottom: l, right: b } = o;
             if (n.top !== _ || n.left !== f || n.right !== b || n.bottom !== l) {
-              const c = { target: i, boundingClientRect: o };
-              this.entries.set(i, c), r.push(c);
+              const c = { target: s, boundingClientRect: o };
+              this.entries.set(s, c), r.push(c);
             }
           });
         }
-      ), s(r);
+      ), i(r);
     });
     this._tick = requestAnimationFrame(async () => {
-      const s = await t;
-      s.length && this._callback(s, this), this._runCallback();
+      const i = await t;
+      i.length && this._callback(i, this), this._runCallback();
     });
   };
   /**
@@ -77,10 +77,10 @@ class v {
    *
    * @param target an `Element` target
    */
-  _new = (t) => new Promise((s) => {
+  _new = (t) => new Promise((i) => {
     new IntersectionObserver(
-      ([i], n) => {
-        n.disconnect(), s(i);
+      ([s], n) => {
+        n.disconnect(), i(s);
       }
     ).observe(t);
   });
