@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@thednp/shorty':
-        specifier: ^2.0.8
-        version: 2.0.8
+        specifier: ^2.0.9
+        version: 2.0.9
     devDependencies:
       '@types/node':
         specifier: ^20.17.7
@@ -470,8 +470,8 @@ packages:
     peerDependencies:
       '@testing-library/dom': '>=7.21.4'
 
-  '@thednp/shorty@2.0.8':
-    resolution: {integrity: sha512-SFuypeDaLrRmbmEpwIdeWfopLAeib3EqKNU5QOc+ZJgcWJnJZmbpLHRr99Sh27JWzqoaiRlKRsyegur/g31Yxw==}
+  '@thednp/shorty@2.0.9':
+    resolution: {integrity: sha512-btulzTMSxSQxNipN5iLMtw6MaTrZ3P0feRUX/rl2fZ1m31RI56PC967lnN5bwUCpZLzry0pl9QoCKlT3GtU+mw==}
     engines: {node: '>=16', pnpm: '>=8.6.0'}
 
   '@types/argparse@1.0.38':
@@ -1221,8 +1221,8 @@ packages:
     resolution: {integrity: sha512-t0rzBq87m3fVcduHDUFhKmyyX+9eo6WQjZvf51Ea/M0Q7+T374Jp1aUiyUl0GKxp8M/OETVHSDvmkyPgvX+X2w==}
     engines: {node: '>=10'}
 
-  type-fest@4.27.0:
-    resolution: {integrity: sha512-3IMSWgP7C5KSQqmo1wjhKrwsvXAtF33jO3QY+Uy++ia7hqvgSK6iXbbg5PbDBc1P2ZbNEDgejOrN4YooXvhwCw==}
+  type-fest@4.27.1:
+    resolution: {integrity: sha512-3Ta7CyV6daqpwuGJMJKABaUChZZejpzysZkQg1//bLRg2wKQ4duwsg3MMIsHuElq58iDqizg4DBUmK8H8wExJg==}
     engines: {node: '>=16'}
 
   typescript@5.4.2:
@@ -1805,7 +1805,7 @@ snapshots:
     dependencies:
       '@testing-library/dom': 10.4.0
 
-  '@thednp/shorty@2.0.8': {}
+  '@thednp/shorty@2.0.9': {}
 
   '@types/argparse@1.0.38': {}
 
@@ -2335,7 +2335,7 @@ snapshots:
       outvariant: 1.4.3
       path-to-regexp: 6.3.0
       strict-event-emitter: 0.5.1
-      type-fest: 4.27.0
+      type-fest: 4.27.1
       yargs: 17.7.2
     optionalDependencies:
       typescript: 5.6.3
@@ -2553,7 +2553,7 @@ snapshots:
 
   type-fest@0.21.3: {}
 
-  type-fest@4.27.0: {}
+  type-fest@4.27.1: {}
 
   typescript@5.4.2: {}
 
