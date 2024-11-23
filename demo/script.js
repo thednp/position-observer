@@ -4,22 +4,21 @@
 import PositionObserver from '../src/index';
 import styleTip from '../test/styleTip';
 import copyToClipboard from './copyToClipboard';
-// @ts-expect-error
 window.PositionObserver = PositionObserver;
 // window.copyToClipboard = copyToClipboard;
 
-const element1 = document.querySelector<HTMLElement>('[data-test="tooltip1"]')!;
-const element2 = document.querySelector<HTMLElement>('[data-test="tooltip2"]')!;
-const benchAverage1 = document.querySelector<HTMLElement>('.bench-average1')!;
+const element1 = document.querySelector('[data-test="tooltip1"]');
+const element2 = document.querySelector('[data-test="tooltip2"]');
+const benchAverage1 = document.querySelector('.bench-average1');
 // const benchMin1 = document.querySelector('.bench-min1');
-const benchMax1 = document.querySelector<HTMLElement>('.bench-max1')!;
-const benchAverage2 = document.querySelector<HTMLElement>('.bench-average2')!;
+const benchMax1 = document.querySelector('.bench-max1');
+const benchAverage2 = document.querySelector('.bench-average2');
 // const benchMin2 = document.querySelector('.bench-min2');
-const benchMax2 = document.querySelector<HTMLElement>('.bench-max2')!;
-const tooltip1 = document.querySelector<HTMLElement>('.tooltip.first')!;
-const arrow1 = tooltip1?.querySelector<HTMLElement>('.tooltip-arrow')!;
-const tooltip2 = document.querySelector<HTMLElement>('.tooltip.second')!;
-const arrow2 = tooltip2?.querySelector<HTMLElement>('.tooltip-arrow')!;
+const benchMax2 = document.querySelector('.bench-max2');
+const tooltip1 = document.querySelector('.tooltip.first');
+const arrow1 = tooltip1?.querySelector('.tooltip-arrow');
+const tooltip2 = document.querySelector('.tooltip.second');
+const arrow2 = tooltip2?.querySelector('.tooltip-arrow');
 const container = document.body;
 let isOpen = null;
 let start = 0;
