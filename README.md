@@ -87,7 +87,7 @@ observer.disconect();
 
 ## Instance Options
 
-### root: HTMLElement | undefined
+### root: Element | undefined
 Sets the `instance._root` private property which identifies the `Element` whose bounds are treated as the bounding box of the viewport for the element which is the observer's target. If not defined then the `Document.documentElement` will be used.
 
 When observing multiple targets from a **scrollable** parent element, that parent must be set as root. The same applies to embeddings and `IFrame`s. See the [ScrollSpy](https://github.com/thednp/bootstrap.native/blob/master/src/components/scrollspy.ts) example for implementation details.
@@ -95,10 +95,10 @@ When observing multiple targets from a **scrollable** parent element, that paren
 
 ## How it works
 * when the observer is initialized without a callback, it will throw an `Error`;
-* if you call the `observe()` method without a valid HTMLElement target, it will throw an `Error`;
+* if you call the `observe()` method without a valid Element target, it will throw an `Error`;
 * if the target isn't attached to the DOM, it will not be added to the observer entries;
-* once propertly set up, the **PositionObserver** will observe the changes of either top, left, width or height for a given HTMLElement target, all in relation to the designated parent element;
-* only when at least one of these values changes the target's entry will be queued for the callback runtime.
+* once propertly set up, the **PositionObserver** will observe the changes of either **top**, **left**, **right** or **bottom** for a given Element target, all in relation to the designated parent element;
+* only if the target Element is intersecting with the bounds of the designated viewport and at least one of the observed values changes the target's entry will be queued for the callback runtime.
 
 
 ## Notes

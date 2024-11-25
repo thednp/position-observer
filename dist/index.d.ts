@@ -29,17 +29,17 @@ declare class PositionObserver {
     /**
      * Stop observing the position of the specified element.
      *
-     * @param target an `HTMLElement` target
+     * @param target an `Element` target
      */
-    unobserve: (target: HTMLElement) => void;
+    unobserve: (target: Element) => void;
     /**
      * Private method responsible for all the heavy duty,
      * the observer's runtime.
      */
     private _runCallback;
     /**
-     * Calculate the target bounding box and determine
-     * the value of `isVisible`.
+     * Check intersection status and resolve it
+     * right away.
      *
      * @param target an `Element` target
      */

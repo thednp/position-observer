@@ -86,9 +86,9 @@ export default class PositionObserver {
   /**
    * Stop observing the position of the specified element.
    *
-   * @param target an `HTMLElement` target
+   * @param target an `Element` target
    */
-  public unobserve = (target: HTMLElement) => {
+  public unobserve = (target: Element) => {
     /* istanbul ignore else @preserve */
     if (this.entries.has(target)) this.entries.delete(target);
   };
@@ -142,8 +142,8 @@ export default class PositionObserver {
   };
 
   /**
-   * Calculate the target bounding box and determine
-   * the value of `isVisible`.
+   * Check intersection status and resolve it
+   * right away.
    *
    * @param target an `Element` target
    */
