@@ -7,6 +7,7 @@ experiments
 demo
 docs
 coverage
+tsconfig.json
 vite.config.mts
 vitest.config.mts
 vitest.config-ui.mts

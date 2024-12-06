@@ -3,12 +3,12 @@
 [![ci](https://github.com/thednp/position-observer/actions/workflows/ci.yml/badge.svg)](https://github.com/thednp/position-observer/actions/workflows/ci.yml)
 [![NPM Version](https://img.shields.io/npm/v/@thednp/position-observer.svg)](https://www.npmjs.com/package/@thednp/position-observer)
 [![typescript version](https://img.shields.io/badge/typescript-5.6.3-brightgreen)](https://www.typescriptlang.org/)
-[![vitest version](https://img.shields.io/badge/vitest-2.1.5-brightgreen)](https://vitest.dev/)
+[![vitest version](https://img.shields.io/badge/vitest-2.1.8-brightgreen)](https://vitest.dev/)
 [![vite version](https://img.shields.io/badge/vite-5.4.11-brightgreen)](https://vitejs.dev/)
 
 If you were looking for an observer that could replace all your `resize` and/or `scroll` EventListeners, this should be it! The **PositionObserver** works with the [IntersectionObserver API](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver) under the hood and the functionality resembles very much to it, but with a much more simple design.
 
-What can you use after your element has intersected? How to listen to resize or scroll without attaching event listeners? What's the most efficient solution to observe scroll, size and position all at once? Why doesn't MutationObserver cover this? Here's where the **PositionObserver** comes in handy.
+The **PositionObserver** tries What can you use after your element has intersected? How to listen to resize or scroll without attaching event listeners? What's the most efficient solution to observe scroll, size and position all at once? Why doesn't MutationObserver cover this? Here's where the **PositionObserver** comes in handy.
 
 
 ## Installation
@@ -22,7 +22,7 @@ yarn add @thednp/position-observer
 ```
 
 ```bash
-pnpm install @thednp/position-observer
+pnpm add @thednp/position-observer
 ```
 
 ```bash
@@ -37,7 +37,7 @@ deno add npm:@thednp/position-observer@latest
 import PositionObserver, { type PositionObserverEntry } from '@thednp/position-observer';
 
 // find a suitable target
-const target = document.getElementById('myElement');
+const myTarget = document.getElementById('myElement');
 
 // define a callback
 const callback = (entries: PositionObserverEntry[], currentObserver: PositionObserver) => {
@@ -46,7 +46,7 @@ const callback = (entries: PositionObserverEntry[], currentObserver: PositionObs
 
   // access the observer inside your callback
   // to find entry for myTarget
-  const entry = currentObserver.getEntry(target);
+  const entry = currentObserver.getEntry(myTarget);
   if (entry.target === myTarget/* and/or other conditions */) {
     // do something about it
   }
@@ -97,7 +97,7 @@ When observing multiple targets from a **scrollable** parent element, that paren
 * when the observer is initialized without a callback, it will throw an `Error`;
 * if you call the `observe()` method without a valid Element target, it will throw an `Error`;
 * if the target isn't attached to the DOM, it will not be added to the observer entries;
-* once propertly set up, the **PositionObserver** will observe the changes of either **top**, **left**, **right** or **bottom** for a given Element target, all in relation to the designated parent element;
+* once propertly set up, the **PositionObserver** will observe the changes of either **top** or **left** for a given Element target in relation to its designated root, as well as the **clientWidth** and **clientHeight** of that root parent;
 * only if the target Element is intersecting with the bounds of the designated viewport and at least one of the observed values changes the target's entry will be queued for the callback runtime.
 
 

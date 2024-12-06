@@ -1,9 +1,9 @@
-const m = (e) => e != null && typeof e == "object" || !1, p = (e) => m(e) && typeof e.nodeType == "number" && [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].some(
+const p = (e) => e != null && typeof e == "object" || !1, d = (e) => p(e) && typeof e.nodeType == "number" && [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].some(
   (t) => e.nodeType === t
-) || !1, h = (e) => p(e) && e.nodeType === 1 || !1, w = (e) => typeof e == "function" || !1, k = "1.0.5", a = "PositionObserver Error";
-class v {
+) || !1, a = (e) => d(e) && e.nodeType === 1 || !1, k = (e) => typeof e == "function" || !1, v = "1.0.6", u = "PositionObserver Error";
+class y {
   entries;
-  static version = k;
+  static version = v;
   _tick;
   _root;
   _callback;
@@ -17,9 +17,9 @@ class v {
    * @param options the options of this observer
    */
   constructor(t, i) {
-    if (!w(t))
-      throw new Error(`${a}: ${t} is not a function.`);
-    this.entries = /* @__PURE__ */ new Map(), this._callback = t, this._root = h(i?.root) ? i.root : document?.documentElement, this._tick = 0;
+    if (!k(t))
+      throw new Error(`${u}: ${t} is not a function.`);
+    this.entries = /* @__PURE__ */ new Map(), this._callback = t, this._root = a(i?.root) ? i.root : document?.documentElement, this._tick = 0;
   }
   /**
    * Start observing the position of the specified element.
@@ -29,12 +29,21 @@ class v {
    * @param target an `Element` target
    */
   observe = (t) => {
-    if (!h(t))
+    if (!a(t))
       throw new Error(
-        `${a}: ${t} is not an instance of Element.`
+        `${u}: ${t} is not an instance of Element.`
       );
-    this._root.contains(t) && this._new(t).then((i) => {
-      i && !this.getEntry(t) && this.entries.set(t, i), this._tick || (this._tick = requestAnimationFrame(this._runCallback));
+    this._root.contains(t) && this._new(t).then(({ boundingClientRect: i }) => {
+      if (i && !this.getEntry(t)) {
+        const { clientWidth: s, clientHeight: n } = this._root;
+        this.entries.set(t, {
+          target: t,
+          boundingClientRect: i,
+          clientWidth: s,
+          clientHeight: n
+        });
+      }
+      this._tick || (this._tick = requestAnimationFrame(this._runCallback));
     });
   };
   /**
@@ -51,24 +60,34 @@ class v {
    */
   _runCallback = () => {
     if (!this.entries.size) return;
-    const t = new Promise((i) => {
-      const r = [];
+    const { clientWidth: t, clientHeight: i } = this._root, s = new Promise((n) => {
+      const o = [];
       this.entries.forEach(
-        ({ target: s, boundingClientRect: n }) => {
-          this._root.contains(s) && this._new(s).then(({ boundingClientRect: o, isIntersecting: u }) => {
-            if (!u) return;
-            const { left: f, top: _, bottom: l, right: b } = o;
-            if (n.top !== _ || n.left !== f || n.right !== b || n.bottom !== l) {
-              const c = { target: s, boundingClientRect: o };
-              this.entries.set(s, c), r.push(c);
+        ({
+          target: r,
+          boundingClientRect: c,
+          clientWidth: _,
+          clientHeight: f
+        }) => {
+          this._root.contains(r) && this._new(r).then(({ boundingClientRect: h, isIntersecting: m }) => {
+            if (!m) return;
+            const { left: b, top: w } = h;
+            if (c.top !== w || c.left !== b || _ !== t || f !== i) {
+              const l = {
+                target: r,
+                boundingClientRect: h,
+                clientHeight: i,
+                clientWidth: t
+              };
+              this.entries.set(r, l), o.push(l);
             }
           });
         }
-      ), i(r);
+      ), n(o);
     });
     this._tick = requestAnimationFrame(async () => {
-      const i = await t;
-      i.length && this._callback(i, this), this._runCallback();
+      const n = await s;
+      n.length && this._callback(n, this), this._runCallback();
     });
   };
   /**
@@ -79,8 +98,8 @@ class v {
    */
   _new = (t) => new Promise((i) => {
     new IntersectionObserver(
-      ([s], n) => {
-        n.disconnect(), i(s);
+      ([n], o) => {
+        o.disconnect(), i(n);
       }
     ).observe(t);
   });
@@ -98,6 +117,6 @@ class v {
   };
 }
 export {
-  v as default
+  y as default
 };
 //# sourceMappingURL=index.mjs.map

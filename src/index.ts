@@ -9,6 +9,8 @@ export type PositionObserverCallback = (
 export type PositionObserverEntry = {
   target: Element;
   boundingClientRect: DOMRect;
+  clientHeight: number;
+  clientWidth: number;
 };
 
 export type PositionObserverOptions = {
@@ -72,10 +74,17 @@ export default class PositionObserver {
 
     // define a new entry
     // push the entry into the queue
-    this._new(target).then((newEntry) => {
+    this._new(target).then(({ boundingClientRect }) => {
       /* istanbul ignore else @preserve - don't allow duplicate entries */
-      if (newEntry && !this.getEntry(target)) {
-        this.entries.set(target, newEntry);
+      if (boundingClientRect && !this.getEntry(target)) {
+        const { clientWidth, clientHeight } = this._root;
+
+        this.entries.set(target, {
+          target,
+          boundingClientRect,
+          clientWidth,
+          clientHeight,
+        });
       }
 
       /* istanbul ignore else @preserve */
@@ -100,25 +109,38 @@ export default class PositionObserver {
   private _runCallback = () => {
     /* istanbul ignore if @preserve - a guard must be set */
     if (!this.entries.size) return;
+    const { clientWidth, clientHeight } = this._root;
 
     const queue = new Promise<PositionObserverEntry[]>((resolve) => {
       const updates: PositionObserverEntry[] = [];
       this.entries.forEach(
-        ({ target, boundingClientRect: oldBoundingBox }) => {
+        (
+          {
+            target,
+            boundingClientRect: oldBoundingBox,
+            clientWidth: oldWidth,
+            clientHeight: oldHeight,
+          },
+        ) => {
           /* istanbul ignore if @preserve - a guard must be set when target has been removed */
           if (!this._root.contains(target)) return;
 
           this._new(target).then(({ boundingClientRect, isIntersecting }) => {
             /* istanbul ignore if @preserve - make sure to only count visible entries */
             if (!isIntersecting) return;
-            const { left, top, bottom, right } = boundingClientRect;
+            const { left, top } = boundingClientRect;
 
             /* istanbul ignore else @preserve - only schedule entries that changed position */
             if (
               oldBoundingBox.top !== top || oldBoundingBox.left !== left ||
-              oldBoundingBox.right !== right || oldBoundingBox.bottom !== bottom
+              oldWidth !== clientWidth || oldHeight !== clientHeight
             ) {
-              const newEntry = { target, boundingClientRect };
+              const newEntry = {
+                target,
+                boundingClientRect,
+                clientHeight,
+                clientWidth,
+              };
               this.entries.set(target, newEntry);
               updates.push(newEntry);
             }
