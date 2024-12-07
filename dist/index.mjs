@@ -1,6 +1,6 @@
 const p = (e) => e != null && typeof e == "object" || !1, d = (e) => p(e) && typeof e.nodeType == "number" && [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11].some(
   (t) => e.nodeType === t
-) || !1, a = (e) => d(e) && e.nodeType === 1 || !1, k = (e) => typeof e == "function" || !1, v = "1.0.6", u = "PositionObserver Error";
+) || !1, a = (e) => d(e) && e.nodeType === 1 || !1, k = (e) => typeof e == "function" || !1, v = "1.0.7", u = "PositionObserver Error";
 class y {
   entries;
   static version = v;

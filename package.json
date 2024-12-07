@@ -1,6 +1,6 @@
 {
   "name": "@thednp/position-observer",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "author": "thednp",
   "license": "MIT",
   "description": "🏯 PositionObserver is a JavaScript tool that provides a way to asynchronously observe changes in the position of a target element within its viewport.",

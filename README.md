@@ -8,7 +8,7 @@
 
 If you were looking for an observer that could replace all your `resize` and/or `scroll` EventListeners, this should be it! The **PositionObserver** works with the [IntersectionObserver API](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver) under the hood and the functionality resembles very much to it, but with a much more simple design.
 
-The **PositionObserver** tries to do what you would expect after your element has intersected as if you would listen to resize or scroll without attaching event listeners.
+The **PositionObserver** tries to do what you would expect after your element has intersected as if you would listen to `resize` or `scroll` without attaching event listeners and it provides a way to asynchronously observe changes in the position of a target element with an ancestor element or with a top-level document's viewport.
 
 
 ## Installation
@@ -55,7 +55,7 @@ const callback = (entries: PositionObserverEntry[], currentObserver: PositionObs
 // set some options
 const options = {
   // if not set, it will use the document.documentElement
-  root: document.getElementById('myModal-or-something'),
+  root: document.getElementById('myModal'),
 }
 
 // create the observer
@@ -72,6 +72,10 @@ observer.observe(target);
   target: <div#myElement>,
   // the target's bounding client react
   boundingClientRect: DOMRect,
+  // parent <div#myModal> root clientWidth
+  clientWidth: number,
+  // root <div#myModal> clientHeight
+  clientHeight: number,
 }]
 
 // anytime you need the entry, find it!!
@@ -84,6 +88,7 @@ observer.unobserve(target);
 // you should disconect the observer
 observer.disconect();
 ```
+
 
 ## Instance Options
 
