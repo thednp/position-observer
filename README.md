@@ -6,9 +6,9 @@
 [![vitest version](https://img.shields.io/badge/vitest-2.1.8-brightgreen)](https://vitest.dev/)
 [![vite version](https://img.shields.io/badge/vite-5.4.11-brightgreen)](https://vitejs.dev/)
 
-If you were looking for an observer that could replace all your `resize` and/or `scroll` EventListeners, this should be it! The **PositionObserver** works with the [IntersectionObserver API](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver) under the hood and the functionality resembles very much to it, but with a much more simple design.
+If you were looking for an observer that could replace all your `resize` and/or `scroll` EventListeners, this should be it! The **PositionObserver** works with the [IntersectionObserver API](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver) under the hood and uses a very simple design.
 
-The **PositionObserver** tries to do what you would expect after your element has intersected as if you would listen to `resize` or `scroll` without attaching event listeners and it provides a way to asynchronously observe changes in the position of a target element with an ancestor element or with a top-level document's viewport.
+The **PositionObserver** provides a way to asynchronously observe changes in the position of a target element with an ancestor element or with a top-level document's viewport. It tries to do what you would expect after your element has intersected as if you would listen to `resize` or `scroll` without attaching event listeners.
 
 
 ## Installation
@@ -102,8 +102,8 @@ When observing multiple targets from a **scrollable** parent element, that paren
 * when the observer is initialized without a callback, it will throw an `Error`;
 * if you call the `observe()` method without a valid Element target, it will throw an `Error`;
 * if the target isn't attached to the DOM, it will not be added to the observer entries;
-* once propertly set up, the **PositionObserver** will observe the changes of either **top** or **left** for a given Element target in relation to its designated root, as well as the **clientWidth** and **clientHeight** of that root parent;
-* only if the target Element is intersecting with the bounds of the designated viewport and at least one of the observed values changes the target's entry will be queued for the callback runtime.
+* once propertly set up, the **PositionObserver** will observe the changes of either **top** or **left** for a given Element target in relation to its designated root, as well as the **clientWidth** and **clientHeight** of that parent;
+* when the target Element is intersecting with the bounds of the designated viewport and at least one of the observed values changes, only then the target's entry will be queued for the callback runtime.
 
 
 ## Notes
