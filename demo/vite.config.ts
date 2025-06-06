@@ -1,5 +1,4 @@
 import { defineConfig } from "vite";
-// import path from "path";
 
 export default defineConfig({
   base: "./",
@@ -8,7 +7,7 @@ export default defineConfig({
     port: 3000,
   },
   build: {
-    target: "esnext",
+    target: "es2020",
     outDir: "../docs",
     emptyOutDir: true,
   },

@@ -68,4 +68,4 @@ declare class PositionObserver {
 }
 //#endregion
 export { PositionObserverCallback, PositionObserverEntry, PositionObserverOptions, PositionObserver as default };
-//# sourceMappingURL=index.d.ts.map
+//# sourceMappingURL=index.d.mts.map

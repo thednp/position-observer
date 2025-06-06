@@ -1,6 +1,6 @@
 {
   "name": "@thednp/position-observer",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "author": "thednp",
   "license": "MIT",
   "description": "🏯 PositionObserver is a JavaScript tool that provides a way to asynchronously observe changes in the position of a target element within its viewport.",
@@ -8,24 +8,26 @@
   "source": "./src/index.ts",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "require": "./dist/index.cjs",
-      "import": "./dist/index.mjs"
-    }
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
   },
   "scripts": {
     "pre-test": "pnpm clean-coverage",
     "dev": "vite --open ./demo/index.html --port 8577",
     "serve": "vite --open ./docs/index.html --port 8577",
-    "test": "pnpm pre-test && vitest --config vitest.config.mts",
-    "test-ui": "pnpm pre-test && vitest --config vitest.config-ui.mts --browser=chrome",
+    "test": "pnpm pre-test && vitest --config vitest.config.ts",
+    "test-ui": "pnpm pre-test && vitest --config vitest.config-ui.ts --browser=chrome",
     "clean-coverage": "rm -rf coverage .nyc_output",
     "badges": "npx -p dependency-version-badge update-badge typescript vitest vite",
-    "build": "pnpm vite build",
+    "build": "tsdown",
+    "build_": "vite build",
     "build:all": "pnpm build && pnpm build:docs",
-    "build:docs": "vite build demo --config demo/vite.config.mts",
+    "build:docs": "vite build demo --config demo/vite.config.ts",
     "lint": "deno lint src && pnpm check:ts",
     "format": "deno fmt src",
     "check:ts": "tsc --noEmit",
@@ -54,15 +56,15 @@
     "@thednp/shorty": "^2.0.11"
   },
   "devDependencies": {
-    "@types/node": "^22.15.23",
-    "@vitest/browser": "^3.1.4",
-    "@vitest/coverage-istanbul": "^3.1.4",
-    "@vitest/ui": "^3.1.4",
+    "@types/node": "^22.15.30",
+    "@vitest/browser": "^3.2.2",
+    "@vitest/coverage-istanbul": "^3.2.2",
+    "@vitest/ui": "^3.2.2",
     "playwright": "^1.52.0",
+    "tsdown": "^0.12.7",
     "typescript": "5.8.3",
     "vite": "^6.3.5",
-    "vite-plugin-dts": "^4.5.4",
-    "vitest": "^3.1.4"
+    "vitest": "^3.2.2"
   },
   "packageManager": "pnpm@8.6.12",
   "engines": {

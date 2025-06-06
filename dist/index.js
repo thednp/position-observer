@@ -1,2 +1,136 @@
-var PositionObserver=function(){"use strict";const u=e=>e!=null&&typeof e=="object"||!1,_=e=>u(e)&&typeof e.nodeType=="number"&&[1,2,3,4,5,6,7,8,9,10,11].some(t=>e.nodeType===t)||!1,c=e=>_(e)&&e.nodeType===1||!1,b=e=>typeof e=="function"||!1,m="1.0.8",h="PositionObserver Error";class v{entries;static version=m;_tick;_root;_callback;constructor(t,i){if(!b(t))throw new Error(`${h}: ${t} is not a function.`);this.entries=new Map,this._callback=t,this._root=c(i?.root)?i.root:document?.documentElement,this._tick=0}observe=t=>{if(!c(t))throw new Error(`${h}: ${t} is not an instance of Element.`);this._root.contains(t)&&this._new(t).then(({boundingClientRect:i})=>{if(i&&!this.getEntry(t)){const{clientWidth:s,clientHeight:n}=this._root;this.entries.set(t,{target:t,boundingClientRect:i,clientWidth:s,clientHeight:n})}this._tick||(this._tick=requestAnimationFrame(this._runCallback))})};unobserve=t=>{this.entries.has(t)&&this.entries.delete(t)};_runCallback=()=>{if(!this.entries.size)return;const{clientWidth:t,clientHeight:i}=this._root,s=new Promise(n=>{const r=[];this.entries.forEach(({target:o,boundingClientRect:l,clientWidth:w,clientHeight:k})=>{this._root.contains(o)&&this._new(o).then(({boundingClientRect:a,isIntersecting:p})=>{if(!p)return;const{left:d,top:y}=a;if(l.top!==y||l.left!==d||w!==t||k!==i){const f={target:o,boundingClientRect:a,clientHeight:i,clientWidth:t};this.entries.set(o,f),r.push(f)}})}),n(r)});this._tick=requestAnimationFrame(async()=>{const n=await s;n.length&&this._callback(n,this),this._runCallback()})};_new=t=>new Promise(i=>{new IntersectionObserver(([n],r)=>{r.disconnect(),i(n)}).observe(t)});getEntry=t=>this.entries.get(t);disconnect=()=>{cancelAnimationFrame(this._tick),this.entries.clear(),this._tick=0}}return v}();
+//#region rolldown:runtime
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __copyProps = (to, from, except, desc) => {
+	if (from && typeof from === "object" || typeof from === "function") for (var keys = __getOwnPropNames(from), i = 0, n = keys.length, key; i < n; i++) {
+		key = keys[i];
+		if (!__hasOwnProp.call(to, key) && key !== except) __defProp(to, key, {
+			get: ((k) => from[k]).bind(null, key),
+			enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable
+		});
+	}
+	return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", {
+	value: mod,
+	enumerable: true
+}) : target, mod));
+
+//#endregion
+const __thednp_shorty = __toESM(require("@thednp/shorty"));
+const __oxc_project_runtime_helpers_defineProperty = __toESM(require("@oxc-project/runtime/helpers/defineProperty"));
+
+//#region package.json
+var version = "1.0.9";
+
+//#endregion
+//#region src/index.ts
+const errorString = "PositionObserver Error";
+/**
+* The PositionObserver class is a utility class that observes the position
+* of DOM elements and triggers a callback when their position changes.
+*/
+var PositionObserver = class {
+	/**
+	* The constructor takes two arguments, a `callback`, which is called
+	* whenever the position of an observed element changes and an `options` object.
+	* The callback function should take an array of `PositionObserverEntry` objects
+	* as its only argument, but it's not required.
+	*
+	* @param callback the callback that applies to all targets of this observer
+	* @param options the options of this observer
+	*/
+	constructor(callback, options) {
+		(0, __oxc_project_runtime_helpers_defineProperty.default)(this, "entries", void 0);
+		(0, __oxc_project_runtime_helpers_defineProperty.default)(this, "_tick", void 0);
+		(0, __oxc_project_runtime_helpers_defineProperty.default)(this, "_root", void 0);
+		(0, __oxc_project_runtime_helpers_defineProperty.default)(this, "_callback", void 0);
+		(0, __oxc_project_runtime_helpers_defineProperty.default)(this, "observe", (target) => {
+			if (!(0, __thednp_shorty.isElement)(target)) throw new Error(`${errorString}: ${target} is not an instance of Element.`);
+			/* istanbul ignore else @preserve - a guard must be set */
+			if (!this._root.contains(target)) return;
+			this._new(target).then(({ boundingClientRect }) => {
+				/* istanbul ignore else @preserve - don't allow duplicate entries */
+				if (boundingClientRect && !this.getEntry(target)) {
+					const { clientWidth, clientHeight } = this._root;
+					this.entries.set(target, {
+						target,
+						boundingClientRect,
+						clientWidth,
+						clientHeight
+					});
+				}
+				/* istanbul ignore else @preserve */
+				if (!this._tick) this._tick = requestAnimationFrame(this._runCallback);
+			});
+		});
+		(0, __oxc_project_runtime_helpers_defineProperty.default)(this, "unobserve", (target) => {
+			/* istanbul ignore else @preserve */
+			if (this.entries.has(target)) this.entries.delete(target);
+		});
+		(0, __oxc_project_runtime_helpers_defineProperty.default)(this, "_runCallback", () => {
+			/* istanbul ignore if @preserve - a guard must be set */
+			if (!this.entries.size) return;
+			const { clientWidth, clientHeight } = this._root;
+			const queue = new Promise((resolve) => {
+				const updates = [];
+				this.entries.forEach(({ target, boundingClientRect: oldBoundingBox, clientWidth: oldWidth, clientHeight: oldHeight }) => {
+					/* istanbul ignore if @preserve - a guard must be set when target has been removed */
+					if (!this._root.contains(target)) return;
+					this._new(target).then(({ boundingClientRect, isIntersecting }) => {
+						/* istanbul ignore if @preserve - make sure to only count visible entries */
+						if (!isIntersecting) return;
+						const { left, top } = boundingClientRect;
+						/* istanbul ignore else @preserve - only schedule entries that changed position */
+						if (oldBoundingBox.top !== top || oldBoundingBox.left !== left || oldWidth !== clientWidth || oldHeight !== clientHeight) {
+							const newEntry = {
+								target,
+								boundingClientRect,
+								clientHeight,
+								clientWidth
+							};
+							this.entries.set(target, newEntry);
+							updates.push(newEntry);
+						}
+					});
+				});
+				resolve(updates);
+			});
+			this._tick = requestAnimationFrame(async () => {
+				const updates = await queue;
+				/* istanbul ignore else @preserve */
+				if (updates.length) this._callback(updates, this);
+				this._runCallback();
+			});
+		});
+		(0, __oxc_project_runtime_helpers_defineProperty.default)(this, "_new", (target) => {
+			return new Promise((resolve) => {
+				const intersectionObserver = new IntersectionObserver(([entry], ob) => {
+					ob.disconnect();
+					resolve(entry);
+				});
+				intersectionObserver.observe(target);
+			});
+		});
+		(0, __oxc_project_runtime_helpers_defineProperty.default)(this, "getEntry", (target) => this.entries.get(target));
+		(0, __oxc_project_runtime_helpers_defineProperty.default)(this, "disconnect", () => {
+			cancelAnimationFrame(this._tick);
+			this.entries.clear();
+			this._tick = 0;
+		});
+		if (!(0, __thednp_shorty.isFunction)(callback)) throw new Error(`${errorString}: ${callback} is not a function.`);
+		this.entries = /* @__PURE__ */ new Map();
+		this._callback = callback;
+		this._root = (0, __thednp_shorty.isElement)(options?.root) ? options.root : document?.documentElement;
+		this._tick = 0;
+	}
+};
+(0, __oxc_project_runtime_helpers_defineProperty.default)(PositionObserver, "version", version);
+
+//#endregion
+module.exports = PositionObserver;
 //# sourceMappingURL=index.js.map
