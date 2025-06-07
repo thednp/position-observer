@@ -100,20 +100,20 @@ When observing multiple targets from a **scrollable** parent element, that paren
 
 ## How it works
 * when the observer is initialized without a callback, it will throw an `Error`;
-* if you call the `observe()` method without a valid Element target, it will throw an `Error`;
+* if you call the `observe()` method without a valid `Element` target, it will throw an `Error`;
 * if the target isn't attached to the DOM, it will not be added to the observer entries;
 * once propertly set up, the **PositionObserver** will observe the changes of either **top** or **left** for a given Element target in relation to its designated root, as well as the **clientWidth** and **clientHeight** of that parent;
-* when the target Element is intersecting with the bounds of the designated viewport and at least one of the observed values changes, only then the target's entry will be queued for the callback runtime.
+* when the target `Element` is intersecting with the bounds of the designated viewport and at least one of the observed values changes, only then the target's entry will be queued for the callback runtime.
 
 
 ## Notes
 * **use with caution**: for performance reasons, if your callback is focused on values of the target's bounding client rect, be sure to make use of `entry.boundingClientRect` values (`observer.getEntry(target)`) instead of invoking `getBoundingClientRect()` again on your target;
 * this implementation is partially inspired by the [async-bounds](https://github.com/glued/async-bounds), the async model is very efficient;
 * if nothing happens when observing a target, please know that the observer's runtime will only call the callback for elements that are descendents of the given root element; this also means that if a target is removed from the document, the target's entry will not be queued into the runtime;
-* also if the target element is hidden with either `display: none` or `visibility: hidden` or attributes with the same effect, the bounding box always has ZERO values and never changes, so make sure to have your target visible before calling `observer.observe(target)`;
+* also if the target `Element` is hidden with either `display: none` or `visibility: hidden` or attributes with the same effect, the bounding box always has ZERO values and never changes, so make sure to have your target visible before calling `observer.observe(target)`;
 * because the functionality is powered by `requestAnimationFrame` and **IntersectionObserver**, all computation is always processed asynchronously before the next paint, in some cases you might want to consider wrapping your **PositionObserver** callback in a `requestAnimationFrame()` invokation for a consistent syncronicity and to eliminate any [unwanted anomalies](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver#observation_errors);
 * while the performance benefits over the use of event listeners is undeniable, it's still **important** to `unobserve` targets or `disconnect` the observer to make room in the main thread;
-* how about an idea to make your **PositionObserver** instance work like a `ResizeObserver`, well you can simply filter your callback with the inequality of `entry.boundingClientRect.height` and `lastHeight` OR `entry.boundingClientRect.width` and `lastWidth` cases, easy right?
+* if you want to make your **PositionObserver** instance work like a `ResizeObserver`, well you can simply filter your callback with the inequality of `entry.boundingClientRect.height` and `lastHeight` OR `entry.boundingClientRect.width` and `lastWidth`;
 * lastly, the **PositionObserver** will observe changes to all sides of a target, but in some cases you might want to narrow down to the changes triggered by scroll, mainly top and left, in which case you can filter your callback to a single side `entry.boundingClientRect.top !== lastTop`, further increasing performance.
 
 
