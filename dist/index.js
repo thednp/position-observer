@@ -25,7 +25,7 @@ const __thednp_shorty = __toESM(require("@thednp/shorty"));
 const __oxc_project_runtime_helpers_defineProperty = __toESM(require("@oxc-project/runtime/helpers/defineProperty"));
 
 //#region package.json
-var version = "1.0.9";
+var version = "1.0.10";
 
 //#endregion
 //#region src/index.ts
@@ -74,7 +74,10 @@ var PositionObserver = class {
 		});
 		(0, __oxc_project_runtime_helpers_defineProperty.default)(this, "_runCallback", () => {
 			/* istanbul ignore if @preserve - a guard must be set */
-			if (!this.entries.size) return;
+			if (!this.entries.size) {
+				this._tick = 0;
+				return;
+			}
 			const { clientWidth, clientHeight } = this._root;
 			const queue = new Promise((resolve) => {
 				const updates = [];

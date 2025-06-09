@@ -2,7 +2,7 @@ import { isElement, isFunction } from "@thednp/shorty";
 import _defineProperty from "@oxc-project/runtime/helpers/defineProperty";
 
 //#region package.json
-var version = "1.0.9";
+var version = "1.0.10";
 
 //#endregion
 //#region src/index.ts
@@ -51,7 +51,10 @@ var PositionObserver = class {
 		});
 		_defineProperty(this, "_runCallback", () => {
 			/* istanbul ignore if @preserve - a guard must be set */
-			if (!this.entries.size) return;
+			if (!this.entries.size) {
+				this._tick = 0;
+				return;
+			}
 			const { clientWidth, clientHeight } = this._root;
 			const queue = new Promise((resolve) => {
 				const updates = [];
