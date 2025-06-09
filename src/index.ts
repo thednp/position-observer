@@ -108,7 +108,10 @@ export default class PositionObserver {
    */
   private _runCallback = () => {
     /* istanbul ignore if @preserve - a guard must be set */
-    if (!this.entries.size) return;
+    if (!this.entries.size) {
+      this._tick = 0;
+      return
+    };
     const { clientWidth, clientHeight } = this._root;
 
     const queue = new Promise<PositionObserverEntry[]>((resolve) => {
