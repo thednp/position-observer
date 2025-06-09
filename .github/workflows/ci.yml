@@ -3,15 +3,15 @@ on:
   push:
     branches: [ main ]
     paths:
-      - src
-      - test
+      - src/index.ts
+      - test/index.test.ts
       - package.json
       - .github/workflows/ci.yml
   pull_request:
     branches: [ main ]
     paths:
-      - src
-      - test
+      - src/index.ts
+      - test/index.test.ts
       - package.json
       - .github/workflows/ci.yml
 jobs:
