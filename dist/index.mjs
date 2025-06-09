@@ -1,8 +1,7 @@
 import { isElement, isFunction } from "@thednp/shorty";
-import _defineProperty from "@oxc-project/runtime/helpers/defineProperty";
 
 //#region package.json
-var version = "1.0.10";
+var version = "1.0.11";
 
 //#endregion
 //#region src/index.ts
@@ -12,6 +11,11 @@ const errorString = "PositionObserver Error";
 * of DOM elements and triggers a callback when their position changes.
 */
 var PositionObserver = class {
+	entries;
+	static version = version;
+	_tick;
+	_root;
+	_callback;
 	/**
 	* The constructor takes two arguments, a `callback`, which is called
 	* whenever the position of an observed element changes and an `options` object.
@@ -22,94 +26,119 @@ var PositionObserver = class {
 	* @param options the options of this observer
 	*/
 	constructor(callback, options) {
-		_defineProperty(this, "entries", void 0);
-		_defineProperty(this, "_tick", void 0);
-		_defineProperty(this, "_root", void 0);
-		_defineProperty(this, "_callback", void 0);
-		_defineProperty(this, "observe", (target) => {
-			if (!isElement(target)) throw new Error(`${errorString}: ${target} is not an instance of Element.`);
-			/* istanbul ignore else @preserve - a guard must be set */
-			if (!this._root.contains(target)) return;
-			this._new(target).then(({ boundingClientRect }) => {
-				/* istanbul ignore else @preserve - don't allow duplicate entries */
-				if (boundingClientRect && !this.getEntry(target)) {
-					const { clientWidth, clientHeight } = this._root;
-					this.entries.set(target, {
-						target,
-						boundingClientRect,
-						clientWidth,
-						clientHeight
-					});
-				}
-				/* istanbul ignore else @preserve */
-				if (!this._tick) this._tick = requestAnimationFrame(this._runCallback);
-			});
-		});
-		_defineProperty(this, "unobserve", (target) => {
-			/* istanbul ignore else @preserve */
-			if (this.entries.has(target)) this.entries.delete(target);
-		});
-		_defineProperty(this, "_runCallback", () => {
-			/* istanbul ignore if @preserve - a guard must be set */
-			if (!this.entries.size) {
-				this._tick = 0;
-				return;
-			}
-			const { clientWidth, clientHeight } = this._root;
-			const queue = new Promise((resolve) => {
-				const updates = [];
-				this.entries.forEach(({ target, boundingClientRect: oldBoundingBox, clientWidth: oldWidth, clientHeight: oldHeight }) => {
-					/* istanbul ignore if @preserve - a guard must be set when target has been removed */
-					if (!this._root.contains(target)) return;
-					this._new(target).then(({ boundingClientRect, isIntersecting }) => {
-						/* istanbul ignore if @preserve - make sure to only count visible entries */
-						if (!isIntersecting) return;
-						const { left, top } = boundingClientRect;
-						/* istanbul ignore else @preserve - only schedule entries that changed position */
-						if (oldBoundingBox.top !== top || oldBoundingBox.left !== left || oldWidth !== clientWidth || oldHeight !== clientHeight) {
-							const newEntry = {
-								target,
-								boundingClientRect,
-								clientHeight,
-								clientWidth
-							};
-							this.entries.set(target, newEntry);
-							updates.push(newEntry);
-						}
-					});
-				});
-				resolve(updates);
-			});
-			this._tick = requestAnimationFrame(async () => {
-				const updates = await queue;
-				/* istanbul ignore else @preserve */
-				if (updates.length) this._callback(updates, this);
-				this._runCallback();
-			});
-		});
-		_defineProperty(this, "_new", (target) => {
-			return new Promise((resolve) => {
-				const intersectionObserver = new IntersectionObserver(([entry], ob) => {
-					ob.disconnect();
-					resolve(entry);
-				});
-				intersectionObserver.observe(target);
-			});
-		});
-		_defineProperty(this, "getEntry", (target) => this.entries.get(target));
-		_defineProperty(this, "disconnect", () => {
-			cancelAnimationFrame(this._tick);
-			this.entries.clear();
-			this._tick = 0;
-		});
 		if (!isFunction(callback)) throw new Error(`${errorString}: ${callback} is not a function.`);
 		this.entries = /* @__PURE__ */ new Map();
 		this._callback = callback;
 		this._root = isElement(options?.root) ? options.root : document?.documentElement;
 		this._tick = 0;
 	}
+	/**
+	* Start observing the position of the specified element.
+	* If the element is not currently attached to the DOM,
+	* it will NOT be added to the entries.
+	*
+	* @param target an `Element` target
+	*/
+	observe = (target) => {
+		if (!isElement(target)) throw new Error(`${errorString}: ${target} is not an instance of Element.`);
+		/* istanbul ignore else @preserve - a guard must be set */
+		if (!this._root.contains(target)) return;
+		this._new(target).then(({ boundingClientRect }) => {
+			/* istanbul ignore else @preserve - don't allow duplicate entries */
+			if (boundingClientRect && !this.getEntry(target)) {
+				const { clientWidth, clientHeight } = this._root;
+				this.entries.set(target, {
+					target,
+					boundingClientRect,
+					clientWidth,
+					clientHeight
+				});
+			}
+			/* istanbul ignore else @preserve */
+			if (!this._tick) this._tick = requestAnimationFrame(this._runCallback);
+		});
+	};
+	/**
+	* Stop observing the position of the specified element.
+	*
+	* @param target an `Element` target
+	*/
+	unobserve = (target) => {
+		/* istanbul ignore else @preserve */
+		if (this.entries.has(target)) this.entries.delete(target);
+	};
+	/**
+	* Private method responsible for all the heavy duty,
+	* the observer's runtime.
+	*/
+	_runCallback = () => {
+		/* istanbul ignore if @preserve - a guard must be set */
+		if (!this.entries.size) {
+			this._tick = 0;
+			return;
+		}
+		const { clientWidth, clientHeight } = this._root;
+		const queue = new Promise((resolve) => {
+			const updates = [];
+			this.entries.forEach(({ target, boundingClientRect: oldBoundingBox, clientWidth: oldWidth, clientHeight: oldHeight }) => {
+				/* istanbul ignore if @preserve - a guard must be set when target has been removed */
+				if (!this._root.contains(target)) return;
+				this._new(target).then(({ boundingClientRect, isIntersecting }) => {
+					/* istanbul ignore if @preserve - make sure to only count visible entries */
+					if (!isIntersecting) return;
+					const { left, top } = boundingClientRect;
+					/* istanbul ignore else @preserve - only schedule entries that changed position */
+					if (oldBoundingBox.top !== top || oldBoundingBox.left !== left || oldWidth !== clientWidth || oldHeight !== clientHeight) {
+						const newEntry = {
+							target,
+							boundingClientRect,
+							clientHeight,
+							clientWidth
+						};
+						this.entries.set(target, newEntry);
+						updates.push(newEntry);
+					}
+				});
+			});
+			resolve(updates);
+		});
+		this._tick = requestAnimationFrame(async () => {
+			const updates = await queue;
+			/* istanbul ignore else @preserve */
+			if (updates.length) this._callback(updates, this);
+			this._runCallback();
+		});
+	};
+	/**
+	* Check intersection status and resolve it
+	* right away.
+	*
+	* @param target an `Element` target
+	*/
+	_new = (target) => {
+		return new Promise((resolve) => {
+			const intersectionObserver = new IntersectionObserver(([entry], ob) => {
+				ob.disconnect();
+				resolve(entry);
+			});
+			intersectionObserver.observe(target);
+		});
+	};
+	/**
+	* Find the entry for a given target.
+	*
+	* @param target an `HTMLElement` target
+	*/
+	getEntry = (target) => this.entries.get(target);
+	/**
+	* Immediately stop observing all elements.
+	*/
+	disconnect = () => {
+		cancelAnimationFrame(this._tick);
+		this.entries.clear();
+		this._tick = 0;
+	};
 };
-_defineProperty(PositionObserver, "version", version);
 
 //#endregion
 export { PositionObserver as default };

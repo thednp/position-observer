@@ -3,7 +3,7 @@ import { defineConfig } from 'tsdown'
 export default defineConfig(
   {
     exports: true,
-    target: "es2020",
+    target: "esnext",
     entry: {
       'index': 'src/index.ts',
     },
@@ -13,10 +13,6 @@ export default defineConfig(
     sourcemap: true,
     globalName: "PositionObserver",
     skipNodeModulesBundle: true,
-    // outputOptions: {
-    //   name: "PositionObserver",
-    //   // globals: "Po"
-    // },
-    external: ["@thednp/shorty"]
+    external: ["@thednp/shorty"],
   },
 );
