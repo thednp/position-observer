@@ -22,7 +22,7 @@ declare class PositionObserver {
   /**
    * The constructor takes two arguments, a `callback`, which is called
    * whenever the position of an observed element changes and an `options` object.
-   * The callback function should take an array of `PositionObserverEntry` objects
+   * The callback function takes an array of `PositionObserverEntry` objects
    * as its only argument, but it's not required.
    *
    * @param callback the callback that applies to all targets of this observer
