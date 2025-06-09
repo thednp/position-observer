@@ -16,6 +16,7 @@ on:
     branches: [ main ]
     paths:
       - src
+      - test
       - package.json
       - .github/workflows/codeql.yml
   pull_request:
@@ -23,6 +24,7 @@ on:
     branches: [ main ]
     paths:
       - src
+      - test
       - package.json
       - .github/workflows/codeql.yml
 
