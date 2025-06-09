@@ -84,6 +84,9 @@ observer.getEntry(target);
 // stop observing the changes for #myElement at any point
 observer.unobserve(target);
 
+// anytime re-start observing the target
+observer.observe(target);
+
 // when no targets require observation
 // you should disconect the observer
 observer.disconect();
