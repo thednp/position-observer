@@ -2,33 +2,46 @@ import { isElement, isFunction } from "@thednp/shorty";
 import { version } from "../package.json";
 
 export type PositionObserverCallback = (
-  entries: PositionObserverEntry[],
+  entries: IntersectionObserverEntry[],
   observer: PositionObserver,
 ) => void;
 
-export type PositionObserverEntry = {
-  target: Element;
-  boundingClientRect: DOMRect;
-  clientHeight: number;
-  clientWidth: number;
-};
+type CallbackMode = "all" | "intersecting" | "update";
+type CallbackModeIndex = 0 | 1 | 2;
 
 export type PositionObserverOptions = {
-  root: HTMLElement;
+  root?: Element; // PositionObserver root only, IntersectionObserver root is always the document
+  rootMargin?: IntersectionObserverInit["rootMargin"];
+  threshold?: IntersectionObserverInit["threshold"];
+  callbackMode?: CallbackMode;
 };
 
 const errorString = "PositionObserver Error";
+const callbackModes = ["all", "intersecting", "update"];
 
 /**
  * The PositionObserver class is a utility class that observes the position
  * of DOM elements and triggers a callback when their position changes.
  */
 export default class PositionObserver {
-  public entries: Map<Element, PositionObserverEntry>;
+  public entries: Map<Element, IntersectionObserverEntry>;
   public static version = version;
-  private _tick: number;
-  private _root: Element;
-  private _callback: PositionObserverCallback;
+  /** `PositionObserver.tick` */
+  protected _t: number;
+  /** `PositionObserver.root` */
+  protected _r: Element;
+  /** `PositionObserver.callbackMode` */
+  protected _cm: 0 | 1 | 2;
+  /** `PositionObserver.root.clientWidth` */
+  protected _w: number;
+  /** `PositionObserver.root.clientHeight` */
+  protected _h: number;
+  /** `IntersectionObserver.options.rootMargin` */
+  protected _rm: string | undefined;
+  /** `IntersectionObserver.options.threshold` */
+  protected _th: number | number[] | undefined;
+  /** `PositionObserver.callback` */
+  protected _c: PositionObserverCallback;
 
   /**
    * The constructor takes two arguments, a `callback`, which is called
@@ -41,18 +54,28 @@ export default class PositionObserver {
    */
   constructor(
     callback: PositionObserverCallback,
-    options?: Partial<PositionObserverOptions>,
+    options?: PositionObserverOptions,
   ) {
     if (!isFunction(callback)) {
       throw new Error(`${errorString}: ${callback} is not a function.`);
     }
     this.entries = new Map();
-    this._callback = callback;
-    this._root = isElement(options?.root)
+    this._c = callback;
+    this._t = 0;
+    const callbackIndex = callbackModes.indexOf(options?.callbackMode || "") as
+      | CallbackModeIndex
+      | -1;
+    const root = isElement(options?.root)
       ? options.root
       /* istanbul ignore next @preserve */
       : document?.documentElement;
-    this._tick = 0;
+    this._r = root;
+    this._rm = options?.rootMargin;
+    this._th = options?.threshold;
+    /* istanbul ignore next @preserve */
+    this._cm = callbackIndex > -1 ? callbackIndex as CallbackModeIndex : 1;
+    this._w = root.clientWidth;
+    this._h = root.clientHeight;
   }
 
   /**
@@ -70,25 +93,18 @@ export default class PositionObserver {
     }
 
     /* istanbul ignore else @preserve - a guard must be set */
-    if (!this._root.contains(target)) return;
+    if (!this._r.contains(target)) return;
 
     // define a new entry
     // push the entry into the queue
-    this._new(target).then(({ boundingClientRect }) => {
+    this._n(target).then((ioEntry) => {
       /* istanbul ignore else @preserve - don't allow duplicate entries */
-      if (boundingClientRect && !this.getEntry(target)) {
-        const { clientWidth, clientHeight } = this._root;
-
-        this.entries.set(target, {
-          target,
-          boundingClientRect,
-          clientWidth,
-          clientHeight,
-        });
+      if (ioEntry.boundingClientRect && !this.getEntry(target)) {
+        this.entries.set(target, ioEntry);
       }
 
       /* istanbul ignore else @preserve */
-      if (!this._tick) this._tick = requestAnimationFrame(this._runCallback);
+      if (!this._t) this._t = requestAnimationFrame(this._rc);
     });
   };
 
@@ -105,64 +121,71 @@ export default class PositionObserver {
   /**
    * Private method responsible for all the heavy duty,
    * the observer's runtime.
+   * `PositionObserver.runCallback`
    */
-  private _runCallback = () => {
+  protected _rc = () => {
     /* istanbul ignore if @preserve - a guard must be set */
     if (!this.entries.size) {
-      this._tick = 0;
+      this._t = 0;
       return;
     }
-    const { clientWidth, clientHeight } = this._root;
+    const { clientWidth, clientHeight } = this._r;
 
-    const queue = new Promise<PositionObserverEntry[]>((resolve) => {
-      const updates: PositionObserverEntry[] = [];
+    const queue = new Promise<IntersectionObserverEntry[]>((resolve) => {
+      const updates: IntersectionObserverEntry[] = [];
       this.entries.forEach(
         (
           {
             target,
             boundingClientRect: oldBoundingBox,
-            clientWidth: oldWidth,
-            clientHeight: oldHeight,
+            isIntersecting: oldIsIntersecting,
           },
         ) => {
           /* istanbul ignore if @preserve - a guard must be set when target has been removed */
-          if (!this._root.contains(target)) return;
+          if (!this._r.contains(target)) return;
 
-          this._new(target).then(({ boundingClientRect, isIntersecting }) => {
+          this._n(target).then((ioEntry) => {
             /* istanbul ignore if @preserve - make sure to only count visible entries */
-            if (!isIntersecting) return;
-            const { left, top } = boundingClientRect;
+            if (!ioEntry.isIntersecting) {
+              if (this._cm === 1) {
+                return;
+              } else if (this._cm === 2) {
+                if (oldIsIntersecting) {
+                  this.entries.set(target, ioEntry);
+                  updates.push(ioEntry);
+                }
+                return;
+              }
+            }
+            const { left, top } = ioEntry.boundingClientRect;
 
             /* istanbul ignore else @preserve - only schedule entries that changed position */
             if (
               oldBoundingBox.top !== top || oldBoundingBox.left !== left ||
-              oldWidth !== clientWidth || oldHeight !== clientHeight
+              this._w !== clientWidth || this._h !== clientHeight
             ) {
-              const newEntry = {
-                target,
-                boundingClientRect,
-                clientHeight,
-                clientWidth,
-              };
-              this.entries.set(target, newEntry);
-              updates.push(newEntry);
+              this.entries.set(target, ioEntry);
+              updates.push(ioEntry);
             }
           });
         },
       );
+      // update root client width & height
+      this._w = clientWidth;
+      this._h = clientHeight;
 
       resolve(updates);
     });
 
-    this._tick = requestAnimationFrame(async () => {
+    this._t = requestAnimationFrame(async () => {
       // execute the queue
       const updates = await queue;
 
       // only execute the callback if position actually changed
       /* istanbul ignore else @preserve */
-      if (updates.length) this._callback(updates, this);
+      if (updates.length) this._c(updates, this);
 
-      this._runCallback();
+      this._rc();
     });
   };
 
@@ -170,15 +193,22 @@ export default class PositionObserver {
    * Check intersection status and resolve it
    * right away.
    *
+   * `PositionObserver.newEntryForTarget`
+   *
    * @param target an `Element` target
    */
-  private _new = (target: Element) => {
+  protected _n = (target: Element) => {
     return new Promise<IntersectionObserverEntry>((resolve) => {
       const intersectionObserver = new IntersectionObserver(
-        ([entry], ob) => {
+        ([ioEntry], ob) => {
           ob.disconnect();
-
-          resolve(entry);
+          resolve(ioEntry);
+        },
+        {
+          // IntersectionObserver.root is always the document
+          // root: target.ownerDocument || document,
+          threshold: this._th,
+          rootMargin: this._rm,
         },
       );
 
@@ -197,8 +227,8 @@ export default class PositionObserver {
    * Immediately stop observing all elements.
    */
   public disconnect = () => {
-    cancelAnimationFrame(this._tick);
+    cancelAnimationFrame(this._t);
     this.entries.clear();
-    this._tick = 0;
+    this._t = 0;
   };
 }

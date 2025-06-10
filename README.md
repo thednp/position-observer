@@ -6,9 +6,8 @@
 [![vitest version](https://img.shields.io/badge/vitest-3.2.3-brightgreen)](https://vitest.dev/)
 [![vite version](https://img.shields.io/badge/vite-6.3.5-brightgreen)](https://vitejs.dev/)
 
-If you were looking for an observer that could replace all your `resize` and/or `scroll` EventListeners, this should be it! The **PositionObserver** works with the [IntersectionObserver API](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver) under the hood and uses a very simple design.
 
-The **PositionObserver** provides a way to asynchronously observe changes in the position of a target element with an ancestor element or with a top-level document's viewport. It tries to do what you would expect after your element has intersected as if you would listen to `resize` or `scroll` without attaching event listeners.
+The **PositionObserver** is a lightweight utility that replaces traditional `resize` and `scroll` event listeners. Built on the [IntersectionObserver API](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver), it provides a way to asynchronously observe changes in the position of a target element with an ancestor element or with a top-level `document`'s viewport.
 
 
 ## Installation
@@ -33,91 +32,109 @@ deno add npm:@thednp/position-observer@latest
 ## Usage
 
 ```ts
-// import the PositionObserver class
-import PositionObserver, { type PositionObserverEntry } from '@thednp/position-observer';
+import PositionObserver from '@thednp/position-observer';
 
-// find a suitable target
+// Find a target element
 const myTarget = document.getElementById('myElement');
 
-// define a callback
-const callback = (entries: PositionObserverEntry[], currentObserver: PositionObserver) => {
-  /* keep an eye on your entries */
-  // console.log(entries);
-
-  // access the observer inside your callback
-  // to find entry for myTarget
-  const entry = currentObserver.getEntry(myTarget);
-  if (entry.target === myTarget/* and/or other conditions */) {
-    // do something about it
-  }
+// Define a callback
+const callback = (entries: IntersectionObserverEntry[], observer: PositionObserver) => {
+  // Access the observer inside your callback
+  // const otherEntry = observer.getEntry(anyOtherTarget);
+  entries.forEach((entry) => {
+    if (entry?.target === myTarget /* and your own conditions apply */) {
+      // Handle position changes
+      console.log(entry.boundingClientRect);
+    }
+  })
 };
 
-// set some options
+// Set options
 const options = {
-  // if not set, it will use the document.documentElement
-  root: document.getElementById('myModal'),
-}
+  root: document.getElementById('myModal'), // Defaults to document.documentElement
+  rootMargin: '0px', // Margin around the root, this applies to IntersectionObserver
+  threshold: 0, // Trigger when any part of the target is visible, this applies to IntersectionObserver
+  callbackMode: 'intersecting', // Options: 'all', 'intersecting', 'update'
+};
 
-// create the observer
+// Create the observer
 const observer = new PositionObserver(callback, options);
 
-// start observing the target element position
-observer.observe(target);
+// Start observing
+observer.observe(myTarget);
 
-// when the position of the element changes from DOM manipulations and/or
-// the position change was triggered by either scroll / resize events
-// these will be the entries of this observer callback example
+// Example callback entries
 [{
-  // the observed target element
   target: <div#myElement>,
-  // the target's bounding client react
-  boundingClientRect: DOMRect,
-  // parent <div#myModal> root clientWidth
-  clientWidth: number,
-  // root <div#myModal> clientHeight
-  clientHeight: number,
+  boundingClientRect: DOMRectReadOnly,
+  intersectionRatio: number,
+  isIntersecting: boolean,
+  // ... other IntersectionObserverEntry properties
 }]
 
-// anytime you need the entry, find it!!
-observer.getEntry(target);
+// Get an entry
+observer.getEntry(myTarget);
 
-// stop observing the changes for #myElement at any point
-observer.unobserve(target);
+// Stop observing a target
+observer.unobserve(myTarget);
 
-// anytime re-start observing the target
-observer.observe(target);
+// Resume observing
+observer.observe(myTarget);
 
-// when no targets require observation
-// you should disconect the observer
-observer.disconect();
+// Stop all observation
+observer.disconnect();
 ```
 
 
 ## Instance Options
 
-### root: Element | undefined
-Sets the `instance._root` private property which identifies the `Element` whose bounds are treated as the bounding box of the viewport for the element which is the observer's target. If not defined then the `Document.documentElement` will be used.
+| Option | Type | Description |
+|--------| -----|-------------|
+| `root` | `Element` \| `undefined` | The element used as the viewport for checking target visibility. Defaults to `document.documentElement`.|
+| `callbackMode` | "all" \| "intersecting" \| "update" \| `undefined` | Controls `PositionObserver` callback behavior. Defaults to "intersecting". See below for details. |
+| `rootMargin` | `string` \| `undefined` | Margin around the root of the `IntersectionObserver`. Uses same format as CSS margins (e.g., "10px 20px"). |
+| `threshold` | `number` \| `number[]` \| `undefined` | Percentage of the target's visibility required to trigger the `IntersectionObserver` callback. |
 
-When observing multiple targets from a **scrollable** parent element, that parent must be set as root. The same applies to embeddings and `IFrame`s. See the [ScrollSpy](https://github.com/thednp/bootstrap.native/blob/master/src/components/scrollspy.ts) example for implementation details.
+### root
+The **PositionObserver** `instance.root` identifies the `Element` whose bounds are treated as the bounding box of the viewport for the element which is the observer's target. Since we're observing for its width and height changes, this root can only be an instance of `Element`, so `Document` cannot be the root of your PositionObserver instance.
+
+The **IntersectionObserver** `instance.root` is always the default, which is `Document`. The two observers really care for different things: one cares about intersection the other cares about position, which is why the two observers cannot use the same root.
+
+### IntersectionObserver
+The two initialization options specifically for the IntersectionObserver are `rootMargin` and `threshold` and only apply when using "intersecting" or "update" modes.
+
+### Callback Modes
+* `all`: Triggers the callback for all observed targets, regardless of visibility or position changes.
+* `intersecting`: Triggers the callback only for targets that are intersecting with the document's viewport and have changed position or root dimensions.
+* `update`: Triggers the callback for targets with position/root dimension changes or when a target's intersection status changes (e.g., from intersecting to non-intersecting).
+
+When observing targets from a **scrollable** parent element, that parent must be set as root. The same applies to embeddings and `IFrame`s. See the [ScrollSpy](https://github.com/thednp/bootstrap.native/blob/master/src/components/scrollspy.ts) example for implementation details.
 
 
-## How it works
-* when the observer is initialized without a callback, it will throw an `Error`;
-* if you call the `observe()` method without a valid `Element` target, it will throw an `Error`;
-* if the target isn't attached to the DOM, it will not be added to the observer entries;
-* once propertly set up, the **PositionObserver** will observe the changes of either **top** or **left** for a given Element target in relation to its designated root, as well as the **clientWidth** and **clientHeight** of that parent;
-* when the target `Element` is intersecting with the bounds of the designated viewport and at least one of the observed values changes, only then the target's entry will be queued for the callback runtime.
+## How it Works
+* **Initialization**: Requires a valid callback function, or it throws an Error.
+* **Target Validation**: The `observe()` method requires a valid `Element`, or it throws an Error. Targets not attached to the DOM are ignored.
+* **Observation**: Tracks changes in the target's top or left position relative to the root, as well as the root's `clientWidth` and `clientHeight`.
+* **Callback Trigger**: The callback is invoked based on the `callbackMode`:
+  - `all`: Includes every observed target's entry.
+  - `intersecting`: Includes only intersecting targets with position or root dimension changes.
+  - `update`: Includes targets with position/root dimension changes or a change in intersection status.
+* **Intersection Checks**: Uses `IntersectionObserver` with the `document` as the root to determine `isIntersecting`. The `rootMargin` and `threshold` options apply to these checks but have no impact in `all` mode.
 
 
 ## Notes
-* **use with caution**: for performance reasons, if your callback is focused on values of the target's bounding client rect, be sure to make use of `entry.boundingClientRect` values (`observer.getEntry(target)`) instead of invoking `getBoundingClientRect()` again on your target;
-* this implementation is partially inspired by the [async-bounds](https://github.com/glued/async-bounds), the async model is very efficient;
-* if nothing happens when observing a target, please know that the observer's runtime will only call the callback for elements that are descendents of the given root element; this also means that if a target is removed from the document, the target's entry will not be queued into the runtime;
-* also if the target `Element` is hidden with either `display: none` or `visibility: hidden` or attributes with the same effect, the bounding box always has ZERO values and never changes, so make sure to have your target visible before calling `observer.observe(target)`;
-* because the functionality is powered by `requestAnimationFrame` and **IntersectionObserver**, all computation is always processed asynchronously before the next paint, in some cases you might want to consider wrapping your **PositionObserver** callback in a `requestAnimationFrame()` invokation for a consistent syncronicity and to eliminate any [unwanted anomalies](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver#observation_errors);
-* while the performance benefits over the use of event listeners is undeniable, it's still **important** to `unobserve` targets or `disconnect` the observer to make room in the main thread;
-* if you want to make your **PositionObserver** instance work like a `ResizeObserver`, well you can simply filter your callback with the inequality of `entry.boundingClientRect.height` and `lastHeight` OR `entry.boundingClientRect.width` and `lastWidth`;
-* lastly, the **PositionObserver** will observe changes to all sides of a target, but in some cases you might want to narrow down to the changes triggered by scroll, mainly top and left, in which case you can filter your callback to a single side `entry.boundingClientRect.top !== lastTop`, further increasing performance.
+* **Performance**: Use `entry.boundingClientRect` from `observer.getEntry(target)` to avoid redundant `getBoundingClientRect()` calls.
+* **Async Design**: Leverages `requestAnimationFrame` and `IntersectionObserver` for efficient, asynchronous operation. Consider wrapping callbacks in `requestAnimationFrame` for synchronization and to eliminate any potential [observation errors](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver#observation_errors).
+* **Visibility**: Targets must be visible (no `display: none` or `visibility: hidden`) for actual accurate bounding box measurements.
+* **Cleanup**: Call unobserve() or disconnect() when observation is no longer needed to free resources.
+* **ResizeObserver Alternative**: Filter callbacks on `entry.boundingClientRect.width` or height changes to mimic `ResizeObserver`.
+* **Scroll Optimization**: For scroll-specific changes, filter callbacks on `entry.boundingClientRect.top` or `left`.
+* **IntersectionObserver Root**: The underlying `IntersectionObserver` uses the `document` as its root, while `the PositionObserver`'s root option defines the reference `Element` for position tracking.
+* **Callback Mode Selection**: Choose `callbackMode` based on your use case:
+  - Use `intersecting` for most scenarios where only visible elements matter.
+  - Use `update` to track intersection state changes.
+  - Use `all` for comprehensive monitoring of *all* targets.
+* **RootMargin and Threshold**: These options have no impact in `all` mode, as non-intersecting targets are still processed. They are however relevant in `intersecting` or `update` modes for defining visibility conditions.
 
 
 ## License

@@ -24,11 +24,16 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 const __thednp_shorty = __toESM(require("@thednp/shorty"));
 
 //#region package.json
-var version = "1.0.11";
+var version = "1.1.0";
 
 //#endregion
 //#region src/index.ts
 const errorString = "PositionObserver Error";
+const callbackModes = [
+	"all",
+	"intersecting",
+	"update"
+];
 /**
 * The PositionObserver class is a utility class that observes the position
 * of DOM elements and triggers a callback when their position changes.
@@ -36,9 +41,22 @@ const errorString = "PositionObserver Error";
 var PositionObserver = class {
 	entries;
 	static version = version;
-	_tick;
-	_root;
-	_callback;
+	/** `PositionObserver.tick` */
+	_t;
+	/** `PositionObserver.root` */
+	_r;
+	/** `PositionObserver.callbackMode` */
+	_cm;
+	/** `PositionObserver.root.clientWidth` */
+	_w;
+	/** `PositionObserver.root.clientHeight` */
+	_h;
+	/** `IntersectionObserver.options.rootMargin` */
+	_rm;
+	/** `IntersectionObserver.options.threshold` */
+	_th;
+	/** `PositionObserver.callback` */
+	_c;
 	/**
 	* The constructor takes two arguments, a `callback`, which is called
 	* whenever the position of an observed element changes and an `options` object.
@@ -51,9 +69,16 @@ var PositionObserver = class {
 	constructor(callback, options) {
 		if (!(0, __thednp_shorty.isFunction)(callback)) throw new Error(`${errorString}: ${callback} is not a function.`);
 		this.entries = /* @__PURE__ */ new Map();
-		this._callback = callback;
-		this._root = (0, __thednp_shorty.isElement)(options?.root) ? options.root : document?.documentElement;
-		this._tick = 0;
+		this._c = callback;
+		this._t = 0;
+		const callbackIndex = callbackModes.indexOf(options?.callbackMode || "");
+		const root = (0, __thednp_shorty.isElement)(options?.root) ? options.root : document?.documentElement;
+		this._r = root;
+		this._rm = options?.rootMargin;
+		this._th = options?.threshold;
+		this._cm = callbackIndex > -1 ? callbackIndex : 1;
+		this._w = root.clientWidth;
+		this._h = root.clientHeight;
 	}
 	/**
 	* Start observing the position of the specified element.
@@ -65,20 +90,12 @@ var PositionObserver = class {
 	observe = (target) => {
 		if (!(0, __thednp_shorty.isElement)(target)) throw new Error(`${errorString}: ${target} is not an instance of Element.`);
 		/* istanbul ignore else @preserve - a guard must be set */
-		if (!this._root.contains(target)) return;
-		this._new(target).then(({ boundingClientRect }) => {
+		if (!this._r.contains(target)) return;
+		this._n(target).then((ioEntry) => {
 			/* istanbul ignore else @preserve - don't allow duplicate entries */
-			if (boundingClientRect && !this.getEntry(target)) {
-				const { clientWidth, clientHeight } = this._root;
-				this.entries.set(target, {
-					target,
-					boundingClientRect,
-					clientWidth,
-					clientHeight
-				});
-			}
+			if (ioEntry.boundingClientRect && !this.getEntry(target)) this.entries.set(target, ioEntry);
 			/* istanbul ignore else @preserve */
-			if (!this._tick) this._tick = requestAnimationFrame(this._runCallback);
+			if (!this._t) this._t = requestAnimationFrame(this._rc);
 		});
 	};
 	/**
@@ -93,56 +110,67 @@ var PositionObserver = class {
 	/**
 	* Private method responsible for all the heavy duty,
 	* the observer's runtime.
+	* `PositionObserver.runCallback`
 	*/
-	_runCallback = () => {
+	_rc = () => {
 		/* istanbul ignore if @preserve - a guard must be set */
 		if (!this.entries.size) {
-			this._tick = 0;
+			this._t = 0;
 			return;
 		}
-		const { clientWidth, clientHeight } = this._root;
+		const { clientWidth, clientHeight } = this._r;
 		const queue = new Promise((resolve) => {
 			const updates = [];
-			this.entries.forEach(({ target, boundingClientRect: oldBoundingBox, clientWidth: oldWidth, clientHeight: oldHeight }) => {
+			this.entries.forEach(({ target, boundingClientRect: oldBoundingBox, isIntersecting: oldIsIntersecting }) => {
 				/* istanbul ignore if @preserve - a guard must be set when target has been removed */
-				if (!this._root.contains(target)) return;
-				this._new(target).then(({ boundingClientRect, isIntersecting }) => {
+				if (!this._r.contains(target)) return;
+				this._n(target).then((ioEntry) => {
 					/* istanbul ignore if @preserve - make sure to only count visible entries */
-					if (!isIntersecting) return;
-					const { left, top } = boundingClientRect;
+					if (!ioEntry.isIntersecting) {
+						if (this._cm === 1) return;
+						else if (this._cm === 2) {
+							if (oldIsIntersecting) {
+								this.entries.set(target, ioEntry);
+								updates.push(ioEntry);
+							}
+							return;
+						}
+					}
+					const { left, top } = ioEntry.boundingClientRect;
 					/* istanbul ignore else @preserve - only schedule entries that changed position */
-					if (oldBoundingBox.top !== top || oldBoundingBox.left !== left || oldWidth !== clientWidth || oldHeight !== clientHeight) {
-						const newEntry = {
-							target,
-							boundingClientRect,
-							clientHeight,
-							clientWidth
-						};
-						this.entries.set(target, newEntry);
-						updates.push(newEntry);
+					if (oldBoundingBox.top !== top || oldBoundingBox.left !== left || this._w !== clientWidth || this._h !== clientHeight) {
+						this.entries.set(target, ioEntry);
+						updates.push(ioEntry);
 					}
 				});
 			});
+			this._w = clientWidth;
+			this._h = clientHeight;
 			resolve(updates);
 		});
-		this._tick = requestAnimationFrame(async () => {
+		this._t = requestAnimationFrame(async () => {
 			const updates = await queue;
 			/* istanbul ignore else @preserve */
-			if (updates.length) this._callback(updates, this);
-			this._runCallback();
+			if (updates.length) this._c(updates, this);
+			this._rc();
 		});
 	};
 	/**
 	* Check intersection status and resolve it
 	* right away.
 	*
+	* `PositionObserver.newEntryForTarget`
+	*
 	* @param target an `Element` target
 	*/
-	_new = (target) => {
+	_n = (target) => {
 		return new Promise((resolve) => {
-			const intersectionObserver = new IntersectionObserver(([entry], ob) => {
+			const intersectionObserver = new IntersectionObserver(([ioEntry], ob) => {
 				ob.disconnect();
-				resolve(entry);
+				resolve(ioEntry);
+			}, {
+				threshold: this._th,
+				rootMargin: this._rm
 			});
 			intersectionObserver.observe(target);
 		});
@@ -157,9 +185,9 @@ var PositionObserver = class {
 	* Immediately stop observing all elements.
 	*/
 	disconnect = () => {
-		cancelAnimationFrame(this._tick);
+		cancelAnimationFrame(this._t);
 		this.entries.clear();
-		this._tick = 0;
+		this._t = 0;
 	};
 };
 

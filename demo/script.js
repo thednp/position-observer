@@ -78,6 +78,7 @@ const handleUpdate = (e) => {
 
 const observer = new PositionObserver((_, ob) => {
   start = window.performance.now();
+  // console.log({..._})
   requestAnimationFrame(updateObserver);
   // updateObserver();
   if (testRuns.length < 500) {
