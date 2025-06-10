@@ -100,6 +100,8 @@ The **PositionObserver** `instance.root` identifies the `Element` whose bounds a
 
 The **IntersectionObserver** `instance.root` is always the default, which is `Document`. The two observers really care for different things: one cares about intersection the other cares about position, which is why the two observers cannot use the same root.
 
+When observing targets from a **scrollable** parent element, that parent must be set as root. The same applies to embeddings and `IFrame`s. See the [ScrollSpy](https://github.com/thednp/bootstrap.native/blob/master/src/components/scrollspy.ts) example for implementation details.
+
 ### IntersectionObserver
 The two initialization options specifically for the IntersectionObserver are `rootMargin` and `threshold` and only apply when using "intersecting" or "update" modes.
 
@@ -107,8 +109,6 @@ The two initialization options specifically for the IntersectionObserver are `ro
 * `all`: Triggers the callback for all observed targets, regardless of visibility or position changes.
 * `intersecting`: Triggers the callback only for targets that are intersecting with the document's viewport and have changed position or root dimensions.
 * `update`: Triggers the callback for targets with position/root dimension changes or when a target's intersection status changes (e.g., from intersecting to non-intersecting).
-
-When observing targets from a **scrollable** parent element, that parent must be set as root. The same applies to embeddings and `IFrame`s. See the [ScrollSpy](https://github.com/thednp/bootstrap.native/blob/master/src/components/scrollspy.ts) example for implementation details.
 
 
 ## How it Works
