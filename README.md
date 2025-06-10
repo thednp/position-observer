@@ -42,7 +42,7 @@ const callback = (entries: IntersectionObserverEntry[], observer: PositionObserv
   // Access the observer inside your callback
   // const otherEntry = observer.getEntry(anyOtherTarget);
   entries.forEach((entry) => {
-    if (entry?.target === myTarget /* and your own conditions apply */) {
+    if (entry.isIntersecting/* and your own conditions apply */) {
       // Handle position changes
       console.log(entry.boundingClientRect);
     }
