@@ -86,14 +86,15 @@
 <code class="text-danger">import</code> <code class="text-primary">PositionObserver</code> from <span class="text-muted">'@thednp/position-observer'</span>;
 
 <code class="text-danger">const</code> target = document.<code class="text-success">getElementById</code>('myElement');
-<code class="text-danger">const</code> observer = <code class="text-danger">new</code> <code class="text-primary">PositionObserver</code>((entries, currentObserver) => {
-  <code class="text-danger">const</code> entry = currentObserver.<code class="text-success">getEntry</code>(target);
 
-  <code class="text-danger">if</code> (entry.<code class="text-success">target</code> === target) console.<code class="text-success">log</code>(<span class="text-muted">'this is myTarget!'</span>);
-  <code class="text-danger">else</code> console.<code class="text-success">log</code>(<span class="text-muted">'this is NOT myTarget!'</span>)
+<code class="text-muted">// only handle a single entry</code>
+<code class="text-danger">const</code> observer = <code class="text-danger">new</code> <code class="text-primary">PositionObserver</code>(([entry], currentObserver) => {
+  <code class="text-danger">if</code> (entry.<code class="text-success">isIntersecting</code><code class="text-muted">/* or any other condition */</code>) console.<code class="text-success">log</code>(<span class="text-muted">'isIntersecting!'</span>);
+  <code class="text-danger">else</code> console.<code class="text-success">log</code>(<span class="text-muted">'NOT isIntersecting!'</span>)
 });
 
 observer.<code class="text-success">observe</code>(target);</pre>
+        <p>See <a href="https://github.com/thednp/position-observer/blob/main/README.md">README</a> for details.</p>
         </div>
       </div>
     </div>

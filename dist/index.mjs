@@ -53,6 +53,7 @@ var PositionObserver = class {
 		this._r = root;
 		this._rm = options?.rootMargin;
 		this._th = options?.threshold;
+		/* istanbul ignore next @preserve */
 		this._cm = callbackIndex > -1 ? callbackIndex : 1;
 		this._w = root.clientWidth;
 		this._h = root.clientHeight;
