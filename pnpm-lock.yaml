@@ -15,7 +15,7 @@ devDependencies:
     version: 24.0.0
   '@vitest/browser':
     specifier: ^3.2.3
-    version: 3.2.3(playwright@1.52.0)(vite@6.3.5)(vitest@3.2.3)
+    version: 3.2.3(playwright@1.53.0)(vite@6.3.5)(vitest@3.2.3)
   '@vitest/coverage-istanbul':
     specifier: ^3.2.3
     version: 3.2.3(vitest@3.2.3)
@@ -23,8 +23,8 @@ devDependencies:
     specifier: ^3.2.3
     version: 3.2.3(vitest@3.2.3)
   playwright:
-    specifier: ^1.52.0
-    version: 1.52.0
+    specifier: ^1.53.0
+    version: 1.53.0
   tsdown:
     specifier: ^0.12.7
     version: 0.12.7(typescript@5.8.3)
@@ -859,7 +859,7 @@ packages:
       undici-types: 7.8.0
     dev: true
 
-  /@vitest/browser@3.2.3(playwright@1.52.0)(vite@6.3.5)(vitest@3.2.3):
+  /@vitest/browser@3.2.3(playwright@1.53.0)(vite@6.3.5)(vitest@3.2.3):
     resolution: {integrity: sha512-5HpUb0ixGF8JWSAjb/P1x/VPuTYUkL4pL0+YO6DJiuvQgqJN3PREaUEcXwfXjU4nBc37EahfpRbAwdE9pHs9lQ==}
     peerDependencies:
       playwright: '*'
@@ -879,7 +879,7 @@ packages:
       '@vitest/mocker': 3.2.3(vite@6.3.5)
       '@vitest/utils': 3.2.3
       magic-string: 0.30.17
-      playwright: 1.52.0
+      playwright: 1.53.0
       sirv: 3.0.1
       tinyrainbow: 2.0.0
       vitest: 3.2.3(@types/node@24.0.0)(@vitest/browser@3.2.3)(@vitest/ui@3.2.3)
@@ -1526,18 +1526,18 @@ packages:
     engines: {node: '>=12'}
     dev: true
 
-  /playwright-core@1.52.0:
-    resolution: {integrity: sha512-l2osTgLXSMeuLZOML9qYODUQoPPnUsKsb5/P6LJ2e6uPKXUdPK5WYhN4z03G+YNbWmGDY4YENauNu4ZKczreHg==}
+  /playwright-core@1.53.0:
+    resolution: {integrity: sha512-mGLg8m0pm4+mmtB7M89Xw/GSqoNC+twivl8ITteqvAndachozYe2ZA7srU6uleV1vEdAHYqjq+SV8SNxRRFYBw==}
     engines: {node: '>=18'}
     hasBin: true
     dev: true
 
-  /playwright@1.52.0:
-    resolution: {integrity: sha512-JAwMNMBlxJ2oD1kce4KPtMkDeKGHQstdpFPcPH3maElAXon/QZeTvtsfXmTMRyO9TslfoYOXkSsvao2nE1ilTw==}
+  /playwright@1.53.0:
+    resolution: {integrity: sha512-ghGNnIEYZC4E+YtclRn4/p6oYbdPiASELBIYkBXfaTVKreQUYbMUYQDwS12a8F0/HtIjr/CkGjtwABeFPGcS4Q==}
     engines: {node: '>=18'}
     hasBin: true
     dependencies:
-      playwright-core: 1.52.0
+      playwright-core: 1.53.0
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
@@ -1994,7 +1994,7 @@ packages:
     dependencies:
       '@types/chai': 5.2.2
       '@types/node': 24.0.0
-      '@vitest/browser': 3.2.3(playwright@1.52.0)(vite@6.3.5)(vitest@3.2.3)
+      '@vitest/browser': 3.2.3(playwright@1.53.0)(vite@6.3.5)(vitest@3.2.3)
       '@vitest/expect': 3.2.3
       '@vitest/mocker': 3.2.3(vite@6.3.5)
       '@vitest/pretty-format': 3.2.3

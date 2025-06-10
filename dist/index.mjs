@@ -5,12 +5,12 @@ var version = "1.1.0";
 
 //#endregion
 //#region src/index.ts
-const errorString = "PositionObserver Error";
 const callbackModes = [
 	"all",
 	"intersecting",
 	"update"
 ];
+const errorString = "PositionObserver Error";
 /**
 * The PositionObserver class is a utility class that observes the position
 * of DOM elements and triggers a callback when their position changes.
@@ -38,7 +38,7 @@ var PositionObserver = class {
 	* The constructor takes two arguments, a `callback`, which is called
 	* whenever the position of an observed element changes and an `options` object.
 	* The callback function takes an array of `PositionObserverEntry` objects
-	* as its only argument, but it's not required.
+	* as its first argument and the PositionObserver instance as its second argument.
 	*
 	* @param callback the callback that applies to all targets of this observer
 	* @param options the options of this observer
@@ -48,13 +48,12 @@ var PositionObserver = class {
 		this.entries = /* @__PURE__ */ new Map();
 		this._c = callback;
 		this._t = 0;
-		const callbackIndex = callbackModes.indexOf(options?.callbackMode || "");
 		const root = isElement(options?.root) ? options.root : document?.documentElement;
 		this._r = root;
 		this._rm = options?.rootMargin;
 		this._th = options?.threshold;
 		/* istanbul ignore next @preserve */
-		this._cm = callbackIndex > -1 ? callbackIndex : 1;
+		this._cm = callbackModes.indexOf(options?.callbackMode || "intersecting");
 		this._w = root.clientWidth;
 		this._h = root.clientHeight;
 	}

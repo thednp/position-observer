@@ -1,6 +1,8 @@
 //#region src/index.d.ts
 type PositionObserverCallback = (entries: IntersectionObserverEntry[], observer: PositionObserver) => void;
-type CallbackMode = "all" | "intersecting" | "update";
+declare const callbackModes: readonly ["all", "intersecting", "update"];
+type CallbackMode = typeof callbackModes[number];
+type CallbackModeIndex = 0 | 1 | 2;
 type PositionObserverOptions = {
   root?: Element;
   rootMargin?: IntersectionObserverInit["rootMargin"];
@@ -19,7 +21,7 @@ declare class PositionObserver {
   /** `PositionObserver.root` */
   protected _r: Element;
   /** `PositionObserver.callbackMode` */
-  protected _cm: 0 | 1 | 2;
+  protected _cm: CallbackModeIndex;
   /** `PositionObserver.root.clientWidth` */
   protected _w: number;
   /** `PositionObserver.root.clientHeight` */
@@ -34,7 +36,7 @@ declare class PositionObserver {
    * The constructor takes two arguments, a `callback`, which is called
    * whenever the position of an observed element changes and an `options` object.
    * The callback function takes an array of `PositionObserverEntry` objects
-   * as its only argument, but it's not required.
+   * as its first argument and the PositionObserver instance as its second argument.
    *
    * @param callback the callback that applies to all targets of this observer
    * @param options the options of this observer

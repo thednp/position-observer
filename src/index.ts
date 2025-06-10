@@ -59,7 +59,7 @@ export default class PositionObserver {
     if (!isFunction(callback)) {
       throw new Error(`${errorString}: ${callback} is not a function.`);
     }
-    this.entries = new Map<Element, IntersectionObserverEntry>;
+    this.entries = new Map<Element, IntersectionObserverEntry>();
     this._c = callback;
     this._t = 0;
     const root = isElement(options?.root)
@@ -70,7 +70,9 @@ export default class PositionObserver {
     this._rm = options?.rootMargin;
     this._th = options?.threshold;
     /* istanbul ignore next @preserve */
-    this._cm = callbackModes.indexOf(options?.callbackMode || "intersecting") as CallbackModeIndex
+    this._cm = callbackModes.indexOf(
+      options?.callbackMode || "intersecting",
+    ) as CallbackModeIndex;
     this._w = root.clientWidth;
     this._h = root.clientHeight;
   }
@@ -177,7 +179,7 @@ export default class PositionObserver {
 
     this._t = requestAnimationFrame(async () => {
       // execute the queue
-      const updates : IntersectionObserverEntry[] = await queue;
+      const updates: IntersectionObserverEntry[] = await queue;
 
       // only execute the callback if position actually changed
       /* istanbul ignore else @preserve */
