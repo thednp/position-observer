@@ -6,7 +6,8 @@ export type PositionObserverCallback = (
   observer: PositionObserver,
 ) => void;
 
-type CallbackMode = "all" | "intersecting" | "update";
+const callbackModes = ["all", "intersecting", "update"] as const;
+type CallbackMode = typeof callbackModes[number];
 type CallbackModeIndex = 0 | 1 | 2;
 
 export type PositionObserverOptions = {
@@ -17,7 +18,6 @@ export type PositionObserverOptions = {
 };
 
 const errorString = "PositionObserver Error";
-const callbackModes = ["all", "intersecting", "update"];
 
 /**
  * The PositionObserver class is a utility class that observes the position
@@ -31,7 +31,7 @@ export default class PositionObserver {
   /** `PositionObserver.root` */
   protected _r: Element;
   /** `PositionObserver.callbackMode` */
-  protected _cm: 0 | 1 | 2;
+  protected _cm: CallbackModeIndex;
   /** `PositionObserver.root.clientWidth` */
   protected _w: number;
   /** `PositionObserver.root.clientHeight` */
@@ -47,7 +47,7 @@ export default class PositionObserver {
    * The constructor takes two arguments, a `callback`, which is called
    * whenever the position of an observed element changes and an `options` object.
    * The callback function takes an array of `PositionObserverEntry` objects
-   * as its only argument, but it's not required.
+   * as its first argument and the PositionObserver instance as its second argument.
    *
    * @param callback the callback that applies to all targets of this observer
    * @param options the options of this observer
@@ -59,12 +59,9 @@ export default class PositionObserver {
     if (!isFunction(callback)) {
       throw new Error(`${errorString}: ${callback} is not a function.`);
     }
-    this.entries = new Map();
+    this.entries = new Map<Element, IntersectionObserverEntry>;
     this._c = callback;
     this._t = 0;
-    const callbackIndex = callbackModes.indexOf(options?.callbackMode || "") as
-      | CallbackModeIndex
-      | -1;
     const root = isElement(options?.root)
       ? options.root
       /* istanbul ignore next @preserve */
@@ -73,7 +70,7 @@ export default class PositionObserver {
     this._rm = options?.rootMargin;
     this._th = options?.threshold;
     /* istanbul ignore next @preserve */
-    this._cm = callbackIndex > -1 ? callbackIndex as CallbackModeIndex : 1;
+    this._cm = callbackModes.indexOf(options?.callbackMode || "intersecting") as CallbackModeIndex
     this._w = root.clientWidth;
     this._h = root.clientHeight;
   }
@@ -147,9 +144,9 @@ export default class PositionObserver {
           this._n(target).then((ioEntry) => {
             /* istanbul ignore if @preserve - make sure to only count visible entries */
             if (!ioEntry.isIntersecting) {
-              if (this._cm === 1) {
+              if (this._cm === 1) { // 1 = "intersecting"
                 return;
-              } else if (this._cm === 2) {
+              } else if (this._cm === 2) { // 2 = "update"
                 if (oldIsIntersecting) {
                   this.entries.set(target, ioEntry);
                   updates.push(ioEntry);
@@ -157,6 +154,7 @@ export default class PositionObserver {
                 return;
               }
             }
+            // 0 = "all"
             const { left, top } = ioEntry.boundingClientRect;
 
             /* istanbul ignore else @preserve - only schedule entries that changed position */
@@ -179,7 +177,7 @@ export default class PositionObserver {
 
     this._t = requestAnimationFrame(async () => {
       // execute the queue
-      const updates = await queue;
+      const updates : IntersectionObserverEntry[] = await queue;
 
       // only execute the callback if position actually changed
       /* istanbul ignore else @preserve */
