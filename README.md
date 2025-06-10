@@ -52,8 +52,8 @@ const callback = (entries: IntersectionObserverEntry[], observer: PositionObserv
 // Set options
 const options = {
   root: document.getElementById('myModal'), // Defaults to document.documentElement
-  rootMargin: '0px', // Margin around the root, this applies to IntersectionObserver
-  threshold: 0, // Trigger when any part of the target is visible, this applies to IntersectionObserver
+  rootMargin: '0px', // Margin around the root, this applies to IntersectionObserver only
+  threshold: 0, // Trigger when any part of the target is visible, this applies to IntersectionObserver only
   callbackMode: 'intersecting', // Options: 'all', 'intersecting', 'update'
 };
 
