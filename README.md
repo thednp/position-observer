@@ -38,9 +38,9 @@ import PositionObserver from '@thednp/position-observer';
 const myTarget = document.getElementById('myElement');
 
 // Define a callback
-const callback = (entries: IntersectionObserverEntry[], observer: PositionObserver) => {
+const callback = (entries: IntersectionObserverEntry[], currentObserver: PositionObserver) => {
   // Access the observer inside your callback
-  // const otherEntry = observer.getEntry(anyOtherTarget);
+  // console.log(currentObserver);
   entries.forEach((entry) => {
     if (entry.isIntersecting/* and your own conditions apply */) {
       // Handle position changes
@@ -130,6 +130,7 @@ The two initialization options specifically for the IntersectionObserver are `ro
 * **ResizeObserver Alternative**: Filter callbacks on `entry.boundingClientRect.width` or height changes to mimic `ResizeObserver`.
 * **Scroll Optimization**: For scroll-specific changes, filter callbacks on `entry.boundingClientRect.top` or `left`.
 * **IntersectionObserver Root**: The underlying `IntersectionObserver` uses the `document` as its root, while `the PositionObserver`'s root option defines the reference `Element` for position tracking.
+* **IntersectionObserverEntry Spread**: This is an interface instance and cannot be [spread](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax). 
 * **Callback Mode Selection**: Choose `callbackMode` based on your use case:
   - Use `intersecting` for most scenarios where only visible elements matter.
   - Use `update` to track intersection state changes.
