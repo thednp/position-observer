@@ -138,5 +138,9 @@ The two initialization options specifically for the IntersectionObserver are `ro
 * **RootMargin and Threshold**: These options have no impact in `all` mode, as non-intersecting targets are still processed. They are however relevant in `intersecting` or `update` modes for defining visibility conditions.
 
 
+## Special Thanks
+* [Bart Spaans](https://github.com/spaansba) for his awesome contributions.
+
+
 ## License
 The **PositionObserver** is released under the [MIT license](https://github.com/thednp/position-observer/blob/master/LICENSE).
