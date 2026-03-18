@@ -26,7 +26,7 @@
     "lint": "deno lint src && pnpm check:ts",
     "format": "deno fmt src",
     "check:ts": "tsc --noEmit",
-    "prepublishOnly": "pnpm update --latest && pnpm lint && pnpm format && pnpm build:all && pnpm badges"
+    "prepublishOnly": "pnpm update --latest && pnpm lint && pnpm format && pnpm build:all"
   },
   "bugs": {
     "url": "https://github.com/thednp/position-observer/issues"

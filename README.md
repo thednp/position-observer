@@ -2,10 +2,6 @@
 [![Coverage Status](https://coveralls.io/repos/github/thednp/position-observer/badge.svg)](https://coveralls.io/github/thednp/position-observer)
 [![ci](https://github.com/thednp/position-observer/actions/workflows/ci.yml/badge.svg)](https://github.com/thednp/position-observer/actions/workflows/ci.yml)
 [![NPM Version](https://img.shields.io/npm/v/@thednp/position-observer.svg)](https://www.npmjs.com/package/@thednp/position-observer)
-[![typescript version](https://img.shields.io/badge/typescript-5.9.3-brightgreen)](https://www.typescriptlang.org/)
-[![vitest version](https://img.shields.io/badge/vitest-4.1.0-brightgreen)](https://vitest.dev/)
-[![vite version](https://img.shields.io/badge/vite-8.0.0-brightgreen)](https://vitejs.dev/)
-
 
 The **PositionObserver** is a lightweight utility that replaces traditional `resize` and `scroll` event listeners. Built on the [IntersectionObserver API](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver), it provides a way to asynchronously observe changes in the position of a target element with an ancestor element or with a top-level `document`'s viewport.
 
@@ -17,7 +13,7 @@ npm i @thednp/position-observer
 ```
 
 ```bash
-yarn add @thednp/position-observer
+bun add @thednp/position-observer
 ```
 
 ```bash
@@ -54,7 +50,6 @@ const options = {
   root: document.getElementById('myModal'), // Defaults to document.documentElement
   rootMargin: '0px', // Margin around the root, this applies to IntersectionObserver only
   threshold: 0, // Trigger when any part of the target is visible, this applies to IntersectionObserver only
-  callbackMode: 'intersecting', // Options: 'all', 'intersecting', 'update'
 };
 
 // Create the observer
