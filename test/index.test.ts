@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { page } from '@vitest/browser/context';
+import { page } from 'vitest/browser';
 import getMarkup from "./getMarkup";
+import PositionObserver from "../src/index";
 
 import "./assets/bootstrap.min.css";
-import PositionObserver from "../src/index";
 
 import styleTip from "./styleTip";
 

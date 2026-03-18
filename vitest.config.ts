@@ -1,17 +1,18 @@
 import { defineConfig } from "vitest/config";
 import { resolve } from 'node:path';
+import { playwright } from "@vitest/browser-playwright";
 
 export default defineConfig({
-  resolve: {
-    alias: {
-      "~": resolve(__dirname, "src"),
-    },
-  },
-  optimizeDeps: {
-    include: [
-      "@vitest/coverage-istanbul"
-    ]
-  },
+  // resolve: {
+  //   alias: {
+  //     "~": resolve(__dirname, "src"),
+  //   },
+  // },
+  // optimizeDeps: {
+  //   include: [
+  //     "@vitest/coverage-istanbul"
+  //   ]
+  // },
   test: {
     css: true,
     globals: true,
@@ -23,14 +24,11 @@ export default defineConfig({
       exclude: ["src/util/init.ts"],
     },
     browser: {
-      provider: 'playwright', // or 'webdriverio'
       enabled: true,
+      provider: playwright({}),
+      instances: [{ browser: "chromium" }],
+      ui: false,
       headless: true,
-      instances: [
-        {
-          browser: 'chromium', // browser name is required
-        }
-      ]
     },
   },
 });

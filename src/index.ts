@@ -6,15 +6,10 @@ export type PositionObserverCallback = (
   observer: PositionObserver,
 ) => void;
 
-const callbackModes = ["all", "intersecting", "update"] as const;
-type CallbackMode = typeof callbackModes[number];
-type CallbackModeIndex = 0 | 1 | 2;
-
 export type PositionObserverOptions = {
   root?: Element; // PositionObserver root only, IntersectionObserver root is always the document
   rootMargin?: IntersectionObserverInit["rootMargin"];
   threshold?: IntersectionObserverInit["threshold"];
-  callbackMode?: CallbackMode;
 };
 
 const errorString = "PositionObserver Error";
@@ -30,8 +25,6 @@ export default class PositionObserver {
   protected _t: number;
   /** `PositionObserver.root` */
   protected _r: Element;
-  /** `PositionObserver.callbackMode` */
-  protected _cm: CallbackModeIndex;
   /** `PositionObserver.root.clientWidth` */
   protected _w: number;
   /** `PositionObserver.root.clientHeight` */
@@ -69,10 +62,7 @@ export default class PositionObserver {
     this._r = root;
     this._rm = options?.rootMargin;
     this._th = options?.threshold;
-    /* istanbul ignore next @preserve */
-    this._cm = callbackModes.indexOf(
-      options?.callbackMode || "intersecting",
-    ) as CallbackModeIndex;
+
     this._w = root.clientWidth;
     this._h = root.clientHeight;
   }
@@ -137,7 +127,6 @@ export default class PositionObserver {
           {
             target,
             boundingClientRect: oldBoundingBox,
-            isIntersecting: oldIsIntersecting,
           },
         ) => {
           /* istanbul ignore if @preserve - a guard must be set when target has been removed */
@@ -145,18 +134,8 @@ export default class PositionObserver {
 
           this._n(target).then((ioEntry) => {
             /* istanbul ignore if @preserve - make sure to only count visible entries */
-            if (!ioEntry.isIntersecting) {
-              if (this._cm === 1) { // 1 = "intersecting"
-                return;
-              } else if (this._cm === 2) { // 2 = "update"
-                if (oldIsIntersecting) {
-                  this.entries.set(target, ioEntry);
-                  updates.push(ioEntry);
-                }
-                return;
-              }
-            }
-            // 0 = "all"
+            if (!ioEntry.isIntersecting) return;
+
             const { left, top } = ioEntry.boundingClientRect;
 
             /* istanbul ignore else @preserve - only schedule entries that changed position */

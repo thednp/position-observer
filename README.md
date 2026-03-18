@@ -2,9 +2,9 @@
 [![Coverage Status](https://coveralls.io/repos/github/thednp/position-observer/badge.svg)](https://coveralls.io/github/thednp/position-observer)
 [![ci](https://github.com/thednp/position-observer/actions/workflows/ci.yml/badge.svg)](https://github.com/thednp/position-observer/actions/workflows/ci.yml)
 [![NPM Version](https://img.shields.io/npm/v/@thednp/position-observer.svg)](https://www.npmjs.com/package/@thednp/position-observer)
-[![typescript version](https://img.shields.io/badge/typescript-5.8.3-brightgreen)](https://www.typescriptlang.org/)
-[![vitest version](https://img.shields.io/badge/vitest-3.2.3-brightgreen)](https://vitest.dev/)
-[![vite version](https://img.shields.io/badge/vite-6.3.5-brightgreen)](https://vitejs.dev/)
+[![typescript version](https://img.shields.io/badge/typescript-5.9.3-brightgreen)](https://www.typescriptlang.org/)
+[![vitest version](https://img.shields.io/badge/vitest-4.1.0-brightgreen)](https://vitest.dev/)
+[![vite version](https://img.shields.io/badge/vite-8.0.0-brightgreen)](https://vitejs.dev/)
 
 
 The **PositionObserver** is a lightweight utility that replaces traditional `resize` and `scroll` event listeners. Built on the [IntersectionObserver API](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver), it provides a way to asynchronously observe changes in the position of a target element with an ancestor element or with a top-level `document`'s viewport.
@@ -91,7 +91,6 @@ observer.disconnect();
 | Option | Type | Description |
 |--------| -----|-------------|
 | `root` | `Element` \| `undefined` | The element used as the viewport for checking target visibility. Defaults to `document.documentElement`.|
-| `callbackMode` | "all" \| "intersecting" \| "update" \| `undefined` | Controls `PositionObserver` callback behavior. Defaults to "intersecting". See below for details. |
 | `rootMargin` | `string` \| `undefined` | Margin around the root of the `IntersectionObserver`. Uses same format as CSS margins (e.g., "10px 20px"). |
 | `threshold` | `number` \| `number[]` \| `undefined` | Percentage of the target's visibility required to trigger the `IntersectionObserver` callback. |
 
@@ -105,20 +104,10 @@ When observing targets from a **scrollable** parent element, that parent must be
 ### IntersectionObserver
 The two initialization options specifically for the IntersectionObserver are `rootMargin` and `threshold` and only apply when using "intersecting" or "update" modes.
 
-### Callback Modes
-* `all`: Triggers the callback for all observed targets, regardless of visibility or position changes.
-* `intersecting`: Triggers the callback only for targets that are intersecting with the document's viewport and have changed position or root dimensions.
-* `update`: Triggers the callback for targets with position/root dimension changes or when a target's intersection status changes (e.g., from intersecting to non-intersecting).
-
-
 ## How it Works
 * **Initialization**: Requires a valid callback function, or it throws an Error.
 * **Target Validation**: The `observe()` method requires a valid `Element`, or it throws an Error. Targets not attached to the DOM are ignored.
 * **Observation**: Tracks changes in the target's top or left position relative to the root, as well as the root's `clientWidth` and `clientHeight`.
-* **Callback Trigger**: The callback is invoked based on the `callbackMode`:
-  - `all`: Includes every observed target's entry.
-  - `intersecting`: Includes only intersecting targets with position or root dimension changes.
-  - `update`: Includes targets with position/root dimension changes or a change in intersection status.
 * **Intersection Checks**: Uses `IntersectionObserver` with the `document` as the root to determine `isIntersecting`. The `rootMargin` and `threshold` options apply to these checks but have no impact in `all` mode.
 
 
@@ -131,10 +120,6 @@ The two initialization options specifically for the IntersectionObserver are `ro
 * **Scroll Optimization**: For scroll-specific changes, filter callbacks on `entry.boundingClientRect.top` or `left`.
 * **IntersectionObserver Root**: The underlying `IntersectionObserver` uses the `document` as its root, while `the PositionObserver`'s root option defines the reference `Element` for position tracking.
 * **IntersectionObserverEntry Spread**: This is an interface instance and cannot be [spread](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax). 
-* **Callback Mode Selection**: Choose `callbackMode` based on your use case:
-  - Use `intersecting` for most scenarios where only visible elements matter.
-  - Use `update` to track intersection state changes.
-  - Use `all` for comprehensive monitoring of *all* targets.
 * **RootMargin and Threshold**: These options have no impact in `all` mode, as non-intersecting targets are still processed. They are however relevant in `intersecting` or `update` modes for defining visibility conditions.
 
 

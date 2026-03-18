@@ -7,12 +7,15 @@ export default defineConfig(
     entry: {
       'index': 'src/index.ts',
     },
-    format: ['esm', 'cjs'],
+    format: ['esm'],
+    platform: "neutral",
     dts: true,
     clean: true,
     sourcemap: true,
     globalName: "PositionObserver",
-    skipNodeModulesBundle: true,
-    external: ["@thednp/shorty"],
+    deps: {
+      skipNodeModulesBundle: true,
+      neverBundle: ["@thednp/shorty"],
+    }
   },
 );

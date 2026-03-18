@@ -1,13 +1,9 @@
 //#region src/index.d.ts
 type PositionObserverCallback = (entries: IntersectionObserverEntry[], observer: PositionObserver) => void;
-declare const callbackModes: readonly ["all", "intersecting", "update"];
-type CallbackMode = typeof callbackModes[number];
-type CallbackModeIndex = 0 | 1 | 2;
 type PositionObserverOptions = {
   root?: Element;
   rootMargin?: IntersectionObserverInit["rootMargin"];
   threshold?: IntersectionObserverInit["threshold"];
-  callbackMode?: CallbackMode;
 };
 /**
  * The PositionObserver class is a utility class that observes the position
@@ -20,8 +16,6 @@ declare class PositionObserver {
   protected _t: number;
   /** `PositionObserver.root` */
   protected _r: Element;
-  /** `PositionObserver.callbackMode` */
-  protected _cm: CallbackModeIndex;
   /** `PositionObserver.root.clientWidth` */
   protected _w: number;
   /** `PositionObserver.root.clientHeight` */

@@ -1,15 +1,8 @@
 import { isElement, isFunction } from "@thednp/shorty";
-
 //#region package.json
-var version = "1.1.0";
-
+var version = "1.1.1";
 //#endregion
 //#region src/index.ts
-const callbackModes = [
-	"all",
-	"intersecting",
-	"update"
-];
 const errorString = "PositionObserver Error";
 /**
 * The PositionObserver class is a utility class that observes the position
@@ -22,8 +15,6 @@ var PositionObserver = class {
 	_t;
 	/** `PositionObserver.root` */
 	_r;
-	/** `PositionObserver.callbackMode` */
-	_cm;
 	/** `PositionObserver.root.clientWidth` */
 	_w;
 	/** `PositionObserver.root.clientHeight` */
@@ -52,8 +43,6 @@ var PositionObserver = class {
 		this._r = root;
 		this._rm = options?.rootMargin;
 		this._th = options?.threshold;
-		/* istanbul ignore next @preserve */
-		this._cm = callbackModes.indexOf(options?.callbackMode || "intersecting");
 		this._w = root.clientWidth;
 		this._h = root.clientHeight;
 	}
@@ -98,21 +87,12 @@ var PositionObserver = class {
 		const { clientWidth, clientHeight } = this._r;
 		const queue = new Promise((resolve) => {
 			const updates = [];
-			this.entries.forEach(({ target, boundingClientRect: oldBoundingBox, isIntersecting: oldIsIntersecting }) => {
+			this.entries.forEach(({ target, boundingClientRect: oldBoundingBox }) => {
 				/* istanbul ignore if @preserve - a guard must be set when target has been removed */
 				if (!this._r.contains(target)) return;
 				this._n(target).then((ioEntry) => {
 					/* istanbul ignore if @preserve - make sure to only count visible entries */
-					if (!ioEntry.isIntersecting) {
-						if (this._cm === 1) return;
-						else if (this._cm === 2) {
-							if (oldIsIntersecting) {
-								this.entries.set(target, ioEntry);
-								updates.push(ioEntry);
-							}
-							return;
-						}
-					}
+					if (!ioEntry.isIntersecting) return;
 					const { left, top } = ioEntry.boundingClientRect;
 					/* istanbul ignore else @preserve - only schedule entries that changed position */
 					if (oldBoundingBox.top !== top || oldBoundingBox.left !== left || this._w !== clientWidth || this._h !== clientHeight) {
@@ -142,14 +122,13 @@ var PositionObserver = class {
 	*/
 	_n = (target) => {
 		return new Promise((resolve) => {
-			const intersectionObserver = new IntersectionObserver(([ioEntry], ob) => {
+			new IntersectionObserver(([ioEntry], ob) => {
 				ob.disconnect();
 				resolve(ioEntry);
 			}, {
 				threshold: this._th,
 				rootMargin: this._rm
-			});
-			intersectionObserver.observe(target);
+			}).observe(target);
 		});
 	};
 	/**
@@ -167,7 +146,7 @@ var PositionObserver = class {
 		this._t = 0;
 	};
 };
-
 //#endregion
 export { PositionObserver as default };
+
 //# sourceMappingURL=index.mjs.map
