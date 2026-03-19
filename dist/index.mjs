@@ -1,6 +1,6 @@
 import { isElement, isFunction } from "@thednp/shorty";
 //#region package.json
-var version = "1.1.1";
+var version = "1.1.2";
 //#endregion
 //#region src/index.ts
 const errorString = "PositionObserver Error";
