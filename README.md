@@ -90,20 +90,19 @@ observer.disconnect();
 | `threshold` | `number` \| `number[]` \| `undefined` | Percentage of the target's visibility required to trigger the `IntersectionObserver` callback. |
 
 ### root
-The **PositionObserver** `instance.root` identifies the `Element` whose bounds are treated as the bounding box of the viewport for the element which is the observer's target. Since we're observing for its width and height changes, this root can only be an instance of `Element`, so `Document` cannot be the root of your PositionObserver instance.
+The **PositionObserver** `instance.root` identifies the `Element` whose bounds are treated as the bounding box of the viewport for the element which is the observer's target. Since we're observing for its width and height changes, this root can only be an instance of `Element`, so `Document` cannot be the root of your `PositionObserver` instance.
 
 The **IntersectionObserver** `instance.root` is always the default, which is `Document`. The two observers really care for different things: one cares about intersection the other cares about position, which is why the two observers cannot use the same root.
 
 When observing targets from a **scrollable** parent element, that parent must be set as root. The same applies to embeddings and `IFrame`s. See the [ScrollSpy](https://github.com/thednp/bootstrap.native/blob/master/src/components/scrollspy.ts) example for implementation details.
 
-### IntersectionObserver
-The two initialization options specifically for the IntersectionObserver are `rootMargin` and `threshold` and only apply when using "intersecting" or "update" modes.
+The two initialization options specifically for the `IntersectionObserver` are `rootMargin` and `threshold`; they control the behavior of `PositionObserver` in the sense that when conditions are met for intersection, the `PositionObserver` entries are updated or skipped.
 
 ## How it Works
 * **Initialization**: Requires a valid callback function, or it throws an Error.
 * **Target Validation**: The `observe()` method requires a valid `Element`, or it throws an Error. Targets not attached to the DOM are ignored.
 * **Observation**: Tracks changes in the target's top or left position relative to the root, as well as the root's `clientWidth` and `clientHeight`.
-* **Intersection Checks**: Uses `IntersectionObserver` with the `document` as the root to determine `isIntersecting`. The `rootMargin` and `threshold` options apply to these checks but have no impact in `all` mode.
+* **Intersection Checks**: Uses `IntersectionObserver` with the `document` as the root to determine `isIntersecting`. The `rootMargin` and `threshold` options apply to these checks.
 
 
 ## Notes
