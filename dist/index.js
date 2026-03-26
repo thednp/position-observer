@@ -1,6 +1,6 @@
 import { isElement, isFunction } from "@thednp/shorty";
 //#region package.json
-var version = "1.1.2";
+var version = "1.1.3";
 //#endregion
 //#region src/index.ts
 const errorString = "PositionObserver Error";
@@ -149,4 +149,4 @@ var PositionObserver = class {
 //#endregion
 export { PositionObserver as default };
 
-//# sourceMappingURL=index.mjs.map
+//# sourceMappingURL=index.js.map

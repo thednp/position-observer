@@ -2,9 +2,6 @@
   // https://janessagarrow.com/blog/typescript-and-esbuild/
  "compilerOptions": {
    "lib": ["DOM", "ESNext", "DOM.Iterable"],
-   "types": ["@thednp/shorty"],
-   "rootDir": "./",
-   "baseUrl": "./",
    "module": "ESNext",
    "target": "ESNext",
    "moduleResolution": "Bundler",
@@ -20,6 +17,7 @@
    "noUnusedParameters": true,
    "noImplicitReturns": true,
    "removeComments": false,
+   "resolvePackageJsonImports": true,
    "allowSyntheticDefaultImports": true,
    "noEmit": true,
    "checkJs": true,
