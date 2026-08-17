@@ -56,7 +56,7 @@ var PositionObserver = class {
 	observe = (target) => {
 		if (!isElement(target)) throw new Error(`${errorString}: ${target} is not an instance of Element.`);
 		/* istanbul ignore else @preserve - a guard must be set */
-		if (!target.isConnected) return;
+		if (!this._r.contains(target)) return;
 		this._n(target).then((ioEntry) => {
 			/* istanbul ignore else @preserve - don't allow duplicate entries */
 			if (ioEntry.boundingClientRect && !this.getEntry(target)) this.entries.set(target, ioEntry);

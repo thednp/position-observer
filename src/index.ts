@@ -82,7 +82,7 @@ export default class PositionObserver {
     }
 
     /* istanbul ignore else @preserve - a guard must be set */
-    if (!target.isConnected) return;
+    if (!this._r.contains(target)) return;
 
     // define a new entry
     // push the entry into the queue
