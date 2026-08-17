@@ -82,7 +82,7 @@ export default class PositionObserver {
     }
 
     /* istanbul ignore else @preserve - a guard must be set */
-    if (!this._r.contains(target)) return;
+    if (!target.isConnected) return;
 
     // define a new entry
     // push the entry into the queue
@@ -130,7 +130,7 @@ export default class PositionObserver {
           },
         ) => {
           /* istanbul ignore if @preserve - a guard must be set when target has been removed */
-          if (!this._r.contains(target)) return;
+          if (!target.isConnected) return;
 
           this._n(target).then((ioEntry) => {
             /* istanbul ignore if @preserve - make sure to only count visible entries */

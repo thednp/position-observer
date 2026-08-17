@@ -1,6 +1,6 @@
 import { isElement, isFunction } from "@thednp/shorty";
 //#region package.json
-var version = "1.1.3";
+var version = "1.1.4";
 //#endregion
 //#region src/index.ts
 const errorString = "PositionObserver Error";
@@ -56,7 +56,7 @@ var PositionObserver = class {
 	observe = (target) => {
 		if (!isElement(target)) throw new Error(`${errorString}: ${target} is not an instance of Element.`);
 		/* istanbul ignore else @preserve - a guard must be set */
-		if (!this._r.contains(target)) return;
+		if (!target.isConnected) return;
 		this._n(target).then((ioEntry) => {
 			/* istanbul ignore else @preserve - don't allow duplicate entries */
 			if (ioEntry.boundingClientRect && !this.getEntry(target)) this.entries.set(target, ioEntry);
@@ -89,7 +89,7 @@ var PositionObserver = class {
 			const updates = [];
 			this.entries.forEach(({ target, boundingClientRect: oldBoundingBox }) => {
 				/* istanbul ignore if @preserve - a guard must be set when target has been removed */
-				if (!this._r.contains(target)) return;
+				if (!target.isConnected) return;
 				this._n(target).then((ioEntry) => {
 					/* istanbul ignore if @preserve - make sure to only count visible entries */
 					if (!ioEntry.isIntersecting) return;
