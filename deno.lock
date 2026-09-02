@@ -1,6 +1,7 @@
 {
   "version": "5",
   "specifiers": {
+    "npm:@thednp/shorty@^2.0.14": "2.0.14",
     "npm:@types/node@^26.4.1": "26.4.1",
     "npm:@vitest/browser-playwright@^4.1.11": "4.1.11_playwright@1.62.1_vitest@4.1.11_@types+node@26.4.1_@vitest+coverage-istanbul@4.1.11_@vitest+ui@4.1.11_vite@8.2.2__@types+node@26.4.1",
     "npm:@vitest/browser@^4.1.11": "4.1.11_vitest@4.1.11__@types+node@26.4.1__@vitest+browser-playwright@4.1.11__@vitest+coverage-istanbul@4.1.11__@vitest+ui@4.1.11__vite@8.2.2___@types+node@26.4.1__playwright@1.62.1_@types+node@26.4.1_@vitest+browser-playwright@4.1.11__playwright@1.62.1__vitest@4.1.11__@types+node@26.4.1__@vitest+coverage-istanbul@4.1.11__@vitest+ui@4.1.11__vite@8.2.2___@types+node@26.4.1_@vitest+coverage-istanbul@4.1.11__vitest@4.1.11__@types+node@26.4.1__@vitest+browser-playwright@4.1.11__@vitest+ui@4.1.11__vite@8.2.2___@types+node@26.4.1_@vitest+ui@4.1.11__vitest@4.1.11__@types+node@26.4.1__@vitest+browser-playwright@4.1.11__@vitest+coverage-istanbul@4.1.11__vite@8.2.2___@types+node@26.4.1_playwright@1.62.1_vite@8.2.2__@types+node@26.4.1",
@@ -258,6 +259,9 @@
     },
     "@standard-schema/spec@1.1.0": {
       "integrity": "sha512-l2aFy5jALhniG5HgqrD6jXLi/rUWrKvqN/qJx6yoJsgKhblVd+iqqU4RCXavm/jPityDo5TCvKMnpjKnOriy0w=="
+    },
+    "@thednp/shorty@2.0.14": {
+      "integrity": "sha512-jCxbkyQryQjovIzK5ko683RNq1pZRAKiscJfhtF71yGxneEzFR9IQgzayw/WRjQ5KDD/5UVqTwgtfQ7pJpmIYA=="
     },
     "@types/chai@5.2.3": {
       "integrity": "sha512-Mw558oeA9fFbv65/y4mHtXDs9bPnFMZAL/jxdPFUpOHHIXX91mcgEHbS5Lahr+pwZFR8A7GQleRWeI6cGFC2UA==",

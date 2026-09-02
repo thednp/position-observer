@@ -5,13 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.1.5] - 2026-09-02
+## [1.1.4] - 2026-09-02
 
 ### Added
 - `deno.json` — JSR publishing as `@thednp/position-observer` (`exports: . -> src/index.ts`), `compilerOptions` (`DOM`, `ESNext`, `strict`), `imports` (`@thednp/shorty`, `@vitest/*`, `playwright`, `vitest`), `tasks` (`test`, `test-ui`, `lint`, `check`, `format`, `fix`), `publish.include` (`src`, `package.json`, `README.md`, `AGENTS.md`, `llms.txt`, `LICENSE`) — mirrors `svg-path-commander/deno.json`
 - `scripts/update-deno.js` — syncs `version`/`description`/`keywords`/`license` from `package.json` to `deno.json` (ported from `svg-path-commander`)
 - `AGENTS.md` and `llms.txt` — agent/LLM guides: stack (`tsdown`, `vitest` + `@vitest/browser-playwright`, `deno fmt/lint`), architecture (`src/index.ts:21` single class, `_r`/`_w`/`_h`/`_t`/`entries`, `observe:77`, `_rc:115`, `_n:179`), conventions and Issue #7 gotchas
 - JSR publish pipeline in `.github/workflows/publish.yml` (`deno publish` after `pnpm publish`)
+- 
+### Fixed
+- `src/index.ts` — guard consistency documented: `observe:85` currently `this._r.contains(target)` (`O(n)`) vs `_rc:133` `target.isConnected` (`O(1)`) — hybrid since `193089f`; `8d9a043` had switched both to `isConnected` (perf win, allows non-ancestor `root` for Issue #7). See `AGENTS.md` Gotchas.
 
 ### Changed
 - `package.json:15` scripts: `lint` → `lint:ts` (`deno lint src`), added `fix:ts` (`deno lint --fix`), `check:ts` (`tsc --noEmit`), `up:deno` (`deno update --latest && deno run -A scripts/update-deno.js`), `prepublishOnly` now `pnpm update --latest && pnpm up:deno && pnpm lint && pnpm format && pnpm build:all`; `types` → `./dist/index.d.ts` (aligned with `tsdown` output, was `.d.mts`), `files` now includes `AGENTS.md`/`llms.txt`
@@ -20,13 +23,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `src/index.ts:77,105,115,179,203,208` — explicit return types (`: void`, `: Promise<IntersectionObserverEntry>`, `: IntersectionObserverEntry | undefined`) to satisfy `deno lint` `no-slow-types` / `deno publish` / `deno check` when `deno.json` has `name`
 - `deno.json` `imports` for `@thednp/shorty` uses `npm:` specifier (JSR package not available)
 - Rebuilt `dist/` (`index.js` version `1.1.5`, `index.d.ts`, `index.js.map`)
-
-### Fixed
-- `src/index.ts` — guard consistency documented: `observe:85` currently `this._r.contains(target)` (`O(n)`) vs `_rc:133` `target.isConnected` (`O(1)`) — hybrid since `193089f`; `8d9a043` had switched both to `isConnected` (perf win, allows non-ancestor `root` for Issue #7). See `AGENTS.md` Gotchas.
-
-## [1.1.4] - 2026-08-17
-
-### Changed
 - `src/index.ts:85,133` — both guards switched to `target.isConnected` (reverted in next commit to `contains` on `observe` only) — `O(1)` flag vs `O(n)` subtree walk on hot loop; allows observing targets not descendant of `root`
 - Updated deps / `pnpm-lock.yaml` (tsdown `0.22.14`, vite `8.2.2`, vitest `4.1.11`, playwright `1.62.1`, `@types/node` `26.x`)
 - Rebuilt `dist`/`docs`

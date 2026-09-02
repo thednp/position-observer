@@ -1,5 +1,5 @@
 //#region package.json
-var version = "1.1.5";
+var version = "1.1.4";
 //#endregion
 //#region src/index.ts
 const errorString = "PositionObserver Error";
