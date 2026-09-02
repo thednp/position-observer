@@ -1,4 +1,4 @@
-import { version } from "../package.json";
+import pkg from "../package.json" with { type: "json" };
 
 export type PositionObserverCallback = (
   entries: IntersectionObserverEntry[],
@@ -19,7 +19,7 @@ const errorString = "PositionObserver Error";
  */
 export default class PositionObserver {
   public entries: Map<Element, IntersectionObserverEntry>;
-  public static version = version;
+  public static version = pkg.version;
   /** `PositionObserver.tick` */
   protected _t: number;
   /** `PositionObserver.root` */
