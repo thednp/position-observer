@@ -1,6 +1,5 @@
-import { isElement, isFunction } from "@thednp/shorty";
 //#region package.json
-var version = "1.1.4";
+var version = "1.1.5";
 //#endregion
 //#region src/index.ts
 const errorString = "PositionObserver Error";
@@ -35,11 +34,11 @@ var PositionObserver = class {
 	* @param options the options of this observer
 	*/
 	constructor(callback, options) {
-		if (!isFunction(callback)) throw new Error(`${errorString}: ${callback} is not a function.`);
+		if (typeof callback !== "function") throw new Error(`${errorString}: ${callback} is not a function.`);
 		this.entries = /* @__PURE__ */ new Map();
 		this._c = callback;
 		this._t = 0;
-		const root = isElement(options?.root) ? options.root : document?.documentElement;
+		const root = options?.root instanceof Element ? options.root : document?.documentElement;
 		this._r = root;
 		this._rm = options?.rootMargin;
 		this._th = options?.threshold;
@@ -54,7 +53,7 @@ var PositionObserver = class {
 	* @param target an `Element` target
 	*/
 	observe = (target) => {
-		if (!isElement(target)) throw new Error(`${errorString}: ${target} is not an instance of Element.`);
+		if (!(target instanceof Element)) throw new Error(`${errorString}: ${target} is not an instance of Element.`);
 		/* istanbul ignore else @preserve - a guard must be set */
 		if (!this._r.contains(target)) return;
 		this._n(target).then((ioEntry) => {

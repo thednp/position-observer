@@ -1,4 +1,3 @@
-import { isElement, isFunction } from "@thednp/shorty";
 import { version } from "../package.json";
 
 export type PositionObserverCallback = (
@@ -49,13 +48,13 @@ export default class PositionObserver {
     callback: PositionObserverCallback,
     options?: PositionObserverOptions,
   ) {
-    if (!isFunction(callback)) {
+    if (typeof callback !== "function") {
       throw new Error(`${errorString}: ${callback} is not a function.`);
     }
     this.entries = new Map<Element, IntersectionObserverEntry>();
     this._c = callback;
     this._t = 0;
-    const root = isElement(options?.root)
+    const root = (options?.root instanceof Element)
       ? options.root
       /* istanbul ignore next @preserve */
       : document?.documentElement;
@@ -74,8 +73,8 @@ export default class PositionObserver {
    *
    * @param target an `Element` target
    */
-  public observe = (target: Element) => {
-    if (!isElement(target)) {
+  public observe = (target: Element): void => {
+    if (!(target instanceof Element)) {
       throw new Error(
         `${errorString}: ${target} is not an instance of Element.`,
       );
@@ -102,7 +101,7 @@ export default class PositionObserver {
    *
    * @param target an `Element` target
    */
-  public unobserve = (target: Element) => {
+  public unobserve = (target: Element): void => {
     /* istanbul ignore else @preserve */
     if (this.entries.has(target)) this.entries.delete(target);
   };
@@ -112,7 +111,7 @@ export default class PositionObserver {
    * the observer's runtime.
    * `PositionObserver.runCallback`
    */
-  protected _rc = () => {
+  protected _rc = (): void => {
     /* istanbul ignore if @preserve - a guard must be set */
     if (!this.entries.size) {
       this._t = 0;
@@ -176,7 +175,7 @@ export default class PositionObserver {
    *
    * @param target an `Element` target
    */
-  protected _n = (target: Element) => {
+  protected _n = (target: Element): Promise<IntersectionObserverEntry> => {
     return new Promise<IntersectionObserverEntry>((resolve) => {
       const intersectionObserver = new IntersectionObserver(
         ([ioEntry], ob) => {
@@ -200,12 +199,13 @@ export default class PositionObserver {
    *
    * @param target an `HTMLElement` target
    */
-  public getEntry = (target: Element) => this.entries.get(target);
+  public getEntry = (target: Element): IntersectionObserverEntry | undefined =>
+    this.entries.get(target);
 
   /**
    * Immediately stop observing all elements.
    */
-  public disconnect = () => {
+  public disconnect = (): void => {
     cancelAnimationFrame(this._t);
     this.entries.clear();
     this._t = 0;

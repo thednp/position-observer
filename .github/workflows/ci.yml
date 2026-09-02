@@ -1,19 +1,27 @@
 name: ci
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
     paths:
-      - src/index.ts
-      - test/index.test.ts
+      - src/**/*
+      - src/*
+      - test
       - package.json
+      - deno.json
       - .github/workflows/ci.yml
+
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
     paths:
-      - src/index.ts
-      - test/index.test.ts
+      - src/**/*
+      - src/*
+      - test
       - package.json
+      - deno.json
       - .github/workflows/ci.yml
+
 jobs:
   test:
     runs-on: ubuntu-24.04
@@ -30,10 +38,10 @@ jobs:
         with:
           deno-version: v2.x
 
-      - name: Node Setup
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: pnpm
 
       - name: Install Dependencies
@@ -46,12 +54,12 @@ jobs:
         run: pnpm lint
 
       - name: Build
-        run: pnpm build:all
+        run: pnpm build
 
       - name: ViTest
         run: pnpm test
-
-      - name: Upload coverage report to coveralls.io...
+      
+      - name: Upload coverage report on to coveralls.io...
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}

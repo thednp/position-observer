@@ -1,0 +1,119 @@
+# PositionObserver
+
+> Lightweight TypeScript utility that replaces `scroll`/`resize` listeners. Built on `IntersectionObserver` + `requestAnimationFrame` to asynchronously observe changes in a target element's position.
+
+- Repo: https://github.com/thednp/position-observer
+- Package: `@thednp/position-observer` — https://www.npmjs.com/package/@thednp/position-observer
+- Version: 1.1.4
+- License: MIT
+- Homepage/Docs: https://thednp.github.io/position-observer/
+
+## Description
+
+PositionObserver provides a `PositionObserver` class (API modeled after `IntersectionObserver`/`ResizeObserver`) that notifies you when an observed element's `top`/`left` changes or when the configured root's `clientWidth`/`clientHeight` changes. Internally it uses a one-shot `IntersectionObserver` (root = `document`) per target per frame + a `requestAnimationFrame` loop — no `scroll`/`resize` events.
+
+Use cases: tooltips, popovers, floating UI, scroll-spy, canvas overlays connecting elements, any UI that needs to reposition on scroll/resize without jank.
+
+## Installation
+
+```bash
+npm i @thednp/position-observer
+pnpm add @thednp/position-observer
+bun add @thednp/position-observer
+deno add npm:@thednp/position-observer@latest
+```
+
+Import:
+
+```ts
+import PositionObserver from '@thednp/position-observer';
+```
+
+## Usage
+
+```ts
+import PositionObserver from '@thednp/position-observer';
+
+const target = document.getElementById('myElement')!;
+
+const observer = new PositionObserver((entries, obs) => {
+  for (const entry of entries) {
+    if (entry.isIntersecting) {
+      // entry.boundingClientRect, entry.target, etc.
+      console.log(entry.boundingClientRect.top, entry.boundingClientRect.left);
+    }
+  }
+}, {
+  root: document.getElementById('myModal') ?? document.documentElement, // defaults to document.documentElement
+  rootMargin: '0px',
+  threshold: 0,
+});
+
+observer.observe(target);
+
+// later
+observer.getEntry(target); // IntersectionObserverEntry | undefined
+observer.unobserve(target);
+observer.disconnect();
+```
+
+Demo: `demo/index.html` + `demo/script.js`
+
+## API
+
+### `new PositionObserver(callback, options?)`
+
+- `callback: (entries: IntersectionObserverEntry[], observer: PositionObserver) => void` — required. Called when position changes.
+- `options.root?: Element` — PositionObserver root. Defaults to `document.documentElement`. **Not** the `IntersectionObserver` root (which is always `document`). Tracks `clientWidth`/`clientHeight` changes. When observing inside a scrollable container, set that container as `root`. Must be an `Element` (not `Document`).
+- `options.rootMargin?: string` — passed to internal `IntersectionObserver` only (e.g. `"10px 20px"`).
+- `options.threshold?: number | number[]` — passed to internal `IntersectionObserver` only.
+
+Throws `PositionObserver Error: <callback> is not a function.` if callback invalid.
+
+### `observer.observe(target: Element)`
+
+Validates `target` is an `Element` (throws `PositionObserver Error: ... is not an instance of Element.` otherwise). No-ops if target is not connected / not contained by `root` (guard at `src/index.ts:85` uses `root.contains(target)`). Creates initial entry via `IntersectionObserver`, stores in `observer.entries`, starts rAF loop if not running. Duplicate observes are ignored.
+
+### `observer.unobserve(target: Element)`
+
+Removes target from `entries`.
+
+### `observer.getEntry(target: Element): IntersectionObserverEntry | undefined`
+
+Returns stored entry.
+
+### `observer.disconnect()`
+
+Cancels rAF, clears `entries`.
+
+### `observer.entries: Map<Element, IntersectionObserverEntry>`
+
+Public map of current entries.
+
+### `PositionObserver.version: string`
+
+Current package version.
+
+## How It Works
+
+1. `observe()` validates and creates a one-shot `IntersectionObserver` (`src/index.ts:179` `_n`) to get the first `IntersectionObserverEntry`.
+2. `_rc()` (`src/index.ts:115`) runs via `requestAnimationFrame`: for each entry checks `target.isConnected`, re-creates entry via `_n()`, filters by `isIntersecting` and by `oldRect.top/left` vs new `top/left` or `root.clientWidth/clientHeight` change (`src/index.ts:142`), collects `updates`, invokes callback, loops.
+3. `rootMargin`/`threshold` only affect the `isIntersecting` gate, not position diff.
+
+## Notes for LLMs / Agents
+
+- ESM only (`"type": "module"`). Build with `tsdown` (`tsdown.config.ts`), output `dist/index.js` + `dist/index.d.mts`. Exports at `package.json:11`.
+- Runtime dep: `@thednp/shorty` (`isElement`, `isFunction`). `tsdown` `neverBundle`.
+- Strict TypeScript (`tsconfig.json:13` — `noUnusedLocals`, `noUnusedParameters`, `noImplicitReturns`).
+- Lint `deno lint src`, format `deno fmt src`, typecheck `tsc --noEmit`.
+- Tests are browser-only: `vitest` + `@vitest/browser-playwright` (Chromium). See `test/index.test.ts`, `test/getMarkup.ts`, `test/styleTip.ts`. Run `pnpm test` (headless) or `pnpm test-ui`.
+- Known nuance: `observe()` guards with `root.contains(target)` (`O(n)`) while hot loop uses `target.isConnected` (`O(1)`). Issue #7 requests `root` not needing to be ancestor (e.g. canvas overlay). Supporting that requires switching to `isConnected` + relative position diff (`targetRect - rootRect`). See `AGENTS.md` Gotchas.
+- Do not spread `IntersectionObserverEntry` (not spreadable). Use `entry.boundingClientRect` from `getEntry()` to avoid extra `getBoundingClientRect()` calls.
+
+## Links
+
+- README: `README.md`
+- Source: `src/index.ts` (single class, ~213 lines)
+- Build config: `tsdown.config.ts`, `tsconfig.json`, `vitest.config.ts`
+- Tests: `test/index.test.ts`
+- Issue #7: https://github.com/thednp/position-observer/issues/7

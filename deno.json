@@ -1,0 +1,55 @@
+{
+  "name": "@thednp/position-observer",
+  "description": "🏯 PositionObserver is a JavaScript tool that provides a way to asynchronously observe changes in the position of a target element within its viewport.",
+  "version": "1.1.5",
+  "license": "MIT",
+  "keywords": [
+    "position-observer",
+    "observer",
+    "intersection",
+    "resize",
+    "position",
+    "typescript"
+  ],
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "compilerOptions": {
+    "lib": [
+      "DOM",
+      "ESNext",
+      "DOM.Iterable"
+    ],
+    "strict": true
+  },
+  "minimumDependencyAge": "0",
+  "imports": {
+    "@thednp/shorty": "npm:@thednp/shorty@^2.0.14",
+    "@vitest/browser": "npm:@vitest/browser@^4.1.11",
+    "@vitest/browser-playwright": "npm:@vitest/browser-playwright@^4.1.11",
+    "@vitest/coverage-istanbul": "npm:@vitest/coverage-istanbul@^4.1.11",
+    "@vitest/ui": "npm:@vitest/ui@^4.1.11",
+    "playwright": "npm:playwright@^1.62.1",
+    "vitest": "npm:vitest@^4.1.11"
+  },
+  "tasks": {
+    "test": "deno task clean-coverage && vitest --browser.headless",
+    "test-ui": "deno task clean-coverage && vitest --browser --ui",
+    "clean-coverage": "rm -rf coverage .nyc_output",
+    "lint": "deno lint src",
+    "check": "deno check src",
+    "format": "deno fmt src",
+    "fix": "deno lint src --fix"
+  },
+  "publish": {
+    "include": [
+      "src",
+      "package.json",
+      "README.md",
+      "CHANGELOG.md",
+      "AGENTS.md",
+      "llms.txt",
+      "LICENSE"
+    ]
+  }
+}

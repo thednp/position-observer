@@ -1,12 +1,12 @@
 {
   "name": "@thednp/position-observer",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "author": "thednp",
   "license": "MIT",
   "description": "🏯 PositionObserver is a JavaScript tool that provides a way to asynchronously observe changes in the position of a target element within its viewport.",
   "homepage": "https://thednp.github.io/position-observer/",
   "source": "./src/index.ts",
-  "types": "./dist/index.d.mts",
+  "types": "./dist/index.d.ts",
   "type": "module",
   "exports": {
     ".": "./dist/index.js",
@@ -24,10 +24,13 @@
     "build_": "vite build",
     "build:all": "pnpm build && pnpm build:docs",
     "build:docs": "vite build demo --config demo/vite.config.ts",
-    "lint": "deno lint src && pnpm check:ts",
+    "lint": "pnpm lint:ts",
+    "lint:ts": "deno lint src",
+    "fix:ts": "deno lint --fix src",
     "format": "deno fmt src",
     "check:ts": "tsc --noEmit",
-    "prepublishOnly": "pnpm update --latest && pnpm lint && pnpm format && pnpm build:all"
+    "up:deno": "deno update --latest && deno run -A scripts/update-deno.js",
+    "prepublishOnly": "pnpm update --latest && pnpm up:deno && pnpm lint && pnpm format && pnpm build:all"
   },
   "bugs": {
     "url": "https://github.com/thednp/position-observer/issues"
@@ -40,6 +43,9 @@
     "dist",
     "LICENSE",
     "README.md",
+    "CHANGELOG.md",
+    "AGENTS.md",
+    "llms.txt",
     "package.json"
   ],
   "repository": {
@@ -54,20 +60,17 @@
     "position",
     "typescript"
   ],
-  "dependencies": {
-    "@thednp/shorty": "^2.0.14"
-  },
   "devDependencies": {
-    "@types/node": "^26.2.0",
-    "@vitest/browser": "^4.1.10",
-    "@vitest/browser-playwright": "^4.1.10",
-    "@vitest/coverage-istanbul": "^4.1.10",
-    "@vitest/ui": "^4.1.10",
+    "@types/node": "^26.4.1",
+    "@vitest/browser": "^4.1.11",
+    "@vitest/browser-playwright": "^4.1.11",
+    "@vitest/coverage-istanbul": "^4.1.11",
+    "@vitest/ui": "^4.1.11",
     "playwright": "^1.62.1",
     "tsdown": "^0.22.14",
     "typescript": "7.0.2",
-    "vite": "^8.2.1",
-    "vitest": "^4.1.10"
+    "vite": "^8.2.2",
+    "vitest": "^4.1.11"
   },
   "packageManager": "pnpm@11.22.0",
   "engines": {
