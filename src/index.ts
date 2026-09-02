@@ -6,12 +6,13 @@ export type PositionObserverCallback = (
 ) => void;
 
 export type PositionObserverOptions = {
-  root?: Element; // PositionObserver root only, IntersectionObserver root is always the document
+  root?: Element;
   rootMargin?: IntersectionObserverInit["rootMargin"];
   threshold?: IntersectionObserverInit["threshold"];
 };
 
-const errorString = "PositionObserver Error";
+const errorString: string = "PositionObserver Error";
+const pkgVersion: string = (pkg as { version: string }).version;
 
 /**
  * The PositionObserver class is a utility class that observes the position
@@ -19,7 +20,7 @@ const errorString = "PositionObserver Error";
  */
 export default class PositionObserver {
   public entries: Map<Element, IntersectionObserverEntry>;
-  public static version = pkg.version;
+  public static version: string = pkgVersion;
   /** `PositionObserver.tick` */
   protected _t: number;
   /** `PositionObserver.root` */
@@ -54,10 +55,10 @@ export default class PositionObserver {
     this.entries = new Map<Element, IntersectionObserverEntry>();
     this._c = callback;
     this._t = 0;
-    const root = (options?.root instanceof Element)
+    const root: Element = (options?.root instanceof Element)
       ? options.root
       /* istanbul ignore next @preserve */
-      : document?.documentElement;
+      : document.documentElement as Element;
     this._r = root;
     this._rm = options?.rootMargin;
     this._th = options?.threshold;
@@ -85,7 +86,7 @@ export default class PositionObserver {
 
     // define a new entry
     // push the entry into the queue
-    this._n(target).then((ioEntry) => {
+    this._n(target).then((ioEntry: IntersectionObserverEntry): void => {
       /* istanbul ignore else @preserve - don't allow duplicate entries */
       if (ioEntry.boundingClientRect && !this.getEntry(target)) {
         this.entries.set(target, ioEntry);
@@ -117,45 +118,50 @@ export default class PositionObserver {
       this._t = 0;
       return;
     }
-    const { clientWidth, clientHeight } = this._r;
+    const { clientWidth, clientHeight }: Element = this._r;
 
-    const queue = new Promise<IntersectionObserverEntry[]>((resolve) => {
-      const updates: IntersectionObserverEntry[] = [];
-      this.entries.forEach(
-        (
-          {
-            target,
-            boundingClientRect: oldBoundingBox,
+    const queue: Promise<IntersectionObserverEntry[]> = new Promise<
+      IntersectionObserverEntry[]
+    >(
+      (resolve: (value: IntersectionObserverEntry[]) => void): void => {
+        const updates: IntersectionObserverEntry[] = [];
+        this.entries.forEach(
+          (
+            { target, boundingClientRect: oldBoundingBox }:
+              IntersectionObserverEntry,
+          ): void => {
+            /* istanbul ignore if @preserve - a guard must be set when target has been removed */
+            if (!(target instanceof Element) || !target.isConnected) return;
+
+            this._n(target as Element).then(
+              (ioEntry: IntersectionObserverEntry): void => {
+                /* istanbul ignore if @preserve - make sure to only count visible entries */
+                if (!ioEntry.isIntersecting) return;
+
+                const { left, top }: DOMRectReadOnly =
+                  ioEntry.boundingClientRect;
+
+                /* istanbul ignore else @preserve - only schedule entries that changed position */
+                if (
+                  oldBoundingBox.top !== top || oldBoundingBox.left !== left ||
+                  this._w !== clientWidth || this._h !== clientHeight
+                ) {
+                  this.entries.set(target as Element, ioEntry);
+                  updates.push(ioEntry);
+                }
+              },
+            );
           },
-        ) => {
-          /* istanbul ignore if @preserve - a guard must be set when target has been removed */
-          if (!target.isConnected) return;
+        );
+        // update root client width & height
+        this._w = clientWidth;
+        this._h = clientHeight;
 
-          this._n(target).then((ioEntry) => {
-            /* istanbul ignore if @preserve - make sure to only count visible entries */
-            if (!ioEntry.isIntersecting) return;
+        resolve(updates);
+      },
+    );
 
-            const { left, top } = ioEntry.boundingClientRect;
-
-            /* istanbul ignore else @preserve - only schedule entries that changed position */
-            if (
-              oldBoundingBox.top !== top || oldBoundingBox.left !== left ||
-              this._w !== clientWidth || this._h !== clientHeight
-            ) {
-              this.entries.set(target, ioEntry);
-              updates.push(ioEntry);
-            }
-          });
-        },
-      );
-      // update root client width & height
-      this._w = clientWidth;
-      this._h = clientHeight;
-
-      resolve(updates);
-    });
-
-    this._t = requestAnimationFrame(async () => {
+    this._t = requestAnimationFrame(async (): Promise<void> => {
       // execute the queue
       const updates: IntersectionObserverEntry[] = await queue;
 
@@ -176,22 +182,28 @@ export default class PositionObserver {
    * @param target an `Element` target
    */
   protected _n = (target: Element): Promise<IntersectionObserverEntry> => {
-    return new Promise<IntersectionObserverEntry>((resolve) => {
-      const intersectionObserver = new IntersectionObserver(
-        ([ioEntry], ob) => {
-          ob.disconnect();
-          resolve(ioEntry);
-        },
-        {
-          // IntersectionObserver.root is always the document
-          // root: target.ownerDocument || document,
-          threshold: this._th,
-          rootMargin: this._rm,
-        },
-      );
+    return new Promise<IntersectionObserverEntry>(
+      (resolve: (value: IntersectionObserverEntry) => void): void => {
+        const intersectionObserver: IntersectionObserver =
+          new IntersectionObserver(
+            (
+              [ioEntry]: IntersectionObserverEntry[],
+              ob: IntersectionObserver,
+            ): void => {
+              ob.disconnect();
+              resolve(ioEntry as IntersectionObserverEntry);
+            },
+            {
+              // IntersectionObserver.root is always the document
+              // root: target.ownerDocument || document,
+              threshold: this._th,
+              rootMargin: this._rm,
+            } as IntersectionObserverInit,
+          );
 
-      intersectionObserver.observe(target);
-    });
+        intersectionObserver.observe(target);
+      },
+    );
   };
 
   /**

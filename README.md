@@ -2,26 +2,27 @@
 [![Coverage Status](https://coveralls.io/repos/github/thednp/position-observer/badge.svg)](https://coveralls.io/github/thednp/position-observer)
 [![ci](https://github.com/thednp/position-observer/actions/workflows/ci.yml/badge.svg)](https://github.com/thednp/position-observer/actions/workflows/ci.yml)
 [![NPM Version](https://img.shields.io/npm/v/@thednp/position-observer.svg)](https://www.npmjs.com/package/@thednp/position-observer)
+[![JSR Version](https://img.shields.io/jsr/v/@thednp/position-observer.svg)](https://jsr.io/@thednp/position-observer)
 
 The **PositionObserver** is a lightweight utility that replaces traditional `resize` and `scroll` event listeners. Built on the [IntersectionObserver API](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver), it provides a way to asynchronously observe changes in the position of a target element with an ancestor element or with a top-level `document`'s viewport.
 
+This library is available on [npm](https://www.npmjs.com/package/@thednp/position-observer) and [JSR](https://jsr.io/@thednp/position-observer).
 
 ## Installation
 
-```bash
+```sh
 npm i @thednp/position-observer
+# or pnpm add @thednp/position-observer
+# or bun add @thednp/position-observer
+# or deno add npm:@thednp/position-observer
+# or deno add jsr:@thednp/position-observer
+# or npx jsr add @thednp/position-observer
 ```
 
-```bash
-bun add @thednp/position-observer
-```
+In a Deno project, install from [JSR](https://jsr.io/@thednp/position-observer) and import the raw TypeScript source directly:
 
-```bash
-pnpm add @thednp/position-observer
-```
-
-```bash
-deno add npm:@thednp/position-observer@latest
+```ts
+import PositionObserver from "jsr:@thednp/position-observer";
 ```
 
 

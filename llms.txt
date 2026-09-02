@@ -4,7 +4,7 @@
 
 - Repo: https://github.com/thednp/position-observer
 - Package: `@thednp/position-observer` — https://www.npmjs.com/package/@thednp/position-observer
-- Version: 1.1.4
+- Version: 1.1.5
 - License: MIT
 - Homepage/Docs: https://thednp.github.io/position-observer/
 
@@ -16,14 +16,22 @@ Use cases: tooltips, popovers, floating UI, scroll-spy, canvas overlays connecti
 
 ## Installation
 
-```bash
+```sh
 npm i @thednp/position-observer
-pnpm add @thednp/position-observer
-bun add @thednp/position-observer
-deno add npm:@thednp/position-observer@latest
+# or pnpm add @thednp/position-observer
+# or bun add @thednp/position-observer
+# or deno add npm:@thednp/position-observer
+# or deno add jsr:@thednp/position-observer
+# or npx jsr add @thednp/position-observer
 ```
 
-Import:
+Deno (JSR) — import raw TS directly:
+
+```ts
+import PositionObserver from "jsr:@thednp/position-observer";
+```
+
+NPM / bundler import:
 
 ```ts
 import PositionObserver from '@thednp/position-observer';

@@ -1,15 +1,16 @@
 //#region package.json
-var version = "1.1.4";
+var version = "1.1.5";
 //#endregion
 //#region src/index.ts
 const errorString = "PositionObserver Error";
+const pkgVersion = version;
 /**
 * The PositionObserver class is a utility class that observes the position
 * of DOM elements and triggers a callback when their position changes.
 */
 var PositionObserver = class {
 	entries;
-	static version = version;
+	static version = pkgVersion;
 	/** `PositionObserver.tick` */
 	_t;
 	/** `PositionObserver.root` */
@@ -38,7 +39,7 @@ var PositionObserver = class {
 		this.entries = /* @__PURE__ */ new Map();
 		this._c = callback;
 		this._t = 0;
-		const root = options?.root instanceof Element ? options.root : document?.documentElement;
+		const root = options?.root instanceof Element ? options.root : document.documentElement;
 		this._r = root;
 		this._rm = options?.rootMargin;
 		this._th = options?.threshold;
@@ -88,7 +89,7 @@ var PositionObserver = class {
 			const updates = [];
 			this.entries.forEach(({ target, boundingClientRect: oldBoundingBox }) => {
 				/* istanbul ignore if @preserve - a guard must be set when target has been removed */
-				if (!target.isConnected) return;
+				if (!(target instanceof Element) || !target.isConnected) return;
 				this._n(target).then((ioEntry) => {
 					/* istanbul ignore if @preserve - make sure to only count visible entries */
 					if (!ioEntry.isIntersecting) return;

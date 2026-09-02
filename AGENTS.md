@@ -7,20 +7,37 @@ Guide for AI coding agents working in this repository.
 **PositionObserver** (`@thednp/position-observer`) — lightweight TypeScript utility that replaces `scroll`/`resize` listeners. Built on `IntersectionObserver` + `requestAnimationFrame` to asynchronously observe changes in a target element's `top`/`left` position and its root's `clientWidth`/`clientHeight`.
 
 - Repo: `thednp/position-observer`
-- Version: `1.1.4` (see `package.json:4`)
+- Version: `1.1.5` (see `package.json:4`)
 - License: MIT
 - Homepage: https://thednp.github.io/position-observer/
 
 ## Stack
 
 - Language: TypeScript (strict, `ESNext`, `Bundler` resolution) — `tsconfig.json:13`
-- Build: `tsdown` (`tsdown.config.ts:1`) — outputs ESM + `.d.mts` to `dist/`
+- Build: `tsdown` (`tsdown.config.ts:1`) — outputs ESM + `.d.ts` to `dist/`
 - Runtime deps: `@thednp/shorty` (`isElement`, `isFunction`)
 - Lint: `deno lint src` + `tsc --noEmit` — `package.json:28`
 - Format: `deno fmt src` — `package.json:29`
 - Tests: `vitest` with `@vitest/browser-playwright` (Chromium, headless) — `vitest.config.ts:16`
 - Package manager: `pnpm@11.22.0` — `package.json:72`
 - Node: `>=16`
+
+## Installation
+
+```sh
+npm i @thednp/position-observer
+# or pnpm add @thednp/position-observer
+# or bun add @thednp/position-observer
+# or deno add npm:@thednp/position-observer
+# or deno add jsr:@thednp/position-observer
+# or npx jsr add @thednp/position-observer
+```
+
+Deno (JSR) — import raw TS directly:
+
+```ts
+import PositionObserver from "jsr:@thednp/position-observer";
+```
 
 ## Commands
 
